@@ -7,6 +7,10 @@ require("./database");
 
 const app = express();
 module.exports = app;
+app.use((req, res, next) => {
+  const imagePath = path.join(__dirname, 'public', 'images', 'enconstruction.jpg');
+  res.sendFile(imagePath);
+});
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
