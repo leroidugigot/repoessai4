@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Devenir Formateur | LifeAcademy</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+    padding: 20px;
+}
+
+header {
+    background: #50b3a2;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+}
+
+header p {
+    font-size: 1.2rem;
+}
+
+.hero {
+    background: linear-gradient(135deg, #e4f9f5, #50b3a2);
+    padding: 50px 0;
+    text-align: center;
+    color: white;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    animation: slideInLeft 1s ease-out;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.hero p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+button {
+    background: #50b3a2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #429a86;
+}
+
+#details {
+    margin-top: 20px;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.step {
+    flex-basis: 30%;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.step:hover {
+    transform: scale(1.05);
+}
+
+.testimonials {
+    background: #e4f9f5;
+    padding: 50px 0;
+}
+
+.testimonials h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.testimonials-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.testimonial {
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.faq {
+    padding: 50px 0;
+}
+
+.faq h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+}
+
+.faq-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+footer {
+    background: #333;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+/* Animation pour les éléments défilants */
+.step, .testimonial, .faq-item {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scrolled {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Style pour l'accordéon de la FAQ */
+.faq-item p {
+    display: none;
+    padding: 10px 0;
+    transition: display 0.3s ease-in;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+/* Animation pour les éléments défilants */
+.step, .testimonial, .faq-item {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scrolled {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Style pour l'accordéon de la FAQ */
+.faq-item p {
+    display: none;
+    padding: 10px 0;
+    transition: display 0.3s ease-in;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+/* Animation pour les éléments défilants */
+.step, .testimonial, .faq-item {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scrolled {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Style pour l'accordéon de la FAQ */
+.faq-item p {
+    display: none;
+    padding: 10px 0;
+    transition: display 0.3s ease-in;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Bienvenue sur LifeAcademy.fr</h1>
+            <p>Une plateforme qui met en relation les formateurs secouristes avec des particuliers et des entreprises.</p>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h2>Pourquoi devenir formateur chez nous ?</h2>
+            <p>LifeAcademy.fr vous permet de mettre à profit vos compétences en secourisme, tout en élargissant votre réseau professionnel.</p>
+            <button onclick="showMore()">En savoir plus</button>
+        </div>
+    </section>
+
+    <section id="details" class="hidden">
+        <div class="container">
+            <h3>Nos points forts</h3>
+            <ul>
+                <li>Accès direct à une base de données de particuliers et d'entreprises cherchant des formations en secourisme</li>
+                <li>Outils de gestion des cours et suivi des apprenants</li>
+                <li>Assistance pour la création et la promotion de vos sessions de formation</li>
+            </ul>
+
+            <h3>Comment ça marche ?</h3>
+            <p>En tant que formateur secouriste, vous vous inscrivez sur notre plateforme. Une fois validé, vous avez accès à notre base de données et pouvez commencer à proposer vos services. Nous vous aidons à trouver des clients, gérer vos disponibilités, et suivre vos performances.</p>
+
+            <div class="steps">
+                <div class="step">
+                    <h4>1. Inscription</h4>
+                    <p>Créez un compte formateur et renseignez vos qualifications.</p>
+                </div>
+                <div class="step">
+                    <h4>2. Accès à notre réseau</h4>
+                    <p>Nous vous connectons avec des particuliers et entreprises intéressés par vos formations.</p>
+                </div>
+                <div class="step">
+                    <h4>3. Suivi et gestion</h4>
+                    <p>Gérez vos sessions de formation, planifiez vos cours et suivez les progrès de vos apprenants.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2>Ils parlent de nous</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <p>"LifeAcademy m'a permis d'élargir ma clientèle et de mieux organiser mes sessions de formation."</p>
+                    <h4>- Sophie, Formatrice en secourisme</h4>
+                </div>
+                <div class="testimonial">
+                    <p>"Grâce à leur plateforme, j'ai pu gérer mon emploi du temps de façon plus efficace."</p>
+                    <h4>- Julien, Formateur en premiers secours</h4>
+                </div>
+                <div class="testimonial">
+                    <p>"Une équipe réactive et un outil facile à utiliser pour organiser mes cours."</p>
+                    <h4>- Nathalie, Experte en secourisme</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2>Questions fréquentes</h2>
+            <div class="faq-item">
+                <h4>Comment m'inscrire en tant que formateur ?</h4>
+                <p>Rendez-vous sur la page d'inscription et remplissez le formulaire avec vos informations professionnelles. Une fois votre profil validé, vous pourrez commencer à proposer vos services.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Quel est le coût d'utilisation de la plateforme ?</h4>
+                <p>L'inscription est gratuite pour les formateurs. Des frais de commission sont appliqués sur chaque formation vendue via la plateforme.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Comment suis-je payé ?</h4>
+                <p>Les paiements sont effectués directement sur votre compte après chaque session de formation via notre système sécurisé.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 LifeAcademy - Tous droits réservés.</p>
+        </div>
+    </footer>
+    <script>
+        // Fonction pour afficher/masquer la section "En savoir plus"
+function showMore() {
+    const detailsSection = document.getElementById('details');
+    detailsSection.classList.toggle('hidden');
+}
+
+// Fonction pour rendre les sections visibles au défilement
+const scrollElements = document.querySelectorAll('.step, .testimonial, .faq-item');
+
+const elementInView = (el, dividend = 1) => {
+    const elementTop = el.getBoundingClientRect().top;
+    return (
+        elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+    );
+};
+
+const displayScrollElement = (element) => {
+    element.classList.add('scrolled');
+};
+
+const hideScrollElement = (element) => {
+    element.classList.remove('scrolled');
+};
+
+const handleScrollAnimation = () => {
+    scrollElements.forEach((el) => {
+        if (elementInView(el, 1.25)) {
+            displayScrollElement(el);
+        } else {
+            hideScrollElement(el);
+        }
+    });
+};
+
+window.addEventListener('scroll', () => {
+    handleScrollAnimation();
+});
+
+// Fonction pour l'effet d'accordéon dans la FAQ
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+    item.addEventListener('click', () => {
+        const answer = item.querySelector('p');
+        const isVisible = answer.style.display === 'block';
+        answer.style.display = isVisible ? 'none' : 'block';
+    });
+});
+
+
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "NODE_ENV=development nodemon ./bin/www",
+    "start": "NODE_ENV=development nodemon ./bin/www npx tailwindcss -i src/style.css -o public/css/output.css --watch",
     "start:prod": "NODE_ENV=production nodemon ./bin.www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

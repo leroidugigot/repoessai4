@@ -1,0 +1,355 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Roboto", sans-serif;
+  }
+  .roboto-thin {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+  .roboto-light {
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .roboto-regular {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .roboto-medium {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .roboto-bold {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .roboto-black {
+    font-family: "Roboto", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+  }
+  
+  .roboto-thin-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    font-style: italic;
+  }
+  
+  .roboto-light-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  .roboto-regular-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  .roboto-medium-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+  }
+  
+  .roboto-bold-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  .roboto-black-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+  }
+   /* souslignage onglet topbar*/
+    .underline-animation {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+    }
+
+    .underline-animation::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: currentColor;
+        transform: scaleX(0);
+        transform-origin: bottom right;
+        transition: transform 0.3s ease-out;
+    }
+
+    .underline-animation:hover::before {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+    .centered-element {
+      @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+    }
+
+    /*topbar blanche apres scroll*/
+    .bg-white {
+      background-color: white !important;
+  }
+  
+  .text-black {
+      color: black !important;
+  }
+  /* Animation de battement de cœur */
+@keyframes heartbeat {
+  0% {
+      transform: scale(1);
+  }
+  20% {
+      transform: scale(1.1);
+  }
+  40% {
+      transform: scale(1);
+  }
+  60% {
+      transform: scale(1.1);
+  }
+  80% {
+      transform: scale(1);
+  }
+  100% {
+      transform: scale(1);
+  }
+}
+
+/* Classe pour appliquer l'animation */
+.heartbeat {
+  animation: heartbeat 1.5s infinite;
+}
+   /*Le mot "agir" glisse de droite à gauche*/
+  /* Définition de l'animation slide-in */
+@keyframes slide-in {
+  0% {
+      transform: translateX(100%);
+      opacity: 0;
+  }
+  100% {
+      transform: translateX(0);
+      opacity: 1;
+  }
+}
+
+  /* Appliquer l'animation à l'élément */
+  .slide-in {
+    display: inline-block; /* Pour que l'élément soit affecté par la transformation */
+    animation: slide-in 7s ease-out;
+  }
+  /* changement de couleur fluide*/
+  .change-color-on-scroll {
+    transition: color 0.3s ease;
+  }
+  /*changement couleur topbar*/
+  .text-white {
+    color: white;
+}
+
+
+    /*----------------------------------------------------------------------------------------------------carte qui se retournn*/
+    .flip-card {
+      perspective: 1000px;
+    }
+    
+    .flip-card-inner {
+      transform-style: preserve-3d;
+      transition: transform 0.8s;
+    }
+    
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg) scale(1.05); /* Légère augmentation de la taille au survol */
+    }
+    
+    .flip-card-front, .flip-card-back {
+      backface-visibility: hidden;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .flip-card-back {
+      transform: rotateY(180deg);
+      padding: 16px; /* Ajout de padding pour le texte et l'image */
+    }
+    
+    .flip-card-img {
+      transition: transform 0.3s ease;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
+    .flip-card-back:hover .flip-card-img {
+      transform: scale(1.1); /* Zoom sur l'image au survol */
+    }
+
+    
+    
+/* ---------------------------------------------------------------------------------------------------------------------Animation sautillante et grossissante footer */
+.social-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+  animation: bounce 1.5s infinite;
+  display: inline-block;
+}
+
+.social-icon:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.social-icon:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.social-icon:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.social-icon:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.social-icon:hover {
+  animation-play-state: paused;
+  transform: scale(1.3);
+}
+
+/* Effet de bounce */
+@keyframes bounce {
+  0%, 100% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(-5mm);
+  }
+}
+
+/* Liens utiles - Effet de survol */
+ul a:hover {
+  color: #ffffff; 
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  transform: translateX(5px);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Bordure du formulaire de newsletter */
+input[type="email"] {
+  border-radius: 0.375rem; /* Arrondir les coins */
+}
+
+/* Bouton S'abonner */
+button[type="submit"] {
+  border-radius: 0.375rem; /* Arrondir les coins */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Effet lumineux sur le bouton au survol */
+button[type="submit"]:hover {
+  background-color: #1e40af; /* Couleur de survol */
+  box-shadow: 0px 0px 15px rgba(59, 130, 246, 0.7);
+}
+
+/* Effet d'ombre pour les titres */
+.drop-shadow-lg {
+  text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Effet de focus sur le champ d'email */
+input[type="email"]:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Effet de transition du fond */
+footer:hover {
+  background: linear-gradient(to left, #1f2937, #111827, #1f2937);
+  transition: background 0.5s ease-in-out;
+}
+
+/* Effet de défilement sur le texte */
+@keyframes text-scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+p.scroll-text {
+  display: inline-block;
+  white-space: nowrap;
+  animation: text-scroll 15s linear infinite;
+  overflow: hidden;
+}
+
+footer p {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Menu burger visible sur petit écran */
+@media (max-width: 768px) {
+  #burgerMenu {
+      display: block;
+  }
+
+  #mobileMenu a {
+      text-align: left;
+      padding-left: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  #mobileMenu a:last-child {
+      border-bottom: none;
+  }
+}
+
+/*------------------------------------------bouton en savoir plus*/
+.btn-en-savoir-plus {
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  padding: 10px 20px;
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.flip-card-back {
+  position: relative;
+}
+
+  
+}
+

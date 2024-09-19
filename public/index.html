@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LifeAcademy.fr</title>
+    <!-- Ajoutez un titre de page approprié -->
+    <link
+      rel="shortcut icon"
+      href="./images/img/logo.png"
+      type="image/x-icon"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/33a775bcdb.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="fixed left-0 right-0 top-0 z-50 bg-black">
+      <nav class="flex h-16 items-center justify-between p-0">
+        <div class="m-0 flex h-full items-center p-0">
+          <a href="index.html"
+            ><img src="./images/img/logo.png" alt="Logo" class="m-0 h-24 p-0"
+          /></a>
+        </div>
+
+        <div class="hidden h-11 w-auto flex-row justify-between gap-4 md:flex">
+          <button
+            id="toggleModalBtn"
+            class="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md hover:bg-blue-600 focus:outline-none"
+          >
+            Formations <i class="fas fa-chevron-down"></i>
+          </button>
+          <a
+            href="enseigner.html"
+            class="text-15 change-color-on-scroll underline-animation flex h-11 w-auto items-center px-1 font-bold"
+            >Enseigner</a
+          >
+          <a
+            href="chat.html"
+            class="text-15 change-color-on-scroll underline-animation flex h-11 w-auto items-center px-1 font-bold"
+            >Chat</a
+          >
+          <a
+            href="sellpage.html"
+            class="text-15 change-color-on-scroll underline-animation flex h-11 w-auto items-center px-1 font-bold"
+          >
+            Mon sac de secouriste
+            <i class="fa-solid fa-heart-pulse fa-beat ml-4"></i>
+          </a>
+        </div>
+
+        <div class="hidden flex-row items-center gap-2 px-1 md:flex">
+          <a
+            href="#"
+            class="change-color-on-scroll underline-animation flex h-7 w-24 items-center justify-center rounded-2xl"
+            onclick="handleClickConnexion()"
+            >Connexion</a
+          >
+          <a
+            href="commencer.html"
+            class="z-40 flex h-7 w-28 items-center justify-center rounded-3xl bg-blue-500 px-2 text-white hover:scale-125 hover:bg-green-600"
+            >Commencer</a
+          >
+        </div>
+
+        <!-- Menu burger -->
+        <div class="flex items-center pr-4 md:hidden">
+          <button id="burgerMenu" class="text-white focus:outline-none">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Menu déroulant -->
+      <nav
+        id="mobileMenu"
+        class="absolute left-0 top-16 z-40 flex hidden w-full flex-col items-start bg-black p-4 text-white md:hidden"
+      >
+        <a href="enseigner.html" class="w-full py-2">Enseigner</a>
+        <a href="chat.html" class="w-full py-2">Chat</a>
+        <a href="sac-secouriste.html" class="w-full py-2"
+          >Mon sac de secouriste</a
+        >
+        <a href="#" onclick="handleClickConnexion()">Connexion</a>
+        <a href="commencer.html" class="w-full py-2">Commencer</a>
+      </nav>
+    </header>
+
+    <!-- Modal -->
+    <section
+      id="modal"
+      class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900 bg-opacity-50"
+    >
+      <div
+        class="relative w-full max-w-screen-xl rounded-lg bg-white p-6 shadow-lg"
+      >
+        <h2 class="mb-4 text-xl font-semibold">Liste des Formations</h2>
+        <ul class="list-none space-y-2">
+          <li class="flex items-center">
+            <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i>
+            Formation prévention et secours civiques de niveau 1 (PSC1)
+          </li>
+          <li class="flex items-center">
+            <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i>
+            Formation Les gestes qui sauvent (GQS)
+          </li>
+          <li class="flex items-center">
+            <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i>
+            Recyclage Formation prévention et secours civique de niveau 1
+          </li>
+          <li class="flex items-center">
+            <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i> FC
+            PSE 1 - Formation continue de premiers secours en équipe de niveau 1
+          </li>
+          <li class="flex items-center">
+            <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i> FC
+            PSE 2 - Formation continue de premiers secours en équipe de niveau 2
+          </li>
+          <li class="flex items-center">
+            <i class="fa-solid fa-xmark mr-4 text-red-500"></i> Brevet National
+            de Sécurité et de Sauvetage Aquatique.
+          </li>
+        </ul>
+        <button
+          id="closeModalBtn"
+          class="absolute bottom-4 right-4 rounded-lg bg-red-500 px-3 py-2 text-white shadow-md hover:bg-red-600 focus:outline-none"
+        >
+          Fermer
+        </button>
+      </div>
+    </section>
+
+    <section class="relative flex h-screen flex-col items-center">
+      <!-- Arrière-plan -->
+      <img src="./images/img/bg.jpg" alt="Arrière-plan" class="h-full w-full" />
+
+      <!-- Voile avec dégradé, flou, bords arrondis et ombre -->
+      <div
+        class="rounded-shadow absolute inset-0 z-10 bg-gradient-to-r from-gray-900 via-gray-800 to-transparent opacity-80 backdrop-blur-md"
+      ></div>
+
+      <!-- Contenu au premier plan avec animation de révélation -->
+      <div
+        class="animate-fadeIn absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-7xl text-white"
+      >
+        <strong
+          ><span class="text-green-600">Savoir</span> sauver,<br />
+          c'est vouloir
+          <span class="slide-in border-white text-blue-500">agir</span></strong
+        >
+      </div>
+
+      <!-- Ligne décorative avec ombre -->
+      <div
+        class="top-3/4 flex h-1 w-20 content-center justify-center bg-white shadow-lg"
+      ></div>
+
+      <!-- Bouton COMMERCER dynamique avec effet de zoom -->
+      <div
+        class="heartbeat absolute top-3/4 z-30 flex h-14 content-center items-center justify-center rounded-3xl bg-blue-500 px-2 text-3xl text-white transition-transform duration-300 hover:scale-110 hover:bg-green-600"
+        onclick="handleClickConnexion()"
+      >
+        Commencer
+      </div>
+
+      <!-- Flèche de navigation avec animation -->
+      <div
+        class="absolute top-[calc(75%_+_5rem)] z-30 flex animate-bounce justify-center text-3xl text-white"
+      >
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </section>
+    <section
+      class="mt-20 flex h-full flex-col items-center justify-center gap-y-8 bg-gradient-to-r from-white via-gray-100 to-white px-6 text-center sm:px-8 md:mt-32 md:px-12 lg:mt-40 lg:px-16"
+    >
+      <h2
+        class="text-3xl font-semibold leading-tight text-gray-800 sm:text-4xl md:text-5xl lg:text-6xl"
+      >
+        Maîtrisez les gestes qui sauvent
+      </h2>
+      <p
+        class="text-lg text-gray-500 sm:text-2xl md:text-3xl lg:text-4xl lg:max-w-4xl lg:leading-relaxed"
+      >
+        Investissez dans votre formation de secouriste pour acquérir des
+        compétences qui feront la différence. Votre expertise pourrait sauver
+        des vies.
+      </p>
+      <div class="flex flex-col gap-y-4 sm:flex-row sm:gap-x-8">
+        <button
+          class="rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition duration-300 hover:bg-gray-800 sm:px-8 sm:text-base md:px-10 md:text-lg"
+        >
+          Voir les détails
+        </button>
+        <button
+          class="rounded-full bg-transparent border border-black px-6 py-3 text-sm font-medium text-black transition duration-300 hover:bg-black hover:text-white sm:px-8 sm:text-base md:px-10 md:text-lg"
+        >
+          S'inscrire maintenant
+        </button>
+      </div>
+      <div class="mt-10 flex items-center gap-x-4 text-gray-400">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 animate-bounce text-blue-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+        <a
+          href="#learn-more"
+          class="text-sm font-medium text-blue-500 hover:underline"
+        >
+          En savoir plus sur nos formations
+        </a>
+      </div>
+    </section>
+
+    <section class="relative p-12 bg-gradient-to-br from-blue-50 to-blue-100">
+      <div class="container mx-auto">
+        <!-- Section Title -->
+        <div class="mb-16 text-center">
+          <h2 class="text-4xl font-bold text-gray-800 sm:text-5xl md:text-6xl">
+            Devenez un Secouriste d'Exception
+          </h2>
+          <p class="mt-4 text-lg text-gray-600 sm:text-xl md:text-2xl">
+            Explorez nos formations certifiées pour maîtriser les gestes qui
+            sauvent.
+          </p>
+        </div>
+
+        <!-- Card Grid Layout with Interactions -->
+        <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1: GSQ -->
+          <div
+            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-teal-500 to-teal-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+            ></div>
+            <div class="relative z-10 p-6 space-y-6 text-center">
+              <h3
+                class="text-3xl font-semibold text-white group-hover:text-teal-100"
+              >
+                GSQ: Héros du Quotidien
+              </h3>
+              <p
+                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                Apprenez à sauver des vies avec des gestes simples mais
+                cruciaux.
+              </p>
+              <button
+                class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              >
+                En savoir plus
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2: PSC 1 -->
+          <div
+            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-lime-500 to-lime-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+            ></div>
+            <div class="relative z-10 p-6 space-y-6 text-center">
+              <h3
+                class="text-3xl font-semibold text-white group-hover:text-lime-100"
+              >
+                PSC 1: Réactions Critiques
+              </h3>
+              <p
+                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                Sauvez des vies dans des situations d’urgence grâce à une
+                formation complète.
+              </p>
+              <button
+                class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-lime-600 shadow-md hover:bg-lime-100"
+              >
+                En savoir plus
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: PSE 1 -->
+          <div
+            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-indigo-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+            ></div>
+            <div class="relative z-10 p-6 space-y-6 text-center">
+              <h3
+                class="text-3xl font-semibold text-white group-hover:text-indigo-100"
+              >
+                PSE 1: Premiers Secours en Équipe
+              </h3>
+              <p
+                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                Maîtrisez les secours d’urgence en collaboration avec d'autres
+                intervenants.
+              </p>
+              <button
+                class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-indigo-600 shadow-md hover:bg-indigo-100"
+              >
+                En savoir plus
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4: PSE 2 -->
+          <div
+            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+            ></div>
+            <div class="relative z-10 p-6 space-y-6 text-center">
+              <h3
+                class="text-3xl font-semibold text-white group-hover:text-red-100"
+              >
+                PSE 2: Secours Avancés
+              </h3>
+              <p
+                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                Passez au niveau supérieur avec des techniques avancées de
+                secours.
+              </p>
+              <button
+                class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-red-600 shadow-md hover:bg-red-100"
+              >
+                En savoir plus
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 5: Recyclage -->
+          <div
+            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+            ></div>
+            <div class="relative z-10 p-6 space-y-6 text-center">
+              <h3
+                class="text-3xl font-semibold text-white group-hover:text-amber-100"
+              >
+                Recyclage: Compétences à Jour
+              </h3>
+              <p
+                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                Actualisez vos connaissances et gardez vos certifications à
+                jour.
+              </p>
+              <button
+                class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-amber-600 shadow-md hover:bg-amber-100"
+              >
+                En savoir plus
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 6: FC PSE 2 -->
+          <div
+            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-rose-500 to-rose-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+            ></div>
+            <div class="relative z-10 p-6 space-y-6 text-center">
+              <h3
+                class="text-3xl font-semibold text-white group-hover:text-rose-100"
+              >
+                FC PSE 2: Expert en Secours
+              </h3>
+              <p
+                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                Devenez un expert reconnu en secourisme d'équipe avec cette
+                formation avancée.
+              </p>
+              <button
+                class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-rose-600 shadow-md hover:bg-rose-100"
+              >
+                En savoir plus
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!---------------------------------footer-->
+    <footer
+      class="mt-12 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 py-6 text-white md:py-12"
+    >
+      <div class="container mx-auto px-6 md:px-12">
+        <!-- Sections principales -->
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <!-- Section À propos de nous -->
+          <div class="col-span-1 space-y-4 md:col-span-2">
+            <h3
+              class="mb-4 text-xl font-bold drop-shadow-lg transition-colors duration-300 hover:text-blue-400 md:text-2xl"
+            >
+              À propos de nous
+            </h3>
+            <p class="text-sm text-gray-300 md:text-base">
+              Nous fournissons les meilleures solutions pour particuliers et
+              organisations.<br />
+              Notre engagement est votre satisfaction.
+            </p>
+          </div>
+
+          <!-- Section Liens utiles -->
+          <div class="space-y-4">
+            <h3
+              class="mb-4 text-xl font-bold drop-shadow-lg transition-colors duration-300 hover:text-blue-400 md:text-2xl"
+            >
+              Liens utiles
+            </h3>
+            <ul class="space-y-2 text-sm text-gray-300 md:text-base">
+              <li>
+                <a
+                  href="#"
+                  class="transition-colors duration-300 hover:text-white"
+                  >Accueil</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="transition-colors duration-300 hover:text-white"
+                  >Services</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="transition-colors duration-300 hover:text-white"
+                  >Contact</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="transition-colors duration-300 hover:text-white"
+                  >À propos</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Section Contact -->
+          <div class="space-y-4">
+            <h3
+              class="mb-4 text-xl font-bold drop-shadow-lg transition-colors duration-300 hover:text-blue-400 md:text-2xl"
+            >
+              Contact
+            </h3>
+            <p class="text-sm text-gray-300 md:text-base">
+              36 rue du bastion, Paris, France
+            </p>
+            <p class="text-sm text-gray-300 md:text-base">
+              Email:
+              <a
+                href="mailto:contact@exemple.com"
+                class="transition-colors duration-300 hover:text-white"
+                >contact@LifeAcademy.FR</a
+              >
+            </p>
+            <p class="text-sm text-gray-300 md:text-base">
+              Téléphone:
+              <a
+                href="tel:+33123456789"
+                class="transition-colors duration-300 hover:text-white"
+                >+33 6 21 23 70 26</a
+              >
+            </p>
+          </div>
+
+          <!-- Section Suivez-nous -->
+          <div class="space-y-4">
+            <h3
+              class="mb-4 text-xl font-bold drop-shadow-lg transition-colors duration-300 hover:text-blue-400 md:text-2xl"
+            >
+              Suivez-nous
+            </h3>
+            <div class="flex flex-wrap gap-4">
+              <a
+                href="#"
+                aria-label="Facebook"
+                class="text-lg text-gray-300 transition-colors duration-300 hover:text-white md:text-xl"
+              >
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a
+                href="#"
+                aria-label="Twitter"
+                class="text-lg text-gray-300 transition-colors duration-300 hover:text-white md:text-xl"
+              >
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a
+                href="#"
+                aria-label="Instagram"
+                class="text-lg text-gray-300 transition-colors duration-300 hover:text-white md:text-xl"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a
+                href="#"
+                aria-label="LinkedIn"
+                class="text-lg text-gray-300 transition-colors duration-300 hover:text-white md:text-xl"
+              >
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Newsletter -->
+        <div class="mt-6 md:mt-12">
+          <div class="rounded-lg bg-gray-700 p-6 text-center shadow-lg">
+            <h3
+              class="mb-4 text-xl font-bold drop-shadow-lg transition-colors duration-300 hover:text-blue-400 md:text-2xl"
+            >
+              Abonnez-vous à notre newsletter
+            </h3>
+            <p class="mb-4 text-sm text-gray-300 md:text-base">
+              Recevez les dernières nouvelles directement dans votre boîte de
+              réception.
+            </p>
+            <form
+              class="flex flex-col justify-center space-y-4 md:flex-row md:space-x-4 md:space-y-0"
+            >
+              <input
+                type="email"
+                placeholder="Entrez votre email"
+                class="w-full rounded-md border border-gray-600 bg-gray-800 px-4 py-2 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 md:w-1/2"
+              />
+              <button
+                type="submit"
+                class="rounded-md bg-blue-600 px-4 py-2 text-white shadow-lg transition-colors duration-300 hover:bg-blue-700"
+              >
+                S'abonner
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Mentions légales -->
+        <div
+          class="mt-6 text-center text-sm text-gray-400 md:mt-12 md:text-base"
+        >
+          <p>
+            © 2024 LifeAcademy.fr. Tous droits réservés.
+            <a
+              href="#"
+              class="underline transition-colors duration-300 hover:text-white"
+              >Mentions légales</a
+            >
+            |
+            <a
+              href="#"
+              class="underline transition-colors duration-300 hover:text-white"
+              >Politique de confidentialité</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+  <script src="./javascripts/script.js"></script>
+</html>
