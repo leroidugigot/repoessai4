@@ -7,19 +7,116 @@
   <link rel="stylesheet" href="./css/output.css" />
   <style>
     /* Custom Styles */
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .product-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
     .product-card:hover {
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .product-card img {
+      border-radius: 10px;
+      transition: transform 0.3s;
+    }
+    .product-card img:hover {
+      transform: scale(1.05);
+    }
+    #cart {
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+    #cart.show {
+      opacity: 1;
+    }
+    .toast {
+      position: fixed;
+      bottom: 4rem;
+      right: 2rem;
+      background-color: #4CAF50;
+      color: white;
+      padding: 1rem;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: opacity 0.5s;
+      opacity: 0;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+    /* Search Bar Styles */
+    .search-bar {
+      margin: 1rem auto;
+      max-width: 600px;
+      display: flex;
+      justify-content: center;
+    }
+    .search-bar input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .search-bar button {
+      padding: 0.5rem 1rem;
+      margin-left: 0.5rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    /* New Product Styles */
+    .new-product {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #FF5733;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    /* Timer Styles */
+    .timer {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    /* Reviews Styles */
+    .reviews {
+      margin-top: 1rem;
+    }
+    .stars {
+      color: #FFD700;
     }
   </style>
 </head>
 <body class="bg-gray-100">
 
-  <!-- Header avec icône du panier -->
+  <!-- Top Bar -->
+  <div class="bg-blue-700 text-white p-3 text-center">
+    <h2 class="text-xl font-bold">Votre source d'équipement de secourisme</h2>
+    <p>-10% sur votre première commande avec le code **LEROIDUGIGOT10** !</p>
+  </div>
+
+  <!-- Header -->
   <header class="bg-blue-700 text-white p-4">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">LifeAcademy.fr </h1>
+      <h1 class="text-3xl font-bold">LifeAcademy.fr</h1>
       <div>
-        <button id="cartButton" class="bg-blue-600 p-2 rounded-full flex items-center">
+        <button id="cartButton" class="bg-blue-600 p-2 rounded-full flex items-center transition-transform transform hover:scale-110">
           <span id="cartCount" class="text-sm bg-red-500 px-2 py-1 rounded-full">0</span>
           <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.343 2H19l-1.343-2H5l1.5 9h11a2 2 0 100-4H7.5M16 16.5l2 3H6l2-3m-3-3h14M7 22a2 2 0 100-4 2 2 0 000 4z"></path>
@@ -29,9 +126,10 @@
     </div>
   </header>
 
-  <!-- Promo Banner -->
-  <div class="bg-red-500 text-white p-3 text-center">
-    -10% sur votre première commande avec le code **LEROIDUGIGOT10** !
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Rechercher des produits..." />
+    <button id="searchButton">Chercher</button>
   </div>
 
   <!-- Filters Section -->
@@ -51,179 +149,231 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <!-- Produit 1 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <img src="trousse-basic.jpg" alt="Trousse de Secours Basique" class="w-full h-48 object-cover rounded-md mb-4" />
+        <div class="new-product">Nouveau</div>
+        <div class="timer" id="timer">07:52</div>
+        <img src="https://loremflickr.com/1280/720" alt="Trousse de Secours Basique" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Trousse de Secours Basique</h3>
         <p class="text-gray-700 mt-2">Trousse de secours pratique pour les petits incidents.</p>
         <div class="mt-4 flex justify-between items-center">
           <span class="text-lg font-semibold text-green-600">€19.99</span>
           <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Trousse de Secours Basique" data-price="19.99">Ajouter au panier</button>
         </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★☆</div>
+          <p class="text-sm text-gray-600">4.2/5 - 120 avis</p>
+        </div>
       </div>
 
       <!-- Produit 2 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <img src="trousse-advanced.jpg" alt="Trousse de Secours Avancée" class="w-full h-48 object-cover rounded-md mb-4" />
+        <div class="new-product">Nouveau</div>
+        <img src="https://loremflickr.com/1280/720" alt="Trousse de Secours Avancée" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Trousse de Secours Avancée</h3>
         <p class="text-gray-700 mt-2">Trousse complète pour les situations d'urgence plus graves.</p>
         <div class="mt-4 flex justify-between items-center">
           <span class="text-lg font-semibold text-green-600">€49.99</span>
           <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Trousse de Secours Avancée" data-price="49.99">Ajouter au panier</button>
         </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★★</div>
+          <p class="text-sm text-gray-600">4.8/5 - 95 avis</p>
+        </div>
       </div>
 
       <!-- Produit 3 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="sac-basic.jpg" alt="Sac de Secourisme Basique" class="w-full h-48 object-cover rounded-md mb-4" />
+        <img src="https://loremflickr.com/1280/720" alt="Sac de Secourisme Basique" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Sac de Secourisme Basique</h3>
         <p class="text-gray-700 mt-2">Sac léger pour les besoins essentiels en secourisme.</p>
         <div class="mt-4 flex justify-between items-center">
           <span class="text-lg font-semibold text-green-600">€39.99</span>
           <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac de Secourisme Basique" data-price="39.99">Ajouter au panier</button>
         </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★☆</div>
+          <p class="text-sm text-gray-600">4.3/5 - 78 avis</p>
+        </div>
       </div>
 
       <!-- Produit 4 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="sac-advanced.jpg" alt="Sac de Secourisme Avancé" class="w-full h-48 object-cover rounded-md mb-4" />
+        <img src="https://loremflickr.com/1280/720" alt="Sac de Secourisme Avancé" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Sac de Secourisme Avancé</h3>
         <p class="text-gray-700 mt-2">Sac complet avec plusieurs compartiments pour une organisation optimale.</p>
         <div class="mt-4 flex justify-between items-center">
           <span class="text-lg font-semibold text-green-600">€79.99</span>
           <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac de Secourisme Avancé" data-price="79.99">Ajouter au panier</button>
         </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★★</div>
+          <p class="text-sm text-gray-600">4.9/5 - 150 avis</p>
+        </div>
       </div>
 
       <!-- Produit 5 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="defibrillateur">
-        <img src="defibrillateur-basic.jpg" alt="Défibrillateur Basique" class="w-full h-48 object-cover rounded-md mb-4" />
+        <img src="https://loremflickr.com/1280/720" alt="Défibrillateur Basique" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Défibrillateur Basique</h3>
         <p class="text-gray-700 mt-2">Défibrillateur simple et efficace pour une utilisation facile.</p>
         <div class="mt-4 flex justify-between items-center">
           <span class="text-lg font-semibold text-green-600">€899.99</span>
           <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Défibrillateur Basique" data-price="899.99">Ajouter au panier</button>
         </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★☆</div>
+          <p class="text-sm text-gray-600">4.5/5 - 65 avis</p>
+        </div>
       </div>
 
       <!-- Produit 6 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="defibrillateur">
-        <img src="defibrillateur-advanced.jpg" alt="Défibrillateur Avancé" class="w-full h-48 object-cover rounded-md mb-4" />
+        <img src="https://loremflickr.com/1280/720" alt="Défibrillateur Avancé" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Défibrillateur Avancé</h3>
-        <p class="text-gray-700 mt-2">Défibrillateur professionnel avec des fonctionnalités avancées.</p>
+        <p class="text-gray-700 mt-2">Défibrillateur de haute technologie pour des situations critiques.</p>
         <div class="mt-4 flex justify-between items-center">
           <span class="text-lg font-semibold text-green-600">€1299.99</span>
           <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Défibrillateur Avancé" data-price="1299.99">Ajouter au panier</button>
         </div>
-      </div>
-
-      <!-- Produit 7 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <img src="trousse-family.jpg" alt="Trousse de Secours Familiale" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Trousse de Secours Familiale</h3>
-        <p class="text-gray-700 mt-2">Trousse complète adaptée aux besoins d'une famille.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€59.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Trousse de Secours Familiale" data-price="59.99">Ajouter au panier</button>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★★</div>
+          <p class="text-sm text-gray-600">4.9/5 - 85 avis</p>
         </div>
       </div>
 
-      <!-- Produit 8 -->
+      <!-- Nouveaux Produits -->
+      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="defibrillateur">
+        <img src="https://loremflickr.com/1280/720" alt="Kit de Secours" class="w-full h-48 object-cover rounded-md mb-4" />
+        <h3 class="text-xl font-bold">Kit de Secours Complet</h3>
+        <p class="text-gray-700 mt-2">Un kit complet pour toutes les situations d'urgence.</p>
+        <div class="mt-4 flex justify-between items-center">
+          <span class="text-lg font-semibold text-green-600">€199.99</span>
+          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Kit de Secours Complet" data-price="199.99">Ajouter au panier</button>
+        </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★☆</div>
+          <p class="text-sm text-gray-600">4.4/5 - 55 avis</p>
+        </div>
+      </div>
+
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="sac-professionnel.jpg" alt="Sac de Secourisme Professionnel" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Sac de Secourisme Professionnel</h3>
-        <p class="text-gray-700 mt-2">Sac de haute qualité avec un grand nombre de compartiments.</p>
+        <img src="https://loremflickr.com/1280/720" alt="Sac Professionnel" class="w-full h-48 object-cover rounded-md mb-4" />
+        <h3 class="text-xl font-bold">Sac Professionnel de Secourisme</h3>
+        <p class="text-gray-700 mt-2">Sac robuste pour les secouristes professionnels.</p>
         <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€99.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac de Secourisme Professionnel" data-price="99.99">Ajouter au panier</button>
+          <span class="text-lg font-semibold text-green-600">€149.99</span>
+          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac Professionnel de Secourisme" data-price="149.99">Ajouter au panier</button>
+        </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★★</div>
+          <p class="text-sm text-gray-600">4.7/5 - 110 avis</p>
         </div>
       </div>
 
-      <!-- Ajoute plus de produits ici -->
+      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
+        <img src="https://via.placeholder.com/300x200.png?text=Sac+Multifonction" alt="Sac Multifonction" class="w-full h-48 object-cover rounded-md mb-4" />
+        <h3 class="text-xl font-bold">Sac Multifonction de Secourisme</h3>
+        <p class="text-gray-700 mt-2">Sac avec plusieurs compartiments pour une organisation optimale.</p>
+        <div class="mt-4 flex justify-between items-center">
+          <span class="text-lg font-semibold text-green-600">€89.99</span>
+          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac Multifonction de Secourisme" data-price="89.99">Ajouter au panier</button>
+        </div>
+        <div class="reviews mt-2">
+          <div class="stars">★★★★☆</div>
+          <p class="text-sm text-gray-600">4.1/5 - 75 avis</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Section du panier -->
-  <div id="cart" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-    <div class="bg-white w-full md:w-1/2 mx-auto mt-10 p-6 rounded-lg">
-      <h2 class="text-2xl font-bold">Votre Panier</h2>
-      <ul id="cartItems" class="mt-4">
-        <!-- Les articles ajoutés au panier apparaîtront ici -->
-      </ul>
-      <div class="mt-6 text-lg font-semibold">Total : <span id="cartTotal">€0.00</span></div>
-      <div class="flex justify-between mt-6">
-        <button id="closeCart" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Fermer</button>
-        <button class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800">Passer à la caisse</button>
-      </div>
-    </div>
+  <!-- Panier -->
+  <div id="cart" class="fixed top-0 right-0 bg-white shadow-lg p-4 w-80 h-full overflow-y-auto hidden">
+    <h2 class="text-xl font-bold mb-4">Mon Panier</h2>
+    <button id="closeCart" class="text-red-500">Fermer</button>
+    <ul id="cartItems" class="mt-2"></ul>
+    <h3 class="text-lg font-bold mt-4">Total : <span id="cartTotal">€0.00</span></h3>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-blue-700 text-white p-4 mt-8">
-    <div class="container mx-auto text-center">
-      <p>© 2024 LifeAcademy - Tous droits réservés</p>
-      <a href="#" class="text-white underline">Politique de retour</a> | 
-      <a href="#" class="text-white underline">FAQ</a>
-    </div>
-  </footer>
-
   <script>
+    const cartData = [];
     const cartButton = document.getElementById('cartButton');
+    const cartCount = document.getElementById('cartCount');
     const cart = document.getElementById('cart');
     const closeCart = document.getElementById('closeCart');
     const cartItems = document.getElementById('cartItems');
     const cartTotal = document.getElementById('cartTotal');
-    const cartCount = document.getElementById('cartCount');
-    
-    let cartData = [];
 
-    // Ajouter un produit au panier
+    // Ajouter un article au panier
     document.querySelectorAll('.add-to-cart').forEach(button => {
       button.addEventListener('click', function() {
-        const productName = this.getAttribute('data-name');
-        const productPrice = parseFloat(this.getAttribute('data-price'));
-        const item = { name: productName, price: productPrice };
-        cartData.push(item);
+        const name = this.getAttribute('data-name');
+        const price = parseFloat(this.getAttribute('data-price'));
+        cartData.push({ name, price });
         updateCart();
+        showToast(`${name} ajouté au panier !`);
       });
     });
 
-    // Mettre à jour le panier
     function updateCart() {
       cartItems.innerHTML = '';
       let total = 0;
+
       cartData.forEach((item, index) => {
         total += item.price;
-        cartItems.innerHTML += `
-          <li class="flex justify-between mt-2">
-            <span>${item.name}</span>
+        const listItem = document.createElement('li');
+        listItem.classList.add('flex', 'justify-between', 'items-center', 'py-2', 'border-b');
+        listItem.innerHTML = `
+          <span>${item.name}</span>
+          <div>
             <span>€${item.price.toFixed(2)}</span>
-            <button class="remove-item text-red-500 hover:text-red-600" data-index="${index}">Supprimer</button>
-          </li>
+            <button class="remove-from-cart bg-red-500 text-white px-2 py-1 ml-4 rounded-lg hover:bg-red-600" data-index="${index}">Supprimer</button>
+          </div>
         `;
+        cartItems.appendChild(listItem);
       });
+
       cartTotal.textContent = `€${total.toFixed(2)}`;
       cartCount.textContent = cartData.length;
     }
 
-    // Gérer la fermeture du panier
-    closeCart.addEventListener('click', function() {
-      cart.classList.add('hidden');
-    });
-
-    // Afficher le panier
-    cartButton.addEventListener('click', function() {
-      cart.classList.remove('hidden');
-    });
-
-    // Supprimer un produit du panier
+    // Événement pour supprimer un article du panier
     cartItems.addEventListener('click', function(event) {
-      if (event.target.classList.contains('remove-item')) {
-        const index = event.target.getAttribute('data-index');
+      if (event.target.classList.contains('remove-from-cart')) {
+        const index = parseInt(event.target.getAttribute('data-index'), 10);
         cartData.splice(index, 1);
         updateCart();
       }
     });
 
-    // Filtrer les produits
+    // Ouvrir et fermer le panier
+    cartButton.addEventListener('click', function() {
+      cart.classList.toggle('hidden');
+      cart.classList.toggle('show');
+      cart.style.opacity = cart.classList.contains('show') ? '1' : '0';
+    });
+
+    closeCart.addEventListener('click', function() {
+      cart.classList.add('hidden');
+      cart.classList.remove('show');
+    });
+
+    // Afficher un toast pour les ajouts au panier
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.classList.add('toast');
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 500);
+      }, 2000);
+    }
+
+    // Filtrer les produits par catégorie
     document.querySelectorAll('.filter-button').forEach(button => {
       button.addEventListener('click', function() {
         const category = this.getAttribute('data-category');
@@ -236,7 +386,43 @@
         });
       });
     });
-  </script>
 
+    // Rechercher des produits
+    document.getElementById('searchButton').addEventListener('click', function() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.product-card').forEach(card => {
+        const productName = card.querySelector('h3').textContent.toLowerCase();
+        if (productName.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+
+    // Timer
+    function startTimer(duration, display) {
+      let timer = duration, minutes, seconds;
+      setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+          timer = duration;
+        }
+      }, 1000);
+    }
+
+    window.onload = function () {
+      let sevenMinutes = 60 * 7 + 52,
+          display = document.querySelector('#timer');
+      startTimer(sevenMinutes, display);
+    };
+  </script>
 </body>
 </html>

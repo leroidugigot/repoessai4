@@ -1,365 +1,322 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Devenir Formateur | LifeAcademy</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-}
-
-body {
-    line-height: 1.6;
-    background-color: #f4f4f4;
-    color: #333;
-    animation: fadeIn 1s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-    padding: 20px;
-}
-
-header {
-    background: #50b3a2;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-}
-
-header h1 {
-    font-size: 2.5rem;
-}
-
-header p {
-    font-size: 1.2rem;
-}
-
-.hero {
-    background: linear-gradient(135deg, #e4f9f5, #50b3a2);
-    padding: 50px 0;
-    text-align: center;
-    color: white;
-}
-
-.hero h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    animation: slideInLeft 1s ease-out;
-}
-
-@keyframes slideInLeft {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-}
-
-.hero p {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-}
-
-button {
-    background: #50b3a2;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-button:hover {
-    background: #429a86;
-}
-
-#details {
-    margin-top: 20px;
-}
-
-.steps {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 20px;
-}
-
-.step {
-    flex-basis: 30%;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-}
-
-.step:hover {
-    transform: scale(1.05);
-}
-
-.testimonials {
-    background: #e4f9f5;
-    padding: 50px 0;
-}
-
-.testimonials h2 {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.testimonials-grid {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.testimonial {
-    background: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-.faq {
-    padding: 50px 0;
-}
-
-.faq h2 {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.faq-item {
-    margin-bottom: 20px;
-}
-
-.faq-item h4 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-footer {
-    background: #333;
-    color: white;
-    padding: 10px 0;
-    text-align: center;
-}
-/* Animation pour les éléments défilants */
-.step, .testimonial, .faq-item {
-    opacity: 0;
-    transform: translateY(100px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scrolled {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Style pour l'accordéon de la FAQ */
-.faq-item p {
-    display: none;
-    padding: 10px 0;
-    transition: display 0.3s ease-in;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-}
-/* Animation pour les éléments défilants */
-.step, .testimonial, .faq-item {
-    opacity: 0;
-    transform: translateY(100px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scrolled {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Style pour l'accordéon de la FAQ */
-.faq-item p {
-    display: none;
-    padding: 10px 0;
-    transition: display 0.3s ease-in;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-}
-/* Animation pour les éléments défilants */
-.step, .testimonial, .faq-item {
-    opacity: 0;
-    transform: translateY(100px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scrolled {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Style pour l'accordéon de la FAQ */
-.faq-item p {
-    display: none;
-    padding: 10px 0;
-    transition: display 0.3s ease-in;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-}
-
-
-    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
-<body>
-    <header>
-        <div class="container">
-            <h1>Bienvenue sur LifeAcademy.fr</h1>
-            <p>Une plateforme qui met en relation les formateurs secouristes avec des particuliers et des entreprises.</p>
-        </div>
+
+<body class="bg-gray-50 text-gray-800 overflow-x-hidden">
+
+    <!-- Topbar -->
+    <header class="fixed left-0 right-0 top-0 z-50 bg-black transition-all duration-300">
+        <nav class="flex h-16 items-center justify-between px-4 lg:px-8">
+            <div class="flex h-full items-center">
+                <a href="index.html">
+                    <img src="./images/img/logo.png" alt="Logo" class="h-12 scale-105 transition-transform duration-200 hover:scale-110" />
+                </a>
+            </div>
+
+            <div class="hidden md:flex flex-row items-center gap-6">
+                <button id="toggleModalBtn"
+                    class="rounded-lg bg-blue-500 px-5 py-2 text-white shadow-md hover:bg-blue-600 transition-all duration-200">Formations
+                    <i class="fas fa-chevron-down"></i></button>
+                <a href="enseigner.html"
+                    class="text-white hover:text-blue-500 transition-colors duration-150">Enseigner</a>
+                <a href="chat.html" class="text-white hover:text-blue-500 transition-colors duration-150">Chat</a>
+                <a href="sellpage.html"
+                    class="flex items-center text-white hover:text-blue-500 transition-colors duration-150">Mon sac de
+                    secouriste <i class="fa-solid fa-heart-pulse fa-beat ml-2"></i></a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-4">
+                <a href="#"
+                    class="text-white hover:text-blue-500 transition-colors duration-150"
+                    onclick="handleClickConnexion()">Connexion</a>
+                <a href="commencer.html"
+                    class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-all duration-200">Commencer</a>
+            </div>
+
+            <div class="md:hidden flex items-center">
+                <button id="burgerMenu" class="text-white">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+
+        <nav id="mobileMenu"
+            class="absolute left-0 top-16 z-40 hidden w-full bg-black p-4 text-white md:hidden transition-all duration-300 ease-out transform translate-y-4">
+            <a href="enseigner.html" class="block py-2 hover:text-blue-500">Enseigner</a>
+            <a href="chat.html" class="block py-2 hover:text-blue-500">Chat</a>
+            <a href="sellpage.html" class="block py-2 hover:text-blue-500">Mon sac de secouriste</a>
+            <a href="#" onclick="handleClickConnexion()" class="block py-2 hover:text-blue-500">Connexion</a>
+            <a href="commencer.html" class="block py-2 hover:text-blue-500">Commencer</a>
+        </nav>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <h2>Pourquoi devenir formateur chez nous ?</h2>
-            <p>LifeAcademy.fr vous permet de mettre à profit vos compétences en secourisme, tout en élargissant votre réseau professionnel.</p>
-            <button onclick="showMore()">En savoir plus</button>
-        </div>
-    </section>
-
-    <section id="details" class="hidden">
-        <div class="container">
-            <h3>Nos points forts</h3>
-            <ul>
-                <li>Accès direct à une base de données de particuliers et d'entreprises cherchant des formations en secourisme</li>
-                <li>Outils de gestion des cours et suivi des apprenants</li>
-                <li>Assistance pour la création et la promotion de vos sessions de formation</li>
+    <!-- Modal -->
+    <section id="modal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900 bg-opacity-50">
+        <div class="relative w-full max-w-screen-xl rounded-lg bg-white p-6 shadow-lg">
+            <h2 class="mb-4 text-xl font-semibold">Liste des Formations</h2>
+            <ul class="list-none space-y-2">
+                <li class="flex items-center">
+                    <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i>
+                    Formation prévention et secours civiques de niveau 1 (PSC1)
+                </li>
+                <li class="flex items-center">
+                    <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i>
+                    Formation Les gestes qui sauvent (GQS)
+                </li>
+                <li class="flex items-center">
+                    <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i>
+                    Recyclage Formation prévention et secours civique de niveau 1
+                </li>
+                <li class="flex items-center">
+                    <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i> FC
+                    PSE 1 - Formation continue de premiers secours en équipe de niveau 1
+                </li>
+                <li class="flex items-center">
+                    <i class="fa-solid fa-check fa-bounce mr-4 text-green-500"></i> FC
+                    PSE 2 - Formation continue de premiers secours en équipe de niveau 2
+                </li>
+                <li class="flex items-center">
+                    <i class="fa-solid fa-xmark mr-4 text-red-500"></i> Brevet National
+                    de Sécurité et de Sauvetage Aquatique.
+                </li>
             </ul>
+            <button id="closeModalBtn"
+                class="absolute bottom-4 right-4 rounded-lg bg-red-500 px-3 py-2 text-white shadow-md hover:bg-red-600 focus:outline-none">
+                Fermer
+            </button>
+        </div>
+    </section>
 
-            <h3>Comment ça marche ?</h3>
-            <p>En tant que formateur secouriste, vous vous inscrivez sur notre plateforme. Une fois validé, vous avez accès à notre base de données et pouvez commencer à proposer vos services. Nous vous aidons à trouver des clients, gérer vos disponibilités, et suivre vos performances.</p>
+    <!-- Hero Section with Parallax Effect -->
+    <section class="relative hero bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-center py-40">
+        <div class="container mx-auto px-6 lg:px-12 animate-fade-in-up relative z-20">
+            <h1 class="text-5xl font-bold mb-6 transition-transform duration-500 ease-out transform hover:scale-110 animate__animated animate__fadeInDown">Rejoignez
+                LifeAcademy et devenez un formateur en secourisme d'exception</h1>
+            <p class="text-xl mb-6 opacity-90 hover:opacity-100 transition-opacity duration-300 ease-in animate__animated animate__fadeInUp">LifeAcademy vous connecte à une communauté dynamique cherchant à améliorer leurs compétences en secourisme.</p>
+            <button onclick="showMore()"
+                class="mt-6 bg-white text-indigo-600 py-3 px-8 rounded-lg shadow-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105 transform animate__animated animate__pulse animate__infinite">En savoir
+                plus</button>
+        </div>
+        <div class="parallax-layer absolute inset-0 bg-cover bg-fixed bg-center opacity-40" style="background-image: url('./images/img/formateur-banner.png'); transform: translateZ(-1px) scale(1.5);"></div>
+    </section>
 
-            <div class="steps">
-                <div class="step">
-                    <h4>1. Inscription</h4>
-                    <p>Créez un compte formateur et renseignez vos qualifications.</p>
+    <!-- Key Benefits Section with Scroll Animations -->
+    <section class="bg-white py-16">
+        <div class="container mx-auto px-6 lg:px-12 text-center">
+            <h2 class="text-4xl font-bold mb-8 animate-fade-in scroll-fade-up">Pourquoi devenir formateur avec nous ?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-100 p-8 rounded-lg shadow-lg transition-shadow duration-300 hover:shadow-2xl scroll-zoom-in animate__animated animate__fadeInLeft">
+                    <i class="fas fa-network-wired text-4xl text-indigo-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Réseau Professionnel</h3>
+                    <p>Accédez à une base de données d'entreprises et de particuliers à la recherche de formations en secourisme.</p>
                 </div>
-                <div class="step">
-                    <h4>2. Accès à notre réseau</h4>
-                    <p>Nous vous connectons avec des particuliers et entreprises intéressés par vos formations.</p>
+                <div class="bg-gray-100 p-8 rounded-lg shadow-lg transition-shadow duration-300 hover:shadow-2xl scroll-zoom-in animate__animated animate__fadeInUp">
+                    <i class="fas fa-chalkboard-teacher text-4xl text-indigo-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Outils de Gestion</h3>
+                    <p>Bénéficiez d'outils pour planifier vos cours et suivre les progrès de vos apprenants facilement.</p>
                 </div>
-                <div class="step">
-                    <h4>3. Suivi et gestion</h4>
-                    <p>Gérez vos sessions de formation, planifiez vos cours et suivez les progrès de vos apprenants.</p>
+                <div class="bg-gray-100 p-8 rounded-lg shadow-lg transition-shadow duration-300 hover:shadow-2xl scroll-zoom-in animate__animated animate__fadeInRight">
+                    <i class="fas fa-chart-line text-4xl text-indigo-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Suivi des Résultats</h3>
+                    <p>Mesurez vos performances grâce à des statistiques détaillées sur vos formations.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="testimonials">
-        <div class="container">
-            <h2>Ils parlent de nous</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial">
-                    <p>"LifeAcademy m'a permis d'élargir ma clientèle et de mieux organiser mes sessions de formation."</p>
-                    <h4>- Sophie, Formatrice en secourisme</h4>
+    <!-- How It Works Section with Vertical Parallax -->
+    <section class="relative py-16 bg-gray-100">
+        <div class="container mx-auto px-6 lg:px-12">
+            <h2 class="text-4xl font-bold text-center mb-10">Comment ça marche ?</h2>
+            <div class="relative grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="step bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-200 scroll-fade-up animate__animated animate__fadeInLeft">
+                    <i class="fas fa-user-plus text-4xl text-indigo-600 mb-4"></i>
+                    <h4 class="text-2xl font-semibold mb-2">1. Inscription</h4>
+                    <p>Créez un compte et renseignez vos qualifications pour commencer à proposer des formations.</p>
                 </div>
-                <div class="testimonial">
-                    <p>"Grâce à leur plateforme, j'ai pu gérer mon emploi du temps de façon plus efficace."</p>
-                    <h4>- Julien, Formateur en premiers secours</h4>
+                <div class="step bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-200 scroll-fade-up animate__animated animate__fadeInUp">
+                    <i class="fas fa-users text-4xl text-indigo-600 mb-4"></i>
+                    <h4 class="text-2xl font-semibold mb-2">2. Accès au Réseau</h4>
+                    <p>Connectez-vous à une communauté à la recherche de formateurs qualifiés en secourisme.</p>
                 </div>
-                <div class="testimonial">
-                    <p>"Une équipe réactive et un outil facile à utiliser pour organiser mes cours."</p>
-                    <h4>- Nathalie, Experte en secourisme</h4>
+                <div class="step bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-200 scroll-fade-up animate__animated animate__fadeInRight">
+                    <i class="fas fa-chart-bar text-4xl text-indigo-600 mb-4"></i>
+                    <h4 class="text-2xl font-semibold mb-2">3. Gérer et Suivre</h4>
+                    <p>Gérez vos sessions, suivez vos apprenants et évaluez vos performances en temps réel.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="faq">
-        <div class="container">
-            <h2>Questions fréquentes</h2>
-            <div class="faq-item">
-                <h4>Comment m'inscrire en tant que formateur ?</h4>
-                <p>Rendez-vous sur la page d'inscription et remplissez le formulaire avec vos informations professionnelles. Une fois votre profil validé, vous pourrez commencer à proposer vos services.</p>
-            </div>
-            <div class="faq-item">
-                <h4>Quel est le coût d'utilisation de la plateforme ?</h4>
-                <p>L'inscription est gratuite pour les formateurs. Des frais de commission sont appliqués sur chaque formation vendue via la plateforme.</p>
-            </div>
-            <div class="faq-item">
-                <h4>Comment suis-je payé ?</h4>
-                <p>Les paiements sont effectués directement sur votre compte après chaque session de formation via notre système sécurisé.</p>
+    <!-- FAQ Section with Interactive Accordion -->
+    <section class="bg-white py-16">
+        <div class="container mx-auto px-6 lg:px-12">
+            <h2 class="text-4xl font-bold text-center mb-10">Questions fréquentes</h2>
+            <div class="faq-container">
+                <div class="faq-item bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 ease-out scroll-zoom-in">
+                    <h4 class="text-xl font-semibold cursor-pointer hover:text-indigo-500">Comment m'inscrire en tant que formateur ?</h4>
+                    <p class="hidden mt-2">Il vous suffit de créer un compte, puis de renseigner vos qualifications et expériences professionnelles.</p>
+                </div>
+                <div class="faq-item bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 ease-out scroll-zoom-in">
+                    <h4 class="text-xl font-semibold cursor-pointer hover:text-indigo-500">Quels sont les frais appliqués ?</h4>
+                    <p class="hidden mt-2">LifeAcademy prélève une commission sur chaque formation vendue afin de garantir le bon fonctionnement de la plateforme.</p>
+                </div>
+                <div class="faq-item bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 ease-out scroll-zoom-in">
+                    <h4 class="text-xl font-semibold cursor-pointer hover:text-indigo-500">Comment suis-je payé ?</h4>
+                    <p class="hidden mt-2">Les paiements sont effectués directement sur votre compte après chaque session de formation.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <p>© 2024 LifeAcademy - Tous droits réservés.</p>
+    <!-- Footer -->
+    <footer class="bg-black text-white py-8">
+        <div class="container mx-auto px-6 lg:px-12 text-center lg:text-left">
+            <div class="flex flex-col lg:flex-row justify-between items-center">
+                <div class="mb-6 lg:mb-0">
+                    <img src="./images/img/logo-white.png" alt="LifeAcademy Logo" class="h-12 mb-4">
+                    <p>© 2024 LifeAcademy - Tous droits réservés.</p>
+                </div>
+                <div class="flex flex-col lg:flex-row items-center gap-8">
+                    <a href="#" class="text-gray-400 hover:text-white">Mentions légales</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Politique de confidentialité</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Nous contacter</a>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script>
-        // Fonction pour afficher/masquer la section "En savoir plus"
-function showMore() {
-    const detailsSection = document.getElementById('details');
-    detailsSection.classList.toggle('hidden');
-}
+        // Parallax scroll effect for the hero background
+        window.addEventListener('scroll', function () {
+            const parallaxLayer = document.querySelector('.parallax-layer');
+            parallaxLayer.style.transform = `translateY(${window.scrollY * 0.5}px)`;
+        });
 
-// Fonction pour rendre les sections visibles au défilement
-const scrollElements = document.querySelectorAll('.step, .testimonial, .faq-item');
+        // FAQ accordion functionality
+        document.querySelectorAll('.faq-item h4').forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.nextElementSibling;
+                answer.classList.toggle('hidden');
+                item.parentElement.classList.toggle('bg-gray-100');
+            });
+        });
 
-const elementInView = (el, dividend = 1) => {
-    const elementTop = el.getBoundingClientRect().top;
-    return (
-        elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
-    );
-};
+        // Mobile menu toggle
+        document.getElementById('burgerMenu').addEventListener('click', function () {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
 
-const displayScrollElement = (element) => {
-    element.classList.add('scrolled');
-};
+        // Scroll animations for sections
+        function handleScrollAnimation() {
+            const fadeInUpElements = document.querySelectorAll('.scroll-fade-up');
+            fadeInUpElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    el.classList.add('animate-slide-up');
+                }
+            });
 
-const hideScrollElement = (element) => {
-    element.classList.remove('scrolled');
-};
-
-const handleScrollAnimation = () => {
-    scrollElements.forEach((el) => {
-        if (elementInView(el, 1.25)) {
-            displayScrollElement(el);
-        } else {
-            hideScrollElement(el);
+            const zoomInElements = document.querySelectorAll('.scroll-zoom-in');
+            zoomInElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    el.classList.add('transform', 'scale-105');
+                }
+            });
         }
-    });
-};
 
-window.addEventListener('scroll', () => {
-    handleScrollAnimation();
-});
+        window.addEventListener('scroll', handleScrollAnimation);
 
-// Fonction pour l'effet d'accordéon dans la FAQ
-const faqItems = document.querySelectorAll('.faq-item');
+        // Topbar color change on scroll
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            const scrollPosition = window.scrollY;
 
-faqItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const answer = item.querySelector('p');
-        const isVisible = answer.style.display === 'block';
-        answer.style.display = isVisible ? 'none' : 'block';
-    });
-});
+            if (scrollPosition > 50) {
+                header.classList.remove('bg-black');
+                header.classList.add('bg-white');
+                header.querySelectorAll('a, button').forEach(el => el.classList.remove('text-white'));
+                header.querySelectorAll('a, button').forEach(el => el.classList.add('text-black'));
+            } else {
+                header.classList.remove('bg-white');
+                header.classList.add('bg-black');
+                header.querySelectorAll('a, button').forEach(el => el.classList.remove('text-black'));
+                header.querySelectorAll('a, button').forEach(el => el.classList.add('text-white'));
+            }
+        });
 
+        // Modal functionality
+        const modal = document.getElementById('modal');
+        const toggleModalBtn = document.getElementById('toggleModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
 
+        toggleModalBtn.addEventListener('click', () => {
+            modal.classList.toggle('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+
+        function showMore() {
+            alert("Vous allez être redirigé vers plus d'informations sur notre programme de formation.");
+        }
     </script>
 
-    <script src="script.js"></script>
+    <style>
+        /* Animation Styles */
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 1.2s ease-out;
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+
 </body>
+
 </html>
