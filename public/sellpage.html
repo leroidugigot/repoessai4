@@ -91,7 +91,7 @@
       color: white;
       padding: 5px 10px;
       border-radius: 5px;
-      font-size: 0.8rem;
+      font-size: 1.3rem;
       font-weight: bold;
     }
     /* Reviews Styles */
@@ -101,6 +101,16 @@
     .stars {
       color: #FFD700;
     }
+    /*transition opacity panier*/
+    #cart {
+  transition: opacity 0.3s ease;
+  opacity: 50;
+}
+#cart.show {
+  opacity: 1;
+}
+
+
   </style>
 </head>
 <body class="bg-gray-100">
@@ -149,8 +159,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <!-- Produit 1 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <div class="new-product">Nouveau</div>
-        <div class="timer" id="timer">07:52</div>
+        <div class="z-30 new-product">Nouveau</div>
+        <div class="z-30 timer" id="timer">07:52</div>
         <img src="https://loremflickr.com/1280/720" alt="Trousse de Secours Basique" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Trousse de Secours Basique</h3>
         <p class="text-gray-700 mt-2">Trousse de secours pratique pour les petits incidents.</p>
@@ -166,7 +176,7 @@
 
       <!-- Produit 2 -->
       <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <div class="new-product">Nouveau</div>
+        <div class="z-30 new-product">Nouveau</div>
         <img src="https://loremflickr.com/1280/720" alt="Trousse de Secours Avancée" class="w-full h-48 object-cover rounded-md mb-4" />
         <h3 class="text-xl font-bold">Trousse de Secours Avancée</h3>
         <p class="text-gray-700 mt-2">Trousse complète pour les situations d'urgence plus graves.</p>
