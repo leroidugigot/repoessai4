@@ -1,5 +1,5 @@
+const {  signinForm, signin, signout} = require('../controllers/auth.controller');
 const router = require('express').Router();
-const { signinForm, signin, signout } = require('../controllers/auth.controller');
 
 router.get('/signin/form', signinForm);
 router.post('/signin', signin);

@@ -1,7 +1,7 @@
 exports.ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
-    next()
+    next();
   } else {
-    res.redirect('/auth/signin/form');
+    res.status(403).redirect('/auth/signin/form');
   }
 }

@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "momocoptere",
+      name: "lifeacademy.fr",
       script: "./bin/www",
       instances: "max",
       autorestart: true,
