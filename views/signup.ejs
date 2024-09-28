@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscription</title>
+    <link rel="shortcut icon" href="/images/img/logo.png" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; 
+        }
+        .loading-spinner {
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .input-field {
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .input-field:focus {
+            border-color: #5c6ac4;
+            box-shadow: 0 0 5px rgba(92, 106, 196, 0.5);
+        }
+        .social-button {
+            transition: background-color 0.3s, transform 0.2s;
+            width: 48px; 
+            height: 48px; 
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .social-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white shadow-xl rounded-lg p-8">
+      <div class="text-center mb-6">
+        <img src="/images/img/logo.png" alt="Logo" class="mx-auto h-24 w-auto" />
+    </div>
+        <h1 class="text-4xl font-extrabold text-center mb-8 text-indigo-600">Inscription</h1>
+        <form method="post" action="/users" class="space-y-6" aria-labelledby="form-title">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur :</label>
+                <input
+                    id="username"
+                    class="input-field mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
+                    type="text"
+                    name="username"
+                    required
+                    placeholder="Votre nom d'utilisateur"
+                    aria-required="true"
+                />
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe :</label>
+                <input
+                    id="password"
+                    class="input-field mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
+                    type="password"
+                    name="password"
+                    required
+                    placeholder="Votre mot de passe"
+                    aria-required="true"
+                />
+                <button type="button" class="text-sm text-indigo-600 hover:underline" onclick="togglePasswordVisibility()">Afficher</button>
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email :</label>
+                <input
+                    id="email"
+                    class="input-field mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="Votre adresse email"
+                    aria-required="true"
+                />
+            </div>
+            <div>
+                <button
+                    type="submit"
+                    class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform transform hover:scale-105 active:scale-95 relative"
+                >
+                    <span class="loading-spinner hidden absolute left-3 top-1/2 transform -translate-y-1/2"></span>
+                    Inscription
+                </button>
+            </div>
+        </form>
+        <div class="mt-4 text-center">
+            <p class="text-sm">Ou inscrivez-vous avec :</p>
+            <div class="flex justify-center mt-2">
+                <button class="social-button bg-white border border-gray-300" title="Google">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
+                </button>
+                <button class="social-button bg-white border border-gray-300" title="Facebook">
+                    <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook" />
+                </button>
+                <button class="social-button bg-white border border-gray-300" title="LinkedIn">
+                    <img src="https://img.icons8.com/color/48/000000/linkedin.png" alt="LinkedIn" />
+                </button>
+                <button class="social-button bg-white border border-gray-300" title="Yahoo">
+                    <img src="https://img.icons8.com/?size=100&id=LKkHGfJr7vxf&format=png&color=000000" alt="Yahoo" />
+                </button>
+            </div>
+        </div>
+        <div class="mt-3 text-center">
+            <p class="text-sm"><a href="/auth/login" class="text-indigo-600 hover:underline">Déjà un compte ? Connectez-vous</a></p>
+        </div>
+    </div>
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+        }
+    </script>
+</body>
+</html>
