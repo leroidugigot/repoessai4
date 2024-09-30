@@ -1,0 +1,12 @@
+<div class="bg-blue-600 text-white p-4 flex justify-between items-center">
+  <div class="flex items-center">
+    <img src="/public/images/img/logo.png" alt="Logo de la formation secourisme" class="h-8 w-8 mr-2">
+    <h1 class="text-xl font-bold">Formation Secourisme</h1>
+  </div>
+  <nav class="flex items-center">
+    <a href="/chat" class="mr-4 hover:underline">Chat</a>
+    <a href="/formations" class="mr-4 hover:underline">Formations</a>
+    <span class="mr-4">Bienvenue, <%= user ? user.username : 'Invité' %></span>
+    <a href="/dashboard" class="hover:underline">Tableau de bord</a>
+  </nav>
+</div>
