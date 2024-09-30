@@ -21,6 +21,9 @@ router.get("/formations/gqs", (req, res) => {
   res.render("partials/contenu-gqs");
 });
 
+router.get("/formations/PSC1", (req, res) => {
+  res.render("partials/contenu-psc1");
+});
 // Route vers le front-end (index.html) à la racine
 router.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
