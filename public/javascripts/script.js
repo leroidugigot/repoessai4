@@ -75,3 +75,32 @@ function handleClickConnexion() {
 function handleClickCommencer() {
   window.location.href = "/users/new";
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Sélectionne tous les liens des formations avec la classe 'formation-link'
+  const formationLinks = document.querySelectorAll('.formation-link');
+  
+  // Attache un event listener à chaque lien
+  formationLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault(); // Empêche le rechargement de la page
+
+      // Récupère le nom de la formation à partir de l'attribut data-formation
+      const formation = this.getAttribute('data-formation');
+      
+      // Utilise Fetch API pour charger dynamiquement le contenu
+      fetch(`/formations/${formation}`)
+        .then(response => response.text())
+        .then(html => {
+          // Injecte le contenu récupéré dans la div avec l'id 'contenu-formation'
+          document.getElementById('contenu-formation').innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Erreur lors du chargement de la formation :', error);
+        });
+    });
+  });
+});
+
+

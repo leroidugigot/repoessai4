@@ -35,17 +35,21 @@ const extractUserFromToken = async (req, res, next) => {
       decodedToken = checkExpirationToken(decodedToken, res);
       const user = await findUserPerId(decodedToken.sub);
       if (user) {
+        console.log('User found:', user); // Log to check if user is found
         req.user = user;
         next();
       } else {
+        console.log('No user found, clearing JWT cookie');
         res.clearCookie('jwt');
         res.redirect('/');
       }
     } catch(e) {
+      console.error('Error during token verification:', e);
       res.clearCookie('jwt');
       res.redirect('/');
     }
   } else {
+    console.log('No JWT token found');
     next();
   }
 }
@@ -60,5 +64,9 @@ const addJwtFeatures = (req, res, next) => {
   next();
 }
 
-app.use(extractUserFromToken);
-app.use(addJwtFeatures);
+if (app) {
+  app.use(extractUserFromToken);
+  app.use(addJwtFeatures);
+} else {
+  console.error('Express app instance is undefined');
+}
