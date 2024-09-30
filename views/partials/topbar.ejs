@@ -7,6 +7,13 @@
     <a href="/chat" class="mr-4 hover:underline">Chat</a>
     <a href="/formations" class="mr-4 hover:underline">Formations</a>
     <span class="mr-4">Bienvenue, <%= user ? user.username : 'Invité' %></span>
-    <a href="/dashboard" class="hover:underline">Tableau de bord</a>
+    <div class="d-flex flex-row">
+      <% if (user) { %>
+        <a href="/auth/signout" class="mx-3">Déconnexion</a>
+      <% } else { %>
+        <a href="/users/new" class="mx-3">Inscription</a>
+        <a href="/auth/signin/form" class="mx-3">Connexion</a>
+      <% } %>
+    </div>
   </nav>
 </div>
