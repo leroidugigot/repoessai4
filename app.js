@@ -6,6 +6,7 @@ const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("errorhandler");
 
+
 const app = express();
 
 exports.app = app;
@@ -17,6 +18,8 @@ exports.app = app;
 app.use(cookieParser());
 
 require("./config/jwt.config");
+require('./config/session.config');
+require('./config/passport.config');
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
