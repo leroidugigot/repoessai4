@@ -5,6 +5,7 @@ require("./database");
 const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("errorhandler");
+require("dotenv").config();
 
 
 const app = express();
@@ -48,7 +49,7 @@ app.use(
 );
 app.use( express.static(path.join(__dirname, 'public/javascripts')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false })); /*?????{ extended: true }*/
+app.use(express.urlencoded({ extended: true })); /*?????{ extended: true }*/
 
 app.use(router);
 

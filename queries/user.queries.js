@@ -9,7 +9,7 @@ exports.createUser = async (body) => {
         email: body.email,
         password: hashedPassword
       }
-    })
+    });
     return user.save();
   } catch(e) {
     throw e;
@@ -23,6 +23,12 @@ exports.findUserPerEmail = (email) => {
 exports.findUserPerId = (id) => {
   return User.findOne({ _id: id }).exec();
 }
+
 exports.findUserPerGoogleId = (googleId) => {
   return User.findOne({ 'local.googleId': googleId }).exec();
+}
+
+// Ajout de la fonction pour Yahoo
+exports.findUserPerYahooId = (yahooId) => {
+  return User.findOne({ 'local.yahooId': yahooId }).exec();
 }

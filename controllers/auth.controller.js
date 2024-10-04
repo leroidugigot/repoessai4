@@ -56,6 +56,22 @@ exports.googleAuthCb = (req, res, next) => {
   })(req, res, next);
 };
 
+// Ajout de l'authentification Yahoo
+exports.yahooAuth = (req, res, next) => {
+  passport.authenticate("yahoo", {
+    scope: ['openid', 'email', 'profile'],
+  })(req, res, next);
+};
+
+exports.yahooAuthCb = (req, res, next) => {
+  passport.authenticate("yahoo", {
+    successRedirect: "/protected",
+    failureRedirect: '/auth/signin/form', 
+  })(req, res, next);
+};
+
+
+
 exports.signout = (req, res) => {
   req.logout((err) => {
     if (err) {

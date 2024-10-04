@@ -6,10 +6,13 @@ const userSchema = schema({
   username: { type: String, required: true, unique: true },
   local: {
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    googleId: { type: String },  // Déjà inclus pour Google
+    yahooId: { type: String },   // Ajout pour Yahoo
   },
   avatar: { type: String, default: '/images/default-profile.svg' }
 });
+
 
 userSchema.statics.hashPassword = (password) => {
   return bcrypt.hash(password, 12);
