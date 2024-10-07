@@ -6,7 +6,7 @@ const userSchema = schema({
   username: { type: String, required: true, unique: true },
   local: {
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String },
     googleId: { type: String },  // Déjà inclus pour Google
     yahooId: { type: String },   // Ajout pour Yahoo
   },
@@ -14,8 +14,13 @@ const userSchema = schema({
 });
 
 
-userSchema.statics.hashPassword = (password) => {
-  return bcrypt.hash(password, 12);
+userSchema.statics.hashPassword = async (password) => {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+  } catch(e) {
+    throw e
+  }
 }
 
 userSchema.methods.comparePassword = function(password) {
