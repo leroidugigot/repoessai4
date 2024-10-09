@@ -3,21 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protected Page</title>
-    <link href="/public/css/output.css" rel="stylesheet">
+    <title>Page Principale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .parent {
+            display: grid;
+            grid-template-columns: repeat(2, 0.75fr) repeat(8, 1fr) repeat(2, 0.75fr);
+            grid-template-rows: repeat(12, 1fr);
+            grid-column-gap: 0px;
+            grid-row-gap: 0px;
+        }
+        .div1 { grid-area: 1 / 1 / 2 / 3; }
+        .div2 { grid-area: 1 / 3 / 2 / 9; }
+        .div3 { grid-area: 1 / 9 / 2 / 13; }
+        .div4 { grid-area: 2 / 3 / 3 / 11; }
+        .div5 { grid-area: 2 / 1 / 4 / 3; }
+        .div6 { grid-area: 4 / 1 / 11 / 3; }
+        .div7 { grid-area: 11 / 1 / 13 / 3; }
+        .div8 { grid-area: 2 / 11 / 9 / 13; }
+        .div9 { grid-area: 9 / 11 / 11 / 13; }
+        .div10 { grid-area: 11 / 11 / 13 / 13; }
+        .div11 { grid-area: 12 / 3 / 13 / 11; }
+        .div12 { grid-area: 2 / 3 / 12 / 11; }
+    </style>
+        <style>
+            /* ... Vos styles existants ... */
+    
+            #navbarHidden {
+                transition: opacity 0.3s ease-in-out;
+            }
+    
+            #navbarHidden.hidden {
+                opacity: 0;
+            }
+        </style>
 </head>
-<body class="bg-gray-100 flex flex-col h-screen">
-    <%- include('partials/topbar') %>
-    <div class="flex flex-1 overflow-hidden">
-        <%- include('partials/aside-left') %>
-        <main class="flex-1 overflow-y-auto p-4 flex flex-col">
-          <div class="flex-grow"id="contenu-formation" class="p-4">
-            <%- include('partials/contenu') %>
-          </div>
-            <%- include('partials/chat-gpt-input') %>
-        </main>
-        <%- include('partials/aside-right') %>
+<body class="bg-gray-100 text-gray-900">
+
+    <div class="parent h-screen">
+        <!-- Div1 - Logo -->
+        <div class="div1 flex  justify-center">
+            <%- include('partials/logoSite') %>
+        </div>
+
+        <!-- Div2 - Navbar -->
+        <div class="div2 bg-gray-800  ">
+            <%- include('partials/navbar') %>
+        </div>
+
+        <!-- Div3 - Logbar -->
+        <div class="div3  bg-gray-800 text-white flex items-center justify-center">
+            <%- include('partials/logbar') %>
+        </div>
+
+        <!-- Div4 - Navbar Hidden -->
+    <!-- Div4 - Navbar Hidden -->
+    <div id="navbarHidden" class="div4 z-50   ">
+        <%- include('partials/navbarHidden') %>
     </div>
-    <script src="/js/main.js"></script>
+
+        <!-- Div5 - Lesson Online -->
+        <div class="div5 bg-blue-400 p-4">
+            <% include('partials/lessonOnLine') %>
+        </div>
+
+        <!-- Div6 - Chapter List -->
+        <div class="div6 bg-gray-100 p-4 overflow-y-auto">
+            <% include('partials/chapterList') %>
+        </div>
+
+        <!-- Div7 - Dashboard -->
+        <div class="div7 bg-blue-300 p-4">
+            <% include('partials/dashboarddiv') %>
+        </div>
+
+        <!-- Div8 - Connected Users -->
+        <div class="div8 bg-blue-200 p-4">
+            <% include('partials/connectedList') %>
+        </div>
+
+        <!-- Div9 - Referentials -->
+        <div class="div9 bg-gray-200 p-4">
+            <% include('partials/referentiels') %>
+        </div>
+
+        <!-- Div10 - Contact -->
+        <div class="div10 bg-gray-300 p-4">
+            <%- include('partials/contact') %>
+        </div>
+
+        <!-- Div11 - Input GPT -->
+        <div class="div11 bg-gray-400 p-4">
+            <%- include('partials/inputgpt') %>
+        </div>
+
+        <!-- Div12 - Main Content -->
+        <div id="mainContent" class="div12 bg-white overflow-y-auto">
+            <%- include('partials/contenus') %>
+        </div>
+    </div>
+
+    <script>
+        // Interactive features with JS (e.g. night mode toggle)
+        const nightModeButton = document.getElementById('night-mode');
+        nightModeButton?.addEventListener('click', () => {
+            document.body.classList.toggle('bg-gray-800');
+            document.body.classList.toggle('text-white');
+        });
+    </script>
+    <script>
+        // ... (votre script existant) ...
+
+        // Script modifié pour contrôler la visibilité de navbarHidden
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbarHidden');
+        const mainContent = document.getElementById('mainContent');
+
+        mainContent.addEventListener('scroll', () => {
+            let scrollTop = mainContent.scrollTop;
+            
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down
+                navbar.classList.add('hidden');
+            } else {
+                // Scrolling up
+                navbar.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }, false);
+    </script>
+
 </body>
 </html>
