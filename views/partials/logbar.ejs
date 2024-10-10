@@ -1,19 +1,20 @@
+<nav class="flex items-center justify-between">
+  <span class="mr-4">Bonjour : <%= user ? user.username : 'Invité' %></span>
+
+  <!-- Show avatar (profile photo) if available -->
+  <% if (user && user.avatar) { %>
+    <img src="<%= user.avatar %>" alt="Profile Photo" class="w-12 h-12 rounded-full object-cover mr-4">
+  <% } %>
+
+  <div class="d-flex flex-row">
+    <% if (user) { %>
+      <a href="/auth/signout" class="mx-3">Déconnexion</a>
+    <% } else { %>
+      <a href="/users/new" class="mx-3">Inscription</a>
+      <a href="/auth/signin/form" class="mx-3">Connexion</a>
+    <% } %>
+  </div>
 
 
-    <nav class="flex items-center justify-between">
 
-      <span class="mr-4">Bonjour :  <%= user ? user.username : 'Invité' %></span>
-      <div class="d-flex flex-row">
-        <% if (user) { %>
-          <a href="/auth/signout" class="mx-3">Déconnexion</a>
-        <% } else { %>
-          <a href="/users/new" class="mx-3">Inscription</a>
-          <a href="/auth/signin/form" class="mx-3">Connexion</a>
-        <% } %>
-      </div>
-    
-    <button id="night-mode" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-600 transition duration-200">
-        Mode Nuit
-    </button>
-    </nav>
-  
+</nav>

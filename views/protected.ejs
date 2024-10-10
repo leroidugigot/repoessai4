@@ -58,7 +58,7 @@
 
     <div class="parent h-screen">
         <!-- Div1 - Logo -->
-        <div class="div1 flex justify-center border border-gray-700 h-full">
+        <div class="div1 bg-gray-800 flex justify-center border border-gray-700 h-full">
             <%- include('partials/logoSite') %>
         </div>
 
@@ -118,14 +118,7 @@
         </div>
     </div>
 
-    <script>
-        // Interactive features with JS (e.g. night mode toggle)
-        const nightModeButton = document.getElementById('night-mode');
-        nightModeButton?.addEventListener('click', () => {
-            document.body.classList.toggle('bg-gray-800');
-            document.body.classList.toggle('text-white');
-        });
-    </script>
+
 
     <script>
         // Script modifié pour contrôler la visibilité de navbarHidden
@@ -147,6 +140,8 @@
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, false);
     </script>
+
+    
 
 </body>
 </html>
