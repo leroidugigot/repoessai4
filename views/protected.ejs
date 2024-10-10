@@ -26,79 +26,94 @@
         .div11 { grid-area: 12 / 3 / 13 / 11; }
         .div12 { grid-area: 2 / 3 / 12 / 11; }
     </style>
-        <style>
-            /* ... Vos styles existants ... */
-    
-            #navbarHidden {
-                transition: opacity 0.3s ease-in-out;
-            }
-    
-            #navbarHidden.hidden {
-                opacity: 0;
-            }
-        </style>
+
+    <style>
+        /* Masquer les barres de défilement */
+        body::-webkit-scrollbar,
+        #mainContent::-webkit-scrollbar,
+        .div6::-webkit-scrollbar {
+            display: none; /* pour Chrome, Safari, et Opera */
+        }
+
+        body {
+            scrollbar-width: none; /* pour Firefox */
+        }
+
+        body,
+        #mainContent,
+        .div6 {
+            -ms-overflow-style: none; /* pour IE et Edge */
+        }
+
+        #navbarHidden {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #navbarHidden.hidden {
+            opacity: 0;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
 
     <div class="parent h-screen">
         <!-- Div1 - Logo -->
-        <div class="div1 flex  justify-center">
+        <div class="div1 flex justify-center border border-gray-700 h-full">
             <%- include('partials/logoSite') %>
         </div>
 
         <!-- Div2 - Navbar -->
-        <div class="div2 bg-gray-800  ">
+        <div class="div2 bg-gray-800 border border-gray-700 h-full">
             <%- include('partials/navbar') %>
         </div>
 
         <!-- Div3 - Logbar -->
-        <div class="div3  bg-gray-800 text-white flex items-center justify-center">
+        <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
             <%- include('partials/logbar') %>
         </div>
 
         <!-- Div4 - Navbar Hidden -->
-    <!-- Div4 - Navbar Hidden -->
-    <div id="navbarHidden" class="div4 z-50   ">
-        <%- include('partials/navbarHidden') %>
-    </div>
+        <div id="navbarHidden" class="div4 z-50 border border-gray-700 h-full">
+            <%- include('partials/navbarHidden') %>
+        </div>
 
         <!-- Div5 - Lesson Online -->
-        <div class="div5 bg-blue-400 p-4">
-            <% include('partials/lessonOnLine') %>
+        <div class="div5 bg-gray-800 border border-gray-700 h-full">
+            <%- include('partials/lessonOnLine') %>
         </div>
 
         <!-- Div6 - Chapter List -->
-        <div class="div6 bg-gray-100 p-4 overflow-y-auto">
-            <% include('partials/chapterList') %>
+        <div class="div6 bg-gray-800 border border-gray-700 h-full">
+            <%- include('partials/chapterList') %>
         </div>
 
         <!-- Div7 - Dashboard -->
-        <div class="div7 bg-blue-300 p-4">
-            <% include('partials/dashboarddiv') %>
+        <div class="div7 bg-gray-800 border border-gray-700 h-full">
+            <%- include('partials/dashboarddiv') %>
         </div>
 
         <!-- Div8 - Connected Users -->
-        <div class="div8 bg-blue-200 p-4">
-            <% include('partials/connectedList') %>
+        <div class="div8 bg-gray-800 border border-gray-700 h-full">
+            <%- include('partials/connectedList') %>
         </div>
 
         <!-- Div9 - Referentials -->
-        <div class="div9 bg-gray-200 p-4">
-            <% include('partials/referentiels') %>
+        <div class="div9 bg-gray-800 border border-gray-700 h-full">
+            <%- include('partials/referentiels') %>
         </div>
 
         <!-- Div10 - Contact -->
-        <div class="div10 bg-gray-300 p-4">
+        <div class="div10 bg-gray-800 border border-gray-700 h-full">
             <%- include('partials/contact') %>
         </div>
 
         <!-- Div11 - Input GPT -->
-        <div class="div11 bg-gray-400 p-4">
+        <div class="div11 bg-gray-800 border border-gray-700 h-full">
             <%- include('partials/inputgpt') %>
         </div>
 
         <!-- Div12 - Main Content -->
-        <div id="mainContent" class="div12 bg-white overflow-y-auto">
+        <div id="mainContent" class="div12 bg-gray-800 border border-gray-700 overflow-y-auto h-full">
             <%- include('partials/contenus') %>
         </div>
     </div>
@@ -111,9 +126,8 @@
             document.body.classList.toggle('text-white');
         });
     </script>
-    <script>
-        // ... (votre script existant) ...
 
+    <script>
         // Script modifié pour contrôler la visibilité de navbarHidden
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbarHidden');
@@ -121,7 +135,7 @@
 
         mainContent.addEventListener('scroll', () => {
             let scrollTop = mainContent.scrollTop;
-            
+
             if (scrollTop > lastScrollTop) {
                 // Scrolling down
                 navbar.classList.add('hidden');
@@ -129,7 +143,7 @@
                 // Scrolling up
                 navbar.classList.remove('hidden');
             }
-            
+
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, false);
     </script>

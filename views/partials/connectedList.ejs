@@ -1,0 +1,15 @@
+<div class="bg-gray-800 text-white">
+    <h1 class="text-2xl font-bold ml-4 mb-4">Utilisateurs connectés</h1>
+    <ul class="divide-y divide-gray-700">
+        <% users.forEach(function(user) { %>
+            <li class="flex items-center ">
+                <!-- Photo de l'utilisateur -->
+                <img src="<%= user.avatar || 'path/to/default-avatar.png' %>" alt="<%= user.username %> Avatar" class="w-12 h-12 rounded-full mr-4">
+                <!-- Nom d'utilisateur -->
+                <div class="text-xs font-medium">
+                    <%= user.username %>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+</div>

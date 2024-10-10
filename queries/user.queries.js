@@ -17,6 +17,7 @@ exports.createUser = async (body) => {
 }
 
 exports.findUserPerEmail = (email) => {
+  console.log(User); // Vérifie si tu obtiens des utilisateurs
   return User.findOne({ 'local.email': email }).exec();
 }
 
@@ -32,3 +33,4 @@ exports.findUserPerGoogleId = (googleId) => {
 exports.findUserPerYahooId = (yahooId) => {
   return User.findOne({ 'local.yahooId': yahooId }).exec();
 }
+

@@ -3,17 +3,27 @@ const userRoutes = require("./user.routes");
 const authRoutes = require("./auth.routes");
 const router = require("express").Router();
 const { ensureAuthenticated } = require("../config/security.config");
+const User = require("../database/models/user.model");
 
 router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
 
-router.get("/protected", (req, res) => {
-  const user = req.user; // Utiliser req.user pour récupérer l'utilisateur
-  console.log("User:", user); // Debugging log
-  if (user) {
-    res.render("protected", { user });
-  } else {
-    res.status(401).send("Unauthorized");
+router.get("/protected", async (req, res) => {
+  const user = req.user; // Récupère l'utilisateur connecté
+
+  try {
+    if (user) {
+      // Récupère les utilisateurs (peut-être les utilisateurs "connectés" ou tous)
+      const users = await User.find({ isConnected: true }); // Exemple : si tu as un champ `isConnected`
+      
+      // Passe l'utilisateur actuel et la liste des utilisateurs à la vue
+      res.render("protected", { user, users });
+    } else {
+      res.status(401).send("Unauthorized");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des utilisateurs:", error);
+    res.status(500).send("Erreur serveur");
   }
 });
 

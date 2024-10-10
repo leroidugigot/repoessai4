@@ -10,9 +10,8 @@ const userSchema = schema({
     googleId: { type: String },  // Déjà inclus pour Google
     yahooId: { type: String },   // Ajout pour Yahoo
   },
-  avatar: { type: String, default: '/images/default-profile.svg' }
+  avatar: { type: String, default: '/images/default-profile.svg' },
 });
-
 
 userSchema.statics.hashPassword = async (password) => {
   try {
@@ -27,6 +26,6 @@ userSchema.methods.comparePassword = function(password) {
   return bcrypt.compare(password, this.local.password)
 }
 
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
