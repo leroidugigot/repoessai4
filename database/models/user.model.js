@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
+
 const userSchema = schema({
   username: { type: String, required: true, unique: true },
   local: {
     email: { type: String, required: true, unique: true },
     password: { type: String },
-    googleId: { type: String },  // Déjà inclus pour Google
-    yahooId: { type: String },   // Ajout pour Yahoo
+
+
   },
   avatar: { type: String, default: '/images/default-profile.svg' },
 });
@@ -27,5 +28,7 @@ userSchema.methods.comparePassword = function(password) {
 }
 
 const User = mongoose.model('User', userSchema);
+console.log(User);
+
 
 module.exports = User;
