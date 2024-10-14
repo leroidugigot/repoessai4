@@ -67,10 +67,11 @@
             <%- include('partials/navbar') %>
         </div>
 
-        <!-- Div3 - Logbar -->
-        <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
-            <%- include('partials/logbar') %>
-        </div>
+    <!-- Div3 - Logbar -->
+    <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
+        <%- include('partials/logbar', { user }) %>
+    </div>
+
 
         <!-- Div4 - Navbar Hidden -->
         <div id="navbarHidden" class="div4 z-50 border border-gray-700 h-full">

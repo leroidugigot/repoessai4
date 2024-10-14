@@ -88,6 +88,7 @@
                 />
             </div>
             <div>
+                <div class="g-recaptcha" data-sitekey="<%= siteKey %>"></div>
                 <button
                     type="submit"
                     class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform transform hover:scale-105 active:scale-95 relative"
@@ -118,6 +119,7 @@
             <p class="text-sm"><a href="/auth/signin/form" class="text-indigo-600 hover:underline">Déjà un compte ? Connectez-vous</a></p>
         </div>
     </div>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById("password");
