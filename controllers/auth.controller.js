@@ -1,28 +1,22 @@
 const passport = require("passport");
-const { findUserPerEmail } = require("../queries/user.queries");
+const { findUserPerEmail } = require("../queries/user.queries"); 
 
+
+//verife
 exports.signinForm = (req, res, next) => {
   res.render("signin", { error: null });
 };
 
+
+//verifié
 exports.signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await findUserPerEmail(email);
-   
-    
     if (user) {
-      console.log('user recu dans signin auth.contollers');
-      
-
-      
       const match = await user.comparePassword(password);
-
-      
       if (match) {
         req.login(user);
-       
-        
         res.redirect('/protected');
       } else {
         res.render('signin', { error: 'Wrong password' });
@@ -35,7 +29,7 @@ exports.signin = async (req, res, next) => {
   }
 
 }
-
+   //authetification avec google passport.authtificate mais pas de bdd
 exports.sessionCreate = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -60,23 +54,7 @@ exports.sessionNew = (req, res, next) => {
   res.render('signin', { error: null });
 };
 
-exports.sessionCreate = (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      next(e);
-    } else if (!user) {
-      res.render('signin', { error: info.message });
-    } else {
-      req.login(user, (err) => {
-        if (err) {
-          next(e);
-        } else {
-          res.redirect('/');
-        }
-      });
-    }
-  })(req, res, next);
-};
+
 
 exports.googleAuth = (req, res, next) => {
   passport.authenticate('google', {
@@ -93,12 +71,15 @@ exports.googleAuthCb = (req, res, next) => {
 };
 
 
-
+//verifié
+// auth.controller.js
 exports.signout = (req, res) => {
   req.logout((err) => {
-    if (err) {
-      return res.status(500).send("Error logging out");
-    }
-    res.status(200).send("Logged out successfully");
+      if (err) {
+          return res.status(500).json({ message: 'Logout failed', error: err });
+      }
+      // Redirection ou réponse après la déconnexion réussie
+      res.status(200).json({ message: 'Logged out successfully' });
   });
 };
+
