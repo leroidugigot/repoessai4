@@ -1,4 +1,4 @@
-//verifie ne pas toucher
+//verifié
 exports.ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
@@ -6,3 +6,4 @@ exports.ensureAuthenticated = (req, res, next) => {
     res.status(403).redirect('/auth/signin/form');
   }
 }
+
