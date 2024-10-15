@@ -1,5 +1,3 @@
-  //verifie ne pas toucher
-
 const passport = require('passport');
 const { app } = require('../app');
 const User = require('../database/models/user.model');
@@ -42,7 +40,7 @@ passport.use(
             done(null, false, { message: "Password doesn't match" });
           }
         } else {
-          done(null, false, { message: 'user not found' });
+          done(null, false, { message: 'User not found' });
         }
       } catch (e) {
         done(e);
@@ -73,6 +71,45 @@ passport.use(
               email: profile.emails[0].value,
             },
           });
+          try {
+            const savedUser = await newUser.save();
+            console.log('User successfully created:', savedUser);
+            done(null, savedUser);
+          } catch (error) {
+            console.error('Error saving new user:', error);
+            done(error);
+          }
+        }
+      } catch (error) {
+        console.error('Error during Google authentication:', error);
+        done(error);
+      }
+    }
+  )
+);
+
+/*passport.use(
+  'google',
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CONSUMER_KEY,
+      clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      // console.log(util.inspect(profile, { compact: true, depth: 5, breakLength: 80 }));
+      try {
+        const user = await findUserPerGoogleId(profile.id);
+        if (user) {
+          done(null, user);
+        } else {
+          const newUser = new User({
+            username: profile.displayName,
+            local: {
+              googleId: profile.id,
+              email: profile.emails[0].value,
+            },
+          });
           const savedUser = await newUser.save();
           done(null, savedUser);
         }
@@ -82,4 +119,4 @@ passport.use(
     }
   )
 );
-
+ */

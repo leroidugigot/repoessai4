@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Connexion</title>
     <link rel="shortcut icon" href="/images/img/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../public/css/output.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         body {
             font-family: 'Arial', sans-serif; 
+            margin: 0;
+            padding: 0; /* Enlever tout padding */
+            overflow: hidden; /* Empêcher le défilement */
         }
+
         .loading-spinner {
             border: 2px solid white;
             border-top: 2px solid transparent;
@@ -18,17 +24,22 @@
             height: 20px;
             animation: spin 0.6s linear infinite;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
         .input-field {
             transition: border-color 0.3s, box-shadow 0.3s;
+            width: 100%; /* Prendre toute la largeur */
         }
+
         .input-field:focus {
             border-color: #5c6ac4;
             box-shadow: 0 0 5px rgba(92, 106, 196, 0.5);
         }
+
         .social-button {
             transition: background-color 0.3s, transform 0.2s;
             width: 48px; 
@@ -38,10 +49,48 @@
             justify-content: center;
             align-items: center;
         }
+
         .social-button:hover {
             transform: scale(1.05);
         }
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px; /* Hauteur de la barre supérieure */
+            background-color: #fff; /* Couleur de fond de la barre supérieure */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre pour la barre supérieure */
+            z-index: 1000; /* Assurez-vous que la barre supérieure est au-dessus du contenu */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Prendre toute la hauteur de la vue */
+            padding-top: 70px; /* Espacement pour la barre supérieure */
+            background-color: #f7fafc; /* Couleur de fond de la page */
+        }
+
+        .form-container {
+            background-color: white; /* Couleur de fond du formulaire */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            width: 90%; /* Prendre 90% de la largeur */
+            max-width: 400px; /* Largeur maximale du formulaire */
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                width: 95%; /* Légèrement plus large sur petits écrans */
+            }
+        }
     </style>
+    
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const form = document.querySelector("form");
@@ -72,78 +121,85 @@
                 }
             });
         });
-    </script>
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="w-full max-w-md bg-white shadow-xl rounded-lg p-8">
-        <div class="text-center mb-6">
-          <img src="/images/img/logo.png" alt="Logo" class="mx-auto h-24 w-auto" />
-        </div>
-        <h1 class="text-4xl font-extrabold text-center mb-8 text-indigo-600">Connexion</h1>
-        <form method="post" action="/auth/signin" class="space-y-6" aria-labelledby="form-title">
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email :</label>
-                <input
-                    id="email"
-                    class="input-field mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
-                    type="email"
-                    name="email"
-                    required
-                    placeholder="Votre adresse email"
-                    aria-required="true"
-                />
-            </div>
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe :</label>
-                <input
-                    id="password"
-                    class="input-field mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
-                    type="password"
-                    name="password"
-                    required
-                    placeholder="Votre mot de passe"
-                    aria-required="true"
-                />
-                <button type="button" class="text-sm text-indigo-600 hover:underline" onclick="togglePasswordVisibility()">Afficher</button>
-            </div>
-            <div>
-                <button
-                    type="submit"
-                    class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform transform hover:scale-105 active:scale-95 relative"
-                >
-                    <span class="loading-spinner hidden absolute left-3 top-1/2 transform -translate-y-1/2"></span>
-                    Connexion
-                </button>
-            </div>
-        </form>
-        <div class="mt-4 text-center">
-            <p class="text-sm">Ou connectez-vous avec :</p>
-            <div class="flex justify-center mt-2">
-                <button class="social-button bg-white border border-gray-300" title="Google" onclick="window.location.href='/auth/google'">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
-                  </button>
-                  
-                <button class="social-button bg-white border border-gray-300" title="Facebook">
-                    <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook" />
-                </button>
-                <button class="social-button bg-white border border-gray-300" title="LinkedIn">
-                    <img src="https://img.icons8.com/color/48/000000/linkedin.png" alt="LinkedIn" />
-                </button>
-                <button class="social-button bg-white border border-gray-300" title="yahoo" onclick="window.location.href='/auth/yahoo'">
-                    <img src="https://img.icons8.com/?size=100&id=LKkHGfJr7vxf&format=png&color=000000" alt="Yahoo" />
-                </button>
-            </div>
-        </div>
-        <div class="mt-3 text-center">
-            <p class="text-sm"><a href="/auth/signup" class="text-indigo-600 hover:underline">Pas encore de compte ? Inscrivez-vous</a></p>
-        </div>
-    </div>
-    <script>
+
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById("password");
             const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
             passwordInput.setAttribute("type", type);
         }
     </script>
+</head>
+<body>
+
+    <div class="topbar">
+        <%- include('partials/topbar') %>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="text-center mb-6">
+                <img src="/images/img/logo.png" alt="Logo" class="mx-auto h-24 w-auto" />
+            </div>
+            <h1 class="text-4xl font-extrabold text-center mb-8 text-indigo-600">Connexion</h1>
+            <form method="post" action="/auth/signin" class="space-y-6" aria-labelledby="form-title">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email :</label>
+                    <input
+                        id="email"
+                        class="input-field mt-1 block px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Votre adresse email"
+                        aria-required="true"
+                    />
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe :</label>
+                    <input
+                        id="password"
+                        class="input-field mt-1 block px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
+                        type="password"
+                        name="password"
+                        required
+                        placeholder="Votre mot de passe"
+                        aria-required="true"
+                    />
+                    <button type="button" class="text-sm text-indigo-600 hover:underline" onclick="togglePasswordVisibility()">Afficher</button>
+                </div>
+                <div>
+                    <button
+                        type="submit"
+                        class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform transform hover:scale-105 active:scale-95 relative"
+                    >
+                        <span class="loading-spinner hidden absolute left-3 top-1/2 transform -translate-y-1/2"></span>
+                        Connexion
+                    </button>
+                </div>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-sm">Ou connectez-vous avec :</p>
+                <div class="flex justify-center mt-2">
+                    <button class="social-button bg-white border border-gray-300" title="Google" onclick="window.location.href='/auth/google'">
+                        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" />
+                    </button>
+                    <button class="social-button bg-white border border-gray-300" title="Facebook">
+                        <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook" />
+                    </button>
+                    <button class="social-button bg-white border border-gray-300" title="LinkedIn">
+                        <img src="https://img.icons8.com/color/48/000000/linkedin.png" alt="LinkedIn" />
+                    </button>
+                    <button class="social-button bg-white border border-gray-300" title="Yahoo" onclick="window.location.href='/auth/yahoo'">
+                        <img src="https://img.icons8.com/?size=100&id=LKkHGfJr7vxf&format=png&color=000000" alt="Yahoo" />
+                    </button>
+                </div>
+            </div>
+            <div class="mt-3 text-center">
+                <p class="text-sm"><a href="/auth/signup" class="text-indigo-600 hover:underline">Pas encore de compte ? Inscrivez-vous</a></p>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 </html>
