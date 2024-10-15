@@ -1,3 +1,5 @@
+
+const session = require('express-session');
 const passport = require("passport");
 const { findUserPerEmail } = require("../queries/user.queries"); 
 
@@ -71,9 +73,31 @@ exports.googleAuthCb = (req, res, next) => {
 };
 
 
-//verifié
-// auth.controller.js
 exports.signout = (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error('Erreur lors de la déconnexion:', err);
+      return res.redirect('/'); 
+    }
+
+    // Réinitialiser les informations de connexion liées à Passport
+    req.session.passport = null;
+
+    // Détruire la session complète
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Erreur lors de la destruction de la session:', err);
+        return res.redirect('/'); // Redirection en cas d'erreur
+      }
+      
+      res.clearCookie('connect.sid'); // Effacer le cookie de session côté client
+
+      return res.redirect('/');
+    });
+  });
+};
+
+/*exports.signout = (req, res) => {
   req.logout((err) => {
       if (err) {
           return res.status(500).json({ message: 'Logout failed', error: err });
@@ -82,4 +106,4 @@ exports.signout = (req, res) => {
       res.status(200).json({ message: 'Logged out successfully' });
   });
 };
-
+*/ 

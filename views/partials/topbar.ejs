@@ -1,19 +1,30 @@
-<div class="bg-blue-600 text-white p-4 flex justify-between items-center">
+<header class="fixed left-0 right-0 top-0 z-50 bg-black">
+  <nav class="flex h-16 items-center justify-between p-0">
+      <div class="m-0 flex h-full items-center p-0">
+          <img src="/public/images/img/logo.png" alt="Logo" class="m-0 h-24 p-0" />
+      </div>
+      <div class="hidden md:flex flex-row items-center gap-2 px-1">
+          <a href="/" class="text-white change-color-on-scroll underline-animation flex h-7 w-24 items-center justify-center rounded-2xl">Accueil</a>
+          <a href="/auth/signin/form" class="text-white change-color-on-scroll underline-animation flex h-7 w-24 items-center justify-center rounded-2xl">Connexion</a>
+          <a href="/users/new" class="z-40 flex h-7 w-28 items-center justify-center rounded-3xl bg-blue-500 px-2 text-white hover:scale-125 hover:bg-green-600">Inscription</a>
+      </div>
+  </nav>
+</header>
+
+
+
+
+
+<!--<div class="bg-black text-white p-4 flex justify-between items-center w-screen fixed top-0 left-0">
   <div class="flex items-center">
     <img src="/public/images/img/logo.png" alt="Logo de la formation secourisme" class="h-8 w-8 mr-2">
     <h1 class="text-xl font-bold">Formation Secourisme</h1>
   </div>
   <nav class="flex items-center">
-    <a href="/chat" class="mr-4 hover:underline">Chat</a>
-    <a href="/formations" class="mr-4 hover:underline">Formations</a>
-    <span class="mr-4">Bienvenue, <%= user ? user.username : 'Invité' %></span>
-    <div class="d-flex flex-row">
-      <% if (user) { %>
-        <a href="/auth/signout" class="mx-3">Déconnexion</a>
-      <% } else { %>
-        <a href="/users/new" class="mx-3">Inscription</a>
-        <a href="/auth/signin/form" class="mx-3">Connexion</a>
-      <% } %>
+    <div class="flex space-x-4">
+      <a href="/" class="hover:underline mr-16">home</a>
+      <a href="/users/new" class="hover:underline">Inscription</a>
+      <a href="/auth/signin/form" class="hover:underline">Connexion</a>
     </div>
   </nav>
-</div>
+</div> -->
