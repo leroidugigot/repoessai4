@@ -1,4 +1,4 @@
-
+const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const passport = require("passport");
 const { findUserPerEmail } = require("../queries/user.queries"); 
@@ -32,24 +32,32 @@ exports.signin = async (req, res, next) => {
 
 }
    //authetification avec google passport.authtificate mais pas de bdd
-exports.sessionCreate = (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    } else if (!user) {
-      res.render("signin", { error: info.message });
-    } else {
-      req.login(user, (err) => {
-        if (err) {
-          return next(err);
-        } else {
-          res.redirect("/protected");
-        }
-      });
-    }
-  })(req, res, next);
-};
 
+   exports.sessionCreate = (req, res, next) => {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err) {
+        return next(err); // Gérer les erreurs d'authentification
+      } 
+  
+      if (!user) {
+        return res.render("signin", { error: info.message }); // Utilisateur non trouvé ou mauvais mot de passe
+      }
+  
+      // Si l'authentification est réussie
+      // Générer un token JWT avec les infos utilisateur
+      const token = jwt.sign({ id: user._id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+  
+      // Stocker le token JWT dans un cookie sécurisé (optionnel, sinon utiliser Authorization header)
+      res.cookie('jwt', token, {
+        httpOnly: true, // Empêche l'accès au cookie via JavaScript (CSRF protection)
+        secure: true,   // Utilise HTTPS (mettre à true en production)
+        maxAge: 3600000 // Expire dans 1 heure
+      });
+  
+      // Rediriger vers la page protégée
+      return res.redirect('/protected');
+    })(req, res, next);
+  };
 
 
 exports.sessionNew = (req, res, next) => {

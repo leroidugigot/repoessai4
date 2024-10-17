@@ -188,6 +188,9 @@
                     />
                     <button type="button" class="text-sm text-indigo-600 hover:underline" onclick="togglePasswordVisibility()">Afficher</button>
                 </div>
+                <div class="g-recaptcha" data-sitekey="<%= process.env.RECAPTCHA_SITE_KEY %>"></div>
+
+
                 <div>
                     <button
                         type="submit"
@@ -220,6 +223,7 @@
             </div>
         </div>
     </div>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
 </body>
 </html>
