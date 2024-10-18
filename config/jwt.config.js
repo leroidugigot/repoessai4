@@ -1,76 +1,77 @@
-//verifé
-const secret = 'a2463421-b798-470a-b4ee-fd23783ec69d';
 const jwt = require('jsonwebtoken');
 const { findUserPerId } = require('../queries/user.queries');
-const { app } = require('../app');
+
+const secret = process.env.JWT_SECRET; // Assurez-vous que ce secret est bien défini
 
 const createJwtToken = ({ user = null, id = null }) => {
   const jwtToken = jwt.sign({ 
     sub: id || user._id.toString(),
-    exp: Math.floor(Date.now() / 1000) + 5 
+    exp: Math.floor(Date.now() / 1000) + 3600 // 1 heure
   }, secret);
   return jwtToken;
 }
 
-exports.createJwtToken = createJwtToken;
-
 const checkExpirationToken = (token, res) => {
   const tokenExp = token.exp;
   const nowInSec = Math.floor(Date.now() / 1000);
+  console.log('Checking token expiration:', { tokenExp, nowInSec });
+
   if (nowInSec <= tokenExp) {
-    return token
-  } else if (nowInSec > tokenExp && ((nowInSec - tokenExp) < 60 * 60 * 24) ) {
+    return token;
+  } else if (nowInSec > tokenExp && ((nowInSec - tokenExp) < 60 * 60 * 24)) {
     const refreshedToken = createJwtToken({ id: token.sub });
     res.cookie('jwt', refreshedToken);
-    return jwt.verify(refreshedToken, secret)
+    console.log('Token refreshed:', refreshedToken);
+    return jwt.verify(refreshedToken, secret);
   } else {
-    console.log('token expiré l.25 jwt.config');
     throw new Error('token expired');
-    console.log();
-    
   }
 }
 
 const extractUserFromToken = async (req, res, next) => {
   const token = req.cookies.jwt;
+  console.log('Extracting user from token, cookie value:', token);
+
   if (token) {
     try {
-      let decodedToken = jwt.verify(token, secret, { ignoreExpiration: true });
-      decodedToken = checkExpirationToken(decodedToken, res);
-      const user = await findUserPerId(decodedToken.sub);
+      // Vérifiez et décodez le token
+      let decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Ne pas ignorer l'expiration
+      console.log('Decoded token:', decodedToken);
+
+      // Vérifiez si l'utilisateur existe
+      const user = await findUserPerId(decodedToken.id); // Utilisez 'id' si vous avez mis le champ id dans le token
+      console.log('User fetched from database:', user);
+
       if (user) {
-        console.log('User found:', user); // Log to check if user is found
-        req.user = user;
+        req.user = user; // Ajoutez l'utilisateur à la requête
         next();
       } else {
-        console.log('No user found, clearing JWT cookie');
+        console.log('User not found for ID:', decodedToken.id);
         res.clearCookie('jwt');
-        res.redirect('/');
+        return res.redirect('/'); // Utilisez 'return' pour arrêter l'exécution ici
       }
-    } catch(e) {
+    } catch (e) {
       console.error('Error during token verification:', e);
-      res.clearCookie('jwt');
-      res.redirect('/');
+      res.clearCookie('jwt'); // Supprimez le cookie en cas d'erreur
+      return res.redirect('/'); // Utilisez 'return' pour arrêter l'exécution ici
     }
   } else {
-    console.log('pas de token dans le cookie ');
-    next();
+    console.log('No token found, proceeding without user authentication.');
+    next(); // Si aucun token n'est trouvé, passez à la suite
   }
-}
+};
+
 
 const addJwtFeatures = (req, res, next) => {
+  console.log('Adding JWT features to request');
   req.isAuthenticated = () => !!req.user;
-  req.logout = () => res.clearCookie('jwt')
+  req.logout = () => res.clearCookie('jwt');
   req.login = (user) => {
     const token = createJwtToken({ user });
     res.cookie('jwt', token);
-  }
+  };
   next();
-}
+};
 
-if (app) {
-  app.use(extractUserFromToken);
-  app.use(addJwtFeatures);
-} else {
-  console.error('Express app instance is undefined');
-}
+
+module.exports = { extractUserFromToken, addJwtFeatures };

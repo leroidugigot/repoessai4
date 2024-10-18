@@ -1,25 +1,16 @@
 const {
-    signinForm,
-    signin,
-    signout,
-    googleAuth,
-    googleAuthCb,
-    sessionCreate, 
+  signinForm,
+  signin,
+  signout,
 
-  } = require('../controllers/auth.controller');
-  
+} = require('../controllers/auth.controller');
+
 const router = require('express').Router();
 
-router.post('/signin', sessionCreate);
-router.get('/signin/form', signinForm);
-router.post('/signin', signin);
-router.get('/signout', signout);
+// Routes pour l'authentification
 
-// Routes pour Google Auth
-router.get('/google', googleAuth);
-router.get('/google/cb', googleAuthCb);
-
-
-
+router.get('/signin/form', signinForm); // Affiche le formulaire de connexion
+router.post('/signin', signin); // Connexion de l'utilisateur via le formulaire
+router.get('/signout', signout); // Déconnexion de l'utilisateur, suppression du cookie JWT
 
 module.exports = router;

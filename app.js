@@ -19,8 +19,8 @@ exports.app = app;
 app.use(cookieParser());
 
 require("./config/jwt.config");
-require('./config/session.config');
-require('./config/passport.config');
+
+
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

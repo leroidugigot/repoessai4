@@ -10,27 +10,19 @@ exports.createUser = async (body) => {
         password: hashedPassword
       }
     });
-    return user.save();
+    const savedUser = await user.save();
+    console.log('User saved to database:', savedUser);
+    return savedUser;
   } catch(e) {
+    console.error('Error creating user:', e);
     throw e;
   }
 }
 
 exports.findUserPerEmail = (email) => {
-  console.log(User); // Vérifie si tu obtiens des utilisateurs
   return User.findOne({ 'local.email': email }).exec();
 }
 
 exports.findUserPerId = (id) => {
   return User.findOne({ _id: id }).exec();
 }
-
-exports.findUserPerGoogleId = (googleId) => {
-  return User.findOne({ 'local.googleId': googleId }).exec();
-}
-
-// Ajout de la fonction pour Yahoo
-exports.findUserPerYahooId = (yahooId) => {
-  return User.findOne({ 'local.yahooId': yahooId }).exec();
-}
-
