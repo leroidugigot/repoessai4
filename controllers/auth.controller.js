@@ -45,7 +45,7 @@ exports.signin = async (req, res, next) => {
   
       // Si l'authentification est réussie
       // Générer un token JWT avec les infos utilisateur
-      const token = jwt.sign({ id: user._id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign({ id: user._id, email: user.email }, 'a2463421-b798-470a-b4ee-fd23783ec69d', { expiresIn: '1h' });
   
       // Stocker le token JWT dans un cookie sécurisé (optionnel, sinon utiliser Authorization header)
       res.cookie('jwt', token, {
