@@ -13,6 +13,8 @@ router.use("/auth", authRoutes);
 // Route protégée, accessible uniquement aux utilisateurs authentifiés
 router.get("/protected", async (req, res) => {
   const user = req.user; // L'utilisateur est récupéré via le middleware `ensureAuthenticated`
+  console.log(user);
+  
  
       res.render("protected", { user}); // Envoie également la liste des utilisateurs à la vue
     } )

@@ -1,15 +1,19 @@
+const secret = 'a2463421-b798-470a-b4ee-fd23783ec69d';
 const jwt = require('jsonwebtoken');
 const { findUserPerId } = require('../queries/user.queries');
-
-const secret = process.env.JWT_SECRET; // Assurez-vous que ce secret est bien défini
+const { app } = require('../app');
 
 const createJwtToken = ({ user = null, id = null }) => {
-  const jwtToken = jwt.sign({ 
+  const jwtToken = jwt.sign({
     sub: id || user._id.toString(),
-    exp: Math.floor(Date.now() / 1000) + 3600 // 1 heure
+    exp: Math.floor(Date.now() / 1000) + 5 // Expiration après 5 secondes pour les tests
   }, secret);
+  
+  console.log('JWT token created:', jwtToken);
   return jwtToken;
 }
+
+exports.createJwtToken = createJwtToken;
 
 const checkExpirationToken = (token, res) => {
   const tokenExp = token.exp;
@@ -17,13 +21,16 @@ const checkExpirationToken = (token, res) => {
   console.log('Checking token expiration:', { tokenExp, nowInSec });
 
   if (nowInSec <= tokenExp) {
+    console.log('Token is valid:', token);
     return token;
   } else if (nowInSec > tokenExp && ((nowInSec - tokenExp) < 60 * 60 * 24)) {
+    console.log('Token expired, refreshing token...');
     const refreshedToken = createJwtToken({ id: token.sub });
     res.cookie('jwt', refreshedToken);
-    console.log('Token refreshed:', refreshedToken);
+    console.log('Refreshed token created and stored in cookie:', refreshedToken);
     return jwt.verify(refreshedToken, secret);
   } else {
+    console.error('Token expired and cannot be refreshed:', token);
     throw new Error('token expired');
   }
 }
@@ -34,44 +41,58 @@ const extractUserFromToken = async (req, res, next) => {
 
   if (token) {
     try {
-      // Vérifiez et décodez le token
-      let decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Ne pas ignorer l'expiration
+      console.log('Verifying token...');
+      let decodedToken = jwt.verify(token, secret, { ignoreExpiration: true });
       console.log('Decoded token:', decodedToken);
 
-      // Vérifiez si l'utilisateur existe
-      const user = await findUserPerId(decodedToken.id); // Utilisez 'id' si vous avez mis le champ id dans le token
+      decodedToken = checkExpirationToken(decodedToken, res);
+      const user = await findUserPerId(decodedToken.sub);
       console.log('User fetched from database:', user);
 
       if (user) {
-        req.user = user; // Ajoutez l'utilisateur à la requête
+        req.user = user;
+        console.log('User authenticated successfully:', user);
         next();
       } else {
-        console.log('User not found for ID:', decodedToken.id);
+        console.warn('User not found for ID:', decodedToken.sub);
         res.clearCookie('jwt');
-        return res.redirect('/'); // Utilisez 'return' pour arrêter l'exécution ici
+        res.redirect('/');
       }
     } catch (e) {
       console.error('Error during token verification:', e);
-      res.clearCookie('jwt'); // Supprimez le cookie en cas d'erreur
-      return res.redirect('/'); // Utilisez 'return' pour arrêter l'exécution ici
+      res.clearCookie('jwt');
+      res.redirect('/');
     }
   } else {
     console.log('No token found, proceeding without user authentication.');
-    next(); // Si aucun token n'est trouvé, passez à la suite
+    next();
   }
-};
-
+}
 
 const addJwtFeatures = (req, res, next) => {
-  console.log('Adding JWT features to request');
-  req.isAuthenticated = () => !!req.user;
-  req.logout = () => res.clearCookie('jwt');
+  console.log('Adding JWT features to request...');
+  
+  req.isAuthenticated = () => {
+    const isAuth = !!req.user;
+    console.log('Is user authenticated?', isAuth);
+    return isAuth;
+  };
+
+  req.logout = () => {
+    console.log('Logging out user, clearing JWT cookie...');
+    res.clearCookie('jwt');
+  };
+
   req.login = (user) => {
+    console.log('Logging in user:', user);
     const token = createJwtToken({ user });
     res.cookie('jwt', token);
+    console.log('User logged in, JWT stored in cookie:', token);
   };
+
   next();
-};
+}
 
-
-module.exports = { extractUserFromToken, addJwtFeatures };
+// Middleware application
+app.use(extractUserFromToken);
+app.use(addJwtFeatures);
