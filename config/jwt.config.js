@@ -1,7 +1,7 @@
 const secret = 'a2463421-b798-470a-b4ee-fd23783ec69d';
 const jwt = require('jsonwebtoken');
 const { findUserPerId } = require('../queries/user.queries');
-const { app } = require('../app');
+const app = require('../app');
 
 const createJwtToken = ({ user = null, id = null }) => {
   const jwtToken = jwt.sign({
@@ -93,6 +93,6 @@ const addJwtFeatures = (req, res, next) => {
   next();
 }
 
-// Middleware application
-app.use(extractUserFromToken);
-app.use(addJwtFeatures);
+
+
+module.exports = { createJwtToken, checkExpirationToken, extractUserFromToken, addJwtFeatures };

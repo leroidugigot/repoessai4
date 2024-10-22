@@ -6,21 +6,15 @@ const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("errorhandler");
 require("dotenv").config();
+const { extractUserFromToken, addJwtFeatures } = require('./config/jwt.config'); // Importer les fonctions
 
-
-const app = express();
-
-exports.app = app;
-/*app.use((req, res, next) => {
-  const imagePath = path.join(__dirname, 'public', 'images', 'enconstruction.jpg');
-  res.sendFile(imagePath);
-});*/
+const app = express(); // Crée l'application Express
 
 app.use(cookieParser());
-
-require("./config/jwt.config");
-
-
+require('./config/passport.config');
+require("./config/jwt.config"); // Passe app à la configuration JWT
+app.use(extractUserFromToken);
+app.use(addJwtFeatures);
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -38,6 +32,7 @@ app.use(
     },
   })
 );
+
 app.use(
   express.static(path.join(__dirname, "public"), {
     setHeaders: (res, path, stat) => {
@@ -47,9 +42,10 @@ app.use(
     },
   })
 );
-app.use( express.static(path.join(__dirname, 'public/javascripts')));
+
+app.use(express.static(path.join(__dirname, 'public/javascripts')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); /*?????{ extended: true }*/
+app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
 
@@ -65,4 +61,4 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-module.exports = app; 
+module.exports = app; // Exporte l'application
