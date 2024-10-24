@@ -25,9 +25,7 @@
         .div10 { grid-area: 11 / 11 / 13 / 13; }
         .div11 { grid-area: 12 / 3 / 13 / 11; }
         .div12 { grid-area: 2 / 3 / 12 / 11; }
-    </style>
 
-    <style>
         /* Masquer les barres de défilement */
         body::-webkit-scrollbar,
         #mainContent::-webkit-scrollbar,
@@ -67,11 +65,14 @@
             <%- include('partials/navbar') %>
         </div>
 
-    <!-- Div3 - Logbar -->
-    <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
-        <%- include('partials/logbar', { user }) %>
-    </div>
-
+        <!-- Div3 - Logbar -->
+        <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
+            <%- include('partials/logbar', { user }) %>
+            <!-- Bouton pour masquer les divs -->
+            <button id="toggleButton" class="ml-2 text-white bg-blue-500 p-2 rounded">
+                &#x1F5D8; <!-- Icône (une croix) -->
+            </button>
+        </div>
 
         <!-- Div4 - Navbar Hidden -->
         <div id="navbarHidden" class="div4 z-50 border border-gray-700 h-full">
@@ -114,14 +115,57 @@
         </div>
 
         <!-- Div12 - Main Content -->
-        <div id="mainContent" class="div12 bg-gray-800 border border-gray-700 overflow-y-auto h-full">
+        <div id="mainContent" class="div12 border border-gray-700 overflow-y-auto h-full">
             <%- include('partials/contenus') %>
         </div>
     </div>
 
-
-
     <script>
+        // Script pour contrôler la visibilité des divs 5 à 10
+        let areDivsHidden = false;
+
+        document.getElementById('toggleButton').addEventListener('click', () => {
+            const divsToToggle = [
+                document.querySelector('.div5'), 
+                document.querySelector('.div6'), 
+                document.querySelector('.div7'), 
+                document.querySelector('.div8'), 
+                document.querySelector('.div9'), 
+                document.querySelector('.div10')
+            ];
+
+            areDivsHidden = !areDivsHidden;
+
+            divsToToggle.forEach(div => {
+                if (areDivsHidden) {
+                    div.style.display = 'none'; // Masquer les divs
+                } else {
+                    div.style.display = 'block'; // Réafficher les divs
+                }
+            });
+
+            // Ajustement des divs restantes
+            const hiddenBar = document.getElementById('navbarHidden');
+            const mainContent = document.getElementById('mainContent');
+            const inputGptDiv = document.querySelector('.div11');
+
+            if (areDivsHidden) {
+                hiddenBar.style.gridColumnStart = '1';
+                hiddenBar.style.gridColumnEnd = '13'; // Prendre toute la largeur
+                mainContent.style.gridColumnStart = '1';
+                mainContent.style.gridColumnEnd = '13'; // Prendre toute la largeur
+                inputGptDiv.style.gridColumnStart = '1';
+                inputGptDiv.style.gridColumnEnd = '13'; // Prendre toute la largeur
+            } else {
+                hiddenBar.style.gridColumnStart = '3';
+                hiddenBar.style.gridColumnEnd = '11'; // Rétablir l'état
+                mainContent.style.gridColumnStart = '3';
+                mainContent.style.gridColumnEnd = '11'; // Rétablir l'état
+                inputGptDiv.style.gridColumnStart = '3';
+                inputGptDiv.style.gridColumnEnd = '11'; // Rétablir l'état
+            }
+        });
+
         // Script modifié pour contrôler la visibilité de navbarHidden
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbarHidden');
@@ -141,8 +185,5 @@
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, false);
     </script>
-
-    
-
 </body>
 </html>

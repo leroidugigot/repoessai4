@@ -1,60 +1,341 @@
-<div class="bg-gray-900 text-white p-6 rounded-lg shadow-md pt-16">
-    <h2 class="text-2xl font-semibold mb-4">Contenu Principal</h2>
-    <p class="mb-4">Bienvenue dans la section de contenu. Voici les détails importants, les cours disponibles, et les ressources utiles :</p>
-    
-    <div class="space-y-6">
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+<!DOCTYPE html>
+<html lang="fr">
 
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sommaire de la Formation PSE1</title>
 
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+  <style>
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
 
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
 
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
 
-        <article class="p-4 bg-gray-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-bold">Titre de l'article ou du cours</h3>
-            <p class="mt-2 text-gray-300">Un bref aperçu ou une description de ce que l'utilisateur peut s'attendre à trouver ici. Cela pourrait inclure des informations sur les sujets couverts, les compétences acquises, ou des conseils pratiques.</p>
-            <a href="#" class="text-blue-400 hover:underline">Lire plus</a>
-        </article>
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      animation: modalFadeIn 0.3s ease-in-out;
+    }
 
-        <!-- Ajoutez d'autres articles ou sections de contenu selon vos besoins -->
+    @keyframes modalFadeIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .completed-module {
+      background-color: #38a169;
+      color: #fff;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.25rem;
+      margin-left: 0.5rem;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .completed-chapter::after {
+      content: '';
+      font-family: "Font Awesome 5 Free";
+      display: inline-block;
+      font-weight: 900;
+      content: '\f00c'; /* Font Awesome checkmark icon */
+      color: #38a169;
+      font-size: 1.5rem;
+      margin-left: 0.5rem;
+    }
+
+    .see-details {
+      color: #4299e1;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-left: 0.5rem;
+    }
+
+    .see-details:hover {
+      color: #2b6cb0;
+    }
+
+    .module-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .module-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Custom icon for list items */
+    .module-item i {
+      margin-right: 0.5rem;
+      color: #4a5568;
+    }
+
+    .animated-btn:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-r from-blue-50 to-blue-100 text-gray-800 font-sans antialiased">
+
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-10">
+    <div class="container mx-auto text-center">
+      <h1 class="text-4xl font-bold">Formation PSE1</h1>
+      <p class="mt-2 text-lg">Premiers Secours en Équipe de niveau 1</p>
     </div>
-</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto py-12 px-6 md:px-12">
+    <!-- Description -->
+    <section class="mb-12 text-center">
+      <h2 class="text-3xl font-semibold text-blue-800 mb-4">À propos de la formation</h2>
+      <p class="text-lg text-gray-700 leading-relaxed">
+        La formation **PSE1** permet d'acquérir les compétences nécessaires pour intervenir en équipe dans des situations
+        d'urgence. Vous apprendrez à évaluer des victimes, à gérer les détresses vitales et à administrer les premiers
+        secours en équipe.
+      </p>
+    </section>
+
+    <!-- Tabs for Chapters -->
+    <section>
+      <div class="border-b-2 border-gray-300 mb-8">
+        <ul class="flex justify-center space-x-4">
+          <li>
+            <button class="tab-link animated-btn text-lg font-semibold py-2 px-4 text-blue-700 focus:outline-none" data-tab="1">
+              Rôle du Secouriste <span class="completed-chapter"></span>
+            </button>
+          </li>
+          <li>
+            <button class="tab-link animated-btn text-lg font-semibold py-2 px-4 text-blue-700 focus:outline-none" data-tab="2">
+              Évaluation & Victime
+            </button>
+          </li>
+          <li>
+            <button class="tab-link animated-btn text-lg font-semibold py-2 px-4 text-blue-700 focus:outline-none" data-tab="3">
+              Urgences Vitales
+            </button>
+          </li>
+          <li>
+            <button class="tab-link animated-btn text-lg font-semibold py-2 px-4 text-blue-700 focus:outline-none" data-tab="4">
+              Voies Respiratoires
+            </button>
+          </li>
+          <li>
+            <button class="tab-link animated-btn text-lg font-semibold py-2 px-4 text-blue-700 focus:outline-none" data-tab="5">
+              Traumatismes
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab Content for Chapters -->
+      <div class="tab-content fade-in" id="tab-1">
+        <h3 class="text-2xl font-semibold text-blue-800 mb-4">Introduction au rôle du secouriste</h3>
+        <p class="text-gray-700 mb-4">
+          Ce chapitre regroupe les modules liés à la posture, aux attitudes mentales et comportementales du secouriste, ainsi que son rôle dans la société.
+        </p>
+        <ul class="leading-relaxed text-gray-700">
+          <li class="module-item">
+            <span>
+              <i class="fas fa-user-shield"></i> Le citoyen de Sécurité Civile
+            </span>
+            <span class="completed-module">Réussi</span>
+          </li>
+          <li class="module-item">
+            <span>
+              <i class="fas fa-balance-scale"></i> Enjeux et principes
+            </span>
+            <span><i class="fas fa-eye see-details" data-modal="modal1"></i></span>
+          </li>
+          <li class="module-item">
+            <span>
+              <i class="fas fa-hands-helping"></i> Attitude et comportement du secouriste
+            </span>
+            <span><i class="fas fa-eye see-details" data-modal="modal1"></i></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content fade-in" id="tab-2">
+        <h3 class="text-2xl font-semibold text-blue-800 mb-4">Évaluation et surveillance de la victime</h3>
+        <p class="text-gray-700 mb-4">
+          Ce chapitre comprend les modules relatifs à la prise en charge initiale, l'évaluation des fonctions vitales, la transmission des bilans et la surveillance continue de la victime.
+        </p>
+        <ul class="leading-relaxed text-gray-700">
+          <li class="module-item">
+            <span>
+              <i class="fas fa-heartbeat"></i> Générales sur les bilans
+            </span>
+            <span><i class="fas fa-eye see-details" data-modal="modal2"></i></span>
+          </li>
+          <li class="module-item">
+            <span>
+              <i class="fas fa-eye"></i> Premier regard
+            </span>
+            <span><i class="fas fa-eye see-details" data-modal="modal2"></i></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content fade-in" id="tab-3">
+        <h3 class="text-2xl font-semibold text-blue-800 mb-4">Urgences Vitales</h3>
+        <p class="text-gray-700 mb-4">
+          Ce chapitre regroupe les modules liés aux urgences vitales, comme l'arrêt cardiaque, les détresses vitales (circulatoires, neurologiques, respiratoires) et la gestion des hémorragies.
+        </p>
+        <ul class="leading-relaxed text-gray-700">
+          <li class="module-item">
+            <span>
+              <i class="fas fa-heart"></i> Arrêt cardiaque
+            </span>
+            <span class="completed-module">Réussi</span>
+          </li>
+          <li class="module-item">
+            <span>
+              <i class="fas fa-medkit"></i> Gestion des hémorragies
+            </span>
+            <span><i class="fas fa-eye see-details" data-modal="modal3"></i></span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Modals for each chapter -->
+      <div id="modal1" class="modal">
+        <div class="modal-content">
+          <span class="close-btn" data-close="modal1">&times;</span>
+          <h3 class="text-xl font-semibold text-blue-800 mb-2">Détails du Module 1</h3>
+          <p>Le citoyen de Sécurité Civile : comprendre et intégrer son rôle dans la communauté.</p>
+          <p>Durée : 30 minutes</p>
+          <p>Objectifs : Appréhender les responsabilités du citoyen.</p>
+        </div>
+      </div>
+
+      <div id="modal2" class="modal">
+        <div class="modal-content">
+          <span class="close-btn" data-close="modal2">&times;</span>
+          <h3 class="text-xl font-semibold text-blue-800 mb-2">Détails du Module 2</h3>
+          <p>Premier regard : savoir évaluer rapidement l'état d'une victime.</p>
+          <p>Durée : 20 minutes</p>
+          <p>Objectifs : Développer des compétences d'évaluation rapide.</p>
+        </div>
+      </div>
+
+      <div id="modal3" class="modal">
+        <div class="modal-content">
+          <span class="close-btn" data-close="modal3">&times;</span>
+          <h3 class="text-xl font-semibold text-blue-800 mb-2">Détails du Module 3</h3>
+          <p>Arrêt cardiaque : maîtriser les techniques de réanimation.</p>
+          <p>Durée : 40 minutes</p>
+          <p>Objectifs : Sauver des vies en situation d'arrêt cardiaque.</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+
+  <script>
+    // Tab Navigation
+    const tabs = document.querySelectorAll('.tab-link');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.getAttribute('data-tab');
+
+        tabs.forEach(t => t.classList.remove('text-blue-900', 'underline'));
+        contents.forEach(content => content.classList.remove('active'));
+
+        tab.classList.add('text-blue-900', 'underline');
+        document.getElementById(`tab-${targetTab}`).classList.add('active');
+      });
+    });
+
+    // Set first tab as active on load
+    document.querySelector('.tab-link').classList.add('text-blue-900', 'underline');
+    document.querySelector('.tab-content').classList.add('active');
+
+    // Modal functionality
+    const buttons = document.querySelectorAll('.see-details');
+    const modals = document.querySelectorAll('.modal');
+    const closeButtons = document.querySelectorAll('.close-btn');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetModal = document.getElementById(button.getAttribute('data-modal'));
+        targetModal.style.display = 'block';
+      });
+    });
+
+    closeButtons.forEach(close => {
+      close.addEventListener('click', () => {
+        const targetModal = document.getElementById(close.getAttribute('data-close'));
+        targetModal.style.display = 'none';
+      });
+    });
+
+    window.addEventListener('click', (event) => {
+      modals.forEach(modal => {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
