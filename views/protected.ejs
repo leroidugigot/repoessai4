@@ -146,64 +146,85 @@
     </div>
 
     <script>
-        // Gestion de l'affichage de `div11` (gptInput) et `div12` (mainContent)
-        document.getElementById('gptButton').addEventListener('click', function () {
-            const gptInput = document.getElementById('gptInput');
-            const mainContent = document.getElementById('mainContent');
-    
-            // Alterner la visibilité entre div11 et div12
-            mainContent.classList.toggle('hidden');
-            gptInput.classList.toggle('hidden');
-    
-            // Agrandir la div affichée
-            if (gptInput.classList.contains('hidden')) {
-                mainContent.classList.toggle('full-width', !mainContent.classList.contains('hidden'));
-            } else {
-                gptInput.classList.toggle('full-width', !gptInput.classList.contains('hidden'));
-            }
-        });
-    
-        // Script modifié pour contrôler la visibilité de navbarHidden
-        let lastScrollTop = 0;
         const navbar = document.getElementById('navbarHidden');
         const mainContent = document.getElementById('mainContent');
-    
+        const gptInput = document.getElementById('gptInput');
+        let lastScrollTop = 0;
+        let divsHidden = false;
+
+        // Gestion du bouton GPT
+        document.getElementById('gptButton').addEventListener('click', function() {
+            // Basculer entre gptInput et mainContent
+            mainContent.classList.toggle('hidden');
+            gptInput.classList.toggle('hidden');
+            
+            // Si on active le mode GPT
+            if (!gptInput.classList.contains('hidden')) {
+                // Restaurer les divs latérales
+                const divsToShow = ['div5', 'div6', 'div7', 'div8', 'div9', 'div10'];
+                divsToShow.forEach(divId => {
+                    const div = document.getElementById(divId);
+                    if (div) {
+                        div.classList.remove('hidden');
+                    }
+                });
+                
+                // Retirer les classes full-width
+                navbar.classList.remove('full-width');
+                mainContent.classList.remove('full-width');
+                divsHidden = false;
+            }
+        });
+
+        // Gestion du défilement pour navbar
         function handleScroll() {
             let scrollTop = mainContent.scrollTop;
             if (scrollTop > lastScrollTop) {
-                // Défilement vers le bas : masquer `navbarHidden`
                 navbar.classList.add('hidden');
             } else {
-                // Défilement vers le haut : afficher `navbarHidden`
                 navbar.classList.remove('hidden');
             }
             lastScrollTop = scrollTop;
         }
-    
-        // Attacher l'événement de défilement
+
         mainContent.addEventListener('scroll', handleScroll);
-    
-        // Gestion du bouton toggleButton
-        document.getElementById('toggleButton').addEventListener('click', function () {
+
+        // Gestion du bouton toggle pour les divs latérales
+        document.getElementById('toggleButton').addEventListener('click', function() {
+            // Ne rien faire si on est en mode GPT
+            if (!gptInput.classList.contains('hidden')) {
+                return;
+            }
+
             const divsToHide = ['div5', 'div6', 'div7', 'div8', 'div9', 'div10'];
-            const gptInput = document.getElementById('gptInput');
-    
-            // Masquer les divs 5 à 10
-            divsToHide.forEach(divId => {
-                const div = document.getElementById(divId);
-                if (div) {
-                    div.classList.toggle('hidden');
-                }
-            });
-    
-            // Agrandir les divs 4 et 12 (ou 11)
-            const allHidden = divsToHide.every(divId => document.getElementById(divId).classList.contains('hidden'));
-            navbar.classList.toggle('full-width', allHidden);
-            mainContent.classList.toggle('full-width', allHidden);
-            gptInput.classList.toggle('full-width', allHidden);
-    
-            // Afficher ou masquer le bouton GPT
-            document.getElementById('gptButton').classList.toggle('visible', allHidden);
+            
+            if (!divsHidden) {
+                // Masquer les divs
+                divsToHide.forEach(divId => {
+                    const div = document.getElementById(divId);
+                    if (div) {
+                        div.classList.add('hidden');
+                    }
+                });
+                
+                navbar.classList.add('full-width');
+                mainContent.classList.add('full-width');
+                document.getElementById('gptButton').classList.add('visible');
+                divsHidden = true;
+            } else {
+                // Restaurer les divs
+                divsToHide.forEach(divId => {
+                    const div = document.getElementById(divId);
+                    if (div) {
+                        div.classList.remove('hidden');
+                    }
+                });
+                
+                navbar.classList.remove('full-width');
+                mainContent.classList.remove('full-width');
+                document.getElementById('gptButton').classList.remove('visible');
+                divsHidden = false;
+            }
         });
     </script>
     
