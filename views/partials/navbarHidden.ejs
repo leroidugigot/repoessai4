@@ -33,11 +33,14 @@
                     </svg>
                     <span class="font-semibold text-lg z-10">Suivant</span>
                 </a>               
-                <button id="gptButton" class="bg-blue-500 text-white p-4 rounded-full">
-                    GPT
-                </button>
-                <button id="toggleButton" class="ml-2 text-white text-3xl p-2 rounded">
-                    <i class="fa-regular fa-eye"></i> <!-- Nouvelle icône oeil -->
+<!-- Bouton GPT avec icône de bascule -->
+                <div id="gptButton" class="cursor-pointer flex items-center justify-center hover:scale-125 relative rounded-lg shadow-md">
+                    <i id="gptIconActive" class="fa-solid fa-graduation-cap text-white hidden hover:scale-125 relative rounded-lg shadow-md"></i>
+                    <i id="gptIconInactive" class="fa-solid fa-rocket text-white"></i>
+                </div>
+
+                <button id="toggleButton" class="ml-2 text-white text-2xl hover:scale-125 relative rounded-lg shadow-md ">
+                    <i class="fa-solid fa-down-left-and-up-right-to-center"></i> <!-- Nouvelle icône oeil -->
                 </button>
 
             </div>

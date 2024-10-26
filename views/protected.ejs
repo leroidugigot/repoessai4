@@ -67,7 +67,7 @@
     border-radius: 50%;
     font-size: 18px;
     cursor: pointer;
-    background-color: #3b82f6;
+
 }
 
 
@@ -154,27 +154,31 @@
 
         // Gestion du bouton GPT
         document.getElementById('gptButton').addEventListener('click', function() {
-            // Basculer entre gptInput et mainContent
-            mainContent.classList.toggle('hidden');
-            gptInput.classList.toggle('hidden');
-            
-            // Si on active le mode GPT
-            if (!gptInput.classList.contains('hidden')) {
-                // Restaurer les divs latérales
-                const divsToShow = ['div5', 'div6', 'div7', 'div8', 'div9', 'div10'];
-                divsToShow.forEach(divId => {
-                    const div = document.getElementById(divId);
-                    if (div) {
-                        div.classList.remove('hidden');
-                    }
-                });
-                
-                // Retirer les classes full-width
-                navbar.classList.remove('full-width');
-                mainContent.classList.remove('full-width');
-                divsHidden = false;
+    // Basculer entre gptInput et mainContent
+    mainContent.classList.toggle('hidden');
+    gptInput.classList.toggle('hidden');
+    
+    // Basculer les icônes du bouton
+    document.getElementById('gptIconActive').classList.toggle('hidden');
+    document.getElementById('gptIconInactive').classList.toggle('hidden');
+    
+    // Si GPT est activé (affiche gptInput)
+    if (!gptInput.classList.contains('hidden')) {
+        // Restaurer les divs latérales
+        const divsToShow = ['div5', 'div6', 'div7', 'div8', 'div9', 'div10'];
+        divsToShow.forEach(divId => {
+            const div = document.getElementById(divId);
+            if (div) {
+                div.classList.remove('hidden');
             }
         });
+        
+        // Retirer les classes full-width
+        navbar.classList.remove('full-width');
+        mainContent.classList.remove('full-width');
+        divsHidden = false;
+    }
+});
 
         // Gestion du défilement pour navbar
         function handleScroll() {
