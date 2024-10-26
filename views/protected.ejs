@@ -15,7 +15,16 @@
             grid-column-gap: 0px;
             grid-row-gap: 0px;
         }
-
+        .div-parent-left {
+            background-image: url('/public/images/img/bgleft.png'); /* Chemin vers votre image */
+            background-size: cover; /* Pour couvrir tout l’espace */
+            background-position: center;
+        }
+        .div-parent-right {
+            background-image: url('/public/images/img/bgright.png'); /* Chemin vers la seconde image */
+            background-size: cover; /* Pour couvrir tout l’espace */
+            background-position: center;
+        }
         .div1 { grid-area: 1 / 1 / 2 / 3; }
         .div2 { grid-area: 1 / 3 / 2 / 9; }
         .div3 { grid-area: 1 / 9 / 2 / 13; }
@@ -37,7 +46,9 @@
 
         body {
             scrollbar-width: none;
+            
         }
+        
 
         .hidden {
             display: none;
@@ -61,20 +72,18 @@
         }
 
         #gptButton {
-    position: relative;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-
-}
-
+            position: relative;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 100; /* Assurez-vous qu'il est au-dessus des autres éléments */
+        }
 
         #gptButton.visible {
             display: block;
         }
-
         
     </style>
 </head>
@@ -94,44 +103,47 @@
         <!-- Div3 - Logbar -->
         <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
             <%- include('partials/logbar', { user }) %>
-            <!-- Bouton pour masquer les divs -->
-
         </div>
 
         <!-- Div4 - Navbar Hidden -->
         <div id="navbarHidden" class="div4 z-50 border border-gray-700 h-full">
             <%- include('partials/navbarHidden') %>
-
         </div>
 
-        <!-- Div5 - Lesson Online -->
-        <div id="div5" class="div5 bg-gray-800 border border-gray-700 h-full">
-            <%- include('partials/lessonOnLine') %>
+        <!-- Div5, Div6, Div7 encapsulés dans une div parent avec l'image de fond -->
+        <div id="div-parent-left" class="div-parent-left bg-cover bg-center border border-gray-700 h-full" style="grid-area: 2 / 1 / 13 / 3;">
+            <!-- Div5 - Lesson Online -->
+            <div id="div5" class="h-20 bg-transparent">
+                <%- include('partials/lessonOnLine') %>
+            </div>
+
+            <!-- Div6 - Chapter List -->
+            <div id="div6" class="h-96 bg-transparent">
+                <%- include('partials/chapterList') %>
+            </div>
+
+            <!-- Div7 - Dashboard -->
+            <div id="div7" class="h-20 bg-transparent">
+                <%- include('partials/dashboarddiv') %>
+            </div>
         </div>
 
-        <!-- Div6 - Chapter List -->
-        <div id="div6" class="div6 bg-gray-800 border border-gray-700 h-full">
-            <%- include('partials/chapterList') %>
-        </div>
+        <!-- Div8, Div9, Div10 encapsulés dans une div parent avec l'image de fond -->
+        <div id="div-parent-right" class="div-parent-right bg-cover bg-center border border-gray-700 h-full" style="grid-area: 2 / 11 / 13 / 13;">
+            <!-- Div8 - Connected Users -->
+            <div id="div8" class="h-96 bg-transparent">
+                <%- include('partials/connectedList') %>
+            </div>
 
-        <!-- Div7 - Dashboard -->
-        <div id="div7" class="div7 bg-gray-800 border border-gray-700 h-full">
-            <%- include('partials/dashboarddiv') %>
-        </div>
+            <!-- Div9 - Referentials -->
+            <div id="div9" class="h-20 bg-transparent">
+                <%- include('partials/referentiels') %>
+            </div>
 
-        <!-- Div8 - Connected Users -->
-        <div id="div8" class="div8 bg-gray-800 border border-gray-700 h-full">
-            <%- include('partials/connectedList') %>
-        </div>
-
-        <!-- Div9 - Referentials -->
-        <div id="div9" class="div9 bg-gray-800 border border-gray-700 h-full">
-            <%- include('partials/referentiels') %>
-        </div>
-
-        <!-- Div10 - Contact -->
-        <div id="div10" class="div10 bg-gray-800 border border-gray-700 h-full relative">
-            <%- include('partials/contact') %>
+            <!-- Div10 - Contact -->
+            <div id="div10" class="h-20 bg-transparent relative">
+                <%- include('partials/contact') %>
+            </div>
         </div>
 
         <!-- Div11 - Input GPT -->
@@ -145,6 +157,15 @@
         </div>  
     </div>
 
+    <button id="gptButton" class="absolute bottom-10 right-10 visible">
+        <i id="gptIconInactive" class="fas fa-comment-dots"></i>
+        <i id="gptIconActive" class="fas fa-comment-slash hidden"></i>
+    </button>
+
+    <button id="toggleButton" class="absolute top-10 right-10">
+        Toggle Divs
+    </button>
+
     <script>
         const navbar = document.getElementById('navbarHidden');
         const mainContent = document.getElementById('mainContent');
@@ -154,31 +175,31 @@
 
         // Gestion du bouton GPT
         document.getElementById('gptButton').addEventListener('click', function() {
-    // Basculer entre gptInput et mainContent
-    mainContent.classList.toggle('hidden');
-    gptInput.classList.toggle('hidden');
-    
-    // Basculer les icônes du bouton
-    document.getElementById('gptIconActive').classList.toggle('hidden');
-    document.getElementById('gptIconInactive').classList.toggle('hidden');
-    
-    // Si GPT est activé (affiche gptInput)
-    if (!gptInput.classList.contains('hidden')) {
-        // Restaurer les divs latérales
-        const divsToShow = ['div5', 'div6', 'div7', 'div8', 'div9', 'div10'];
-        divsToShow.forEach(divId => {
-            const div = document.getElementById(divId);
-            if (div) {
-                div.classList.remove('hidden');
+            // Basculer entre gptInput et mainContent
+            mainContent.classList.toggle('hidden');
+            gptInput.classList.toggle('hidden');
+            
+            // Basculer les icônes du bouton
+            document.getElementById('gptIconActive').classList.toggle('hidden');
+            document.getElementById('gptIconInactive').classList.toggle('hidden');
+            
+            // Si GPT est activé (affiche gptInput)
+            if (!gptInput.classList.contains('hidden')) {
+                // Restaurer les divs latérales
+                const divsToShow = ['div-parent-left', 'div-parent-right'];
+                divsToShow.forEach(divId => {
+                    const div = document.getElementById(divId);
+                    if (div) {
+                        div.classList.remove('hidden');
+                    }
+                });
+                
+                // Retirer les classes full-width
+                navbar.classList.remove('full-width');
+                mainContent.classList.remove('full-width');
+                divsHidden = false;
             }
         });
-        
-        // Retirer les classes full-width
-        navbar.classList.remove('full-width');
-        mainContent.classList.remove('full-width');
-        divsHidden = false;
-    }
-});
 
         // Gestion du défilement pour navbar
         function handleScroll() {
@@ -200,7 +221,7 @@
                 return;
             }
 
-            const divsToHide = ['div5', 'div6', 'div7', 'div8', 'div9', 'div10'];
+            const divsToHide = ['div-parent-left', 'div-parent-right'];
             
             if (!divsHidden) {
                 // Masquer les divs
@@ -210,27 +231,28 @@
                         div.classList.add('hidden');
                     }
                 });
-                
-                navbar.classList.add('full-width');
+
+                // Élargir la div principale
                 mainContent.classList.add('full-width');
-                document.getElementById('gptButton').classList.add('visible');
+                navbar.classList.add('full-width');
+
                 divsHidden = true;
             } else {
-                // Restaurer les divs
+                // Afficher les divs
                 divsToHide.forEach(divId => {
                     const div = document.getElementById(divId);
                     if (div) {
                         div.classList.remove('hidden');
                     }
                 });
-                
-                navbar.classList.remove('full-width');
+
+                // Réduire la div principale
                 mainContent.classList.remove('full-width');
-                document.getElementById('gptButton').classList.remove('visible');
+                navbar.classList.remove('full-width');
+
                 divsHidden = false;
             }
         });
     </script>
-    
 </body>
 </html>
