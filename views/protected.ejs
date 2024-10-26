@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
         .parent {
             display: grid;
             grid-template-columns: repeat(2, 0.75fr) repeat(8, 1fr) repeat(2, 0.75fr);
@@ -44,9 +49,11 @@
             display: none;
         }
 
-        body {
-            scrollbar-width: none;
-            
+        html,body {
+            overflow: hidden; /* Empêche le défilement de la page */
+            scrollbar-width: none; /* Pour Firefox */
+            height: 100%;
+            margin: 0;
         }
         
 
