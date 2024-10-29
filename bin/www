@@ -17,8 +17,7 @@ const httpServer = http
   })
   .listen(env.portHttp);
 
-  console.log(env.key); // Vérifiez que la clé est correcte
-console.log(env.cert); // Vérifiez que le certificat est correct
+
 
 const httpsServer = https
   .createServer(

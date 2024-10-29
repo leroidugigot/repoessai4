@@ -21,10 +21,9 @@ exports.signin = async (req, res, next) => {
     } else {
       res.render('signin', { error: 'User not found' });
     }
-  } catch(e) {
+  } catch (e) {
     next(e);
   }
-
 }
 
 exports.googleAuth = (req, res, next) => {
@@ -37,7 +36,6 @@ exports.googleAuth = (req, res, next) => {
 exports.googleAuthCb = (req, res, next) => {
   passport.authenticate('google', { session: false }, async (err, user, info) => {
     if (err || !user) {
-      console.error('Error during Google authentication:', err);
       return res.redirect('/'); // Redirection en cas d'erreur
     }
 
@@ -46,20 +44,12 @@ exports.googleAuthCb = (req, res, next) => {
       const token = createJwtToken({ user });
       // Stocke le token JWT dans un cookie
       res.cookie('jwt', token, { httpOnly: true });
-      console.log('JWT token generated for Google user:', token);
       res.redirect('/protected'); // Redirection vers la page protégée
     } catch (error) {
-      console.error('Error while creating JWT token:', error);
       res.redirect('/'); // Redirection en cas d'erreur lors de la création du token
     }
   })(req, res, next);
 };
-
-
-
-
-
-
 
 exports.signout = (req, res, next) => {
   req.logout();
