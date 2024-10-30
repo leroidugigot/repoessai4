@@ -25,7 +25,7 @@ router.get("/protected", ensureAuthenticated, async (req, res) => {
         console.log("Utilisateur:", user);
         console.log("Formations:", formations);
         
-        res.render("protected", { user, formations });
+        res.render("protected", { user, formations,module });
     } catch (error) {
         console.error("Erreur lors de la récupération des formations:", error);
         res.status(500).send("Erreur lors de la récupération des formations");
