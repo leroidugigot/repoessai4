@@ -14,7 +14,7 @@ exports.signin = async (req, res, next) => {
       const match = await user.comparePassword(password);
       if (match) {
         req.login(user);
-        res.redirect('/protected');
+        res.redirect('/formations/protected');
       } else {
         res.render('signin', { error: 'Wrong password' });
       }
@@ -44,7 +44,7 @@ exports.googleAuthCb = (req, res, next) => {
       const token = createJwtToken({ user });
       // Stocke le token JWT dans un cookie
       res.cookie('jwt', token, { httpOnly: true });
-      res.redirect('/protected'); // Redirection vers la page protégée
+      res.redirect('/formations/protected'); // Redirection vers la page protégée
     } catch (error) {
       res.redirect('/'); // Redirection en cas d'erreur lors de la création du token
     }
