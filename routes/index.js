@@ -4,9 +4,9 @@ const userRoutes = require("./user.routes");
 const authRoutes = require("./auth.routes");
 const formationRoutes = require("./formation.routes");
 const router = require("express").Router();
-const { ensureAuthenticated } = require("../config/security.config");
+
 const User = require("../database/models/user.model");
-const Formation = require('../database/models/formation.model'); // Chemin vers votre modèle Formation
+
 
 require("dotenv").config();
 
@@ -15,19 +15,8 @@ router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
 router.use("/formations", formationRoutes);
 
-// Route protégée, accessible uniquement aux utilisateurs authentifiés
-router.get("/protected", ensureAuthenticated, async (req, res) => {
-    try {
-        const formations = await Formation.find({},);
-        const user = req.user;
-        console.log(user, formations);
-        
-        res.render("protected", { user, formations });
-    } catch (error) {
-        console.error("Erreur lors de la récupération des formations:", error);
-        res.status(500).send("Erreur lors de la récupération des formations");
-    }
-});
+
+
 
 // Autres routes
 router.get("/formations/gqs", (req, res) => {

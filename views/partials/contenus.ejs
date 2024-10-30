@@ -1,41 +1,11 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Page Protégée</title>
-</head>
-<body>
-    <h1>Bienvenue, <%= user.username %>!</h1>
-    <h2>Formations Disponibles</h2>
-    <ul>
-        <% formations.forEach(formation => { %>
-            <li>
-                <h3><%= formation.nom %></h3>
-                <h4>Modules :</h4>
-                <ul>
-                    <% formation.modules.forEach(module => { %>
-                        <li>
-                            <strong><%= module.nom %></strong>
-                            <p>Vidéo: <a href="<%= module.contenu.video %>">Regarder ici</a></p>
-                            <p>Cours: <%= module.contenu.cours %></p>
-                            <h5>Quiz:</h5>
-                            <ul>
-                                <% module.contenu.quiz.forEach(quiz => { %>
-                                    <li>
-                                        <strong><%= quiz.question %></strong>
-                                        <ul>
-                                            <% quiz.options.forEach(option => { %>
-                                                <li><%= option %></li>
-                                            <% }); %>
-                                        </ul>
-                                    </li>
-                                <% }); %>
-                            </ul>
-                        </li>
-                    <% }); %>
-                </ul>
-            </li>
-        <% }); %>
-    </ul>
-</body>
-</html>
+<!-- protected.ejs -->
+<h1>Formations</h1>
+<ul>
+    <% formations.forEach(formation => { %>
+        <li>
+            <h2><%= formation.nom %></h2>
+            <p><%= formation.description %></p>
+            <a href="/formations/<%= formation.formationId %>/modules">Voir les modules</a>
+        </li>
+    <% }); %>
+</ul>
