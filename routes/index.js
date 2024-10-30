@@ -1,57 +1,67 @@
+// index.js
 const path = require("path");
 const userRoutes = require("./user.routes");
 const authRoutes = require("./auth.routes");
+const formationRoutes = require("./formation.routes");
 const router = require("express").Router();
 const { ensureAuthenticated } = require("../config/security.config");
 const User = require("../database/models/user.model");
+const Formation = require('../database/models/formation.model'); // Chemin vers votre modèle Formation
+
 require("dotenv").config();
 
 // Routes pour les utilisateurs et l'authentification
 router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
+router.use("/formations", formationRoutes);
 
 // Route protégée, accessible uniquement aux utilisateurs authentifiés
 router.get("/protected", ensureAuthenticated, async (req, res) => {
-  const user = req.user;
-  res.render("protected", { user });
+    try {
+        const formations = await Formation.find({},);
+        const user = req.user;
+        console.log(user, formations);
+        
+        res.render("protected", { user, formations });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des formations:", error);
+        res.status(500).send("Erreur lors de la récupération des formations");
+    }
 });
 
 // Autres routes
 router.get("/formations/gqs", (req, res) => {
-  res.render("partials/contenu-gqs");
+    res.render("partials/contenu-gqs");
 });
 
 router.get("/formations/PSC1", (req, res) => {
-  res.render("partials/contenu-psc1");
+    res.render("partials/contenu-psc1");
 });
 
-// Route vers le front-end (index.html) à la racine
 router.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public", "index.html"));
+    res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
 
 // Routes pour la navigation
 router.get("/enseigner", (req, res) => {
-  res.json({ message: "Enseigner details" });
+    res.json({ message: "Enseigner details" });
 });
 
 router.get("/chat", (req, res) => {
-  res.json({ message: "Chat information" });
+    res.json({ message: "Chat information" });
 });
 
 router.get("/sellpage", (req, res) => {
-  res.json({ message: "Secouriste bag information" });
+    res.json({ message: "Secouriste bag information" });
 });
 
-// Route de connexion (exemple)
 router.post("/connexion", (req, res) => {
-  const { email, password } = req.body;
-  res.json({ message: `Connexion attempted for ${email}` });
+    const { email, password } = req.body;
+    res.json({ message: `Connexion attempted for ${email}` });
 });
 
-// Route pour commencer un processus
 router.post("/commencer", (req, res) => {
-  res.json({ message: "Starting process" });
+    res.json({ message: "Starting process" });
 });
 
 module.exports = router;

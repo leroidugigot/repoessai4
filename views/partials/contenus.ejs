@@ -1,26 +1,41 @@
-<!-- Contenus.ejs -->
-<div class="p-5">
-  <h1 class="text-2xl font-bold mb-4 mt-16">Formations Disponibles</h1>
-  <ul class="space-y-2">
-      <li>
-          <a href="/formations/formation1" class="block p-4 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Formation 1
-          </a>
-      </li>
-      <li>
-          <a href="/formations/formation2" class="block p-4 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Formation 2
-          </a>
-      </li>
-      <li>
-          <a href="/formations/formation3" class="block p-4 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Formation 3
-          </a>
-      </li>
-      <li>
-          <a href="/formations/formation4" class="block p-4 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Formation 4
-          </a>
-      </li>
-  </ul>
-</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Protégée</title>
+</head>
+<body>
+    <h1>Bienvenue, <%= user.username %>!</h1>
+    <h2>Formations Disponibles</h2>
+    <ul>
+        <% formations.forEach(formation => { %>
+            <li>
+                <h3><%= formation.nom %></h3>
+                <h4>Modules :</h4>
+                <ul>
+                    <% formation.modules.forEach(module => { %>
+                        <li>
+                            <strong><%= module.nom %></strong>
+                            <p>Vidéo: <a href="<%= module.contenu.video %>">Regarder ici</a></p>
+                            <p>Cours: <%= module.contenu.cours %></p>
+                            <h5>Quiz:</h5>
+                            <ul>
+                                <% module.contenu.quiz.forEach(quiz => { %>
+                                    <li>
+                                        <strong><%= quiz.question %></strong>
+                                        <ul>
+                                            <% quiz.options.forEach(option => { %>
+                                                <li><%= option %></li>
+                                            <% }); %>
+                                        </ul>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        </li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+</body>
+</html>
