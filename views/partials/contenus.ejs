@@ -5,51 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formations</title>
     <style>
-        /* Styles de base */
-        #formationList, #moduleList {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
 
-        .formation-item, .module-item {
-            background-color: #fff;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            cursor: pointer; 
-            transition: transform 0.2s; 
-        }
-
-        .formation-item:hover, .module-item:hover {
-            transform: scale(1.02);
-        }
-
-        /* Style pour le contenu d'un module */
-        #contentDisplay {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Styles cachés */
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <div id="formationList">
+    <div id="formationList" class="hidden bg-blue-500 ">
         <!-- Liste des formations sera insérée ici -->
     </div>
     
-    <div id="moduleList" class="hidden">
+    <div id="moduleList" class="hidden bg-red-600">
         <!-- Liste des modules sera insérée ici -->
     </div>
     
-    <div id="contentDisplay" class="hidden">
+    <div id="contentDisplay" class="hidden bg-green-700">
         <!-- Contenu sera affiché ici -->
     </div>
 
@@ -66,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const formationList = document.getElementById('formationList');
                 formationList.innerHTML = ''; // Vider la liste existante
+                formationList.classList.remove('hidden'); // Afficher le contenu
 
                 data.forEach(formation => {
                     const div = document.createElement('div');
@@ -93,8 +62,11 @@ function loadModules(formationId) {
         .then(data => {
             console.log('Données des modules reçues:', data); // Log des données des modules
 
-            const formationList = document.getElementById('formationList');
-            formationList.innerHTML = ''; // Vider la liste des formations
+
+            formationList.innerHTML = ''; // Vider la liste existante
+            const moduleList = document.getElementById('moduleList');
+            moduleList.innerHTML = ''; // Vider la liste des formations
+            moduleList.classList.remove('hidden'); // Afficher le contenu
 
             // Afficher les modules à la place
             data.forEach(module => {
@@ -102,7 +74,7 @@ function loadModules(formationId) {
                 div.className = 'module-item'; 
                 div.textContent = module.nom; 
                 div.addEventListener('click', () => loadContent(formationId, module._id)); // Inclure l'ID du module
-                formationList.appendChild(div); 
+                moduleList.appendChild(div); 
             });
         })
         .catch(error => {
@@ -128,7 +100,9 @@ function loadModules(formationId) {
                     .then(data => {
                         console.log('Données du module reçues:', data); // Log des données du module
 
-                        const contentDisplay = document.getElementById('formationList');
+                        
+                        moduleList.innerHTML = ''; // Vider la liste des formations
+                        const contentDisplay = document.getElementById('contentDisplay');
                         contentDisplay.innerHTML = ''; // Vider le contenu existant
                         contentDisplay.classList.remove('hidden'); // Afficher le contenu
 
