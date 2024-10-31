@@ -44,69 +44,91 @@
     <div id="formationList">
         <!-- Liste des formations sera insérée ici -->
     </div>
-
+    
+    <div id="moduleList" class="hidden">
+        <!-- Liste des modules sera insérée ici -->
+    </div>
+    
     <div id="contentDisplay" class="hidden">
         <!-- Contenu sera affiché ici -->
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFormations(); // Charge les formations au démarrage
 
-            // Charge les formations depuis le backend
-            function loadFormations() {
-                fetch('/formations') 
-                    .then(response => response.json())
-                    .then(data => {
-                        const formationList = document.getElementById('formationList');
-                        formationList.innerHTML = ''; // Vider la liste existante
 
-                        data.forEach(formation => {
-                            const div = document.createElement('div');
-                            div.className = 'formation-item'; 
-                            div.textContent = formation.nom; // Remplacez title par nom
-                            div.addEventListener('click', () => loadModules(formation._id));
-                            formationList.appendChild(div);
-                        });
-                    });
+document.addEventListener('DOMContentLoaded', function() {
+    loadFormations(); // Charge les formations au démarrage
+
+    // Charge les formations depuis le backend
+    function loadFormations() {
+        fetch('/formations') 
+            .then(response => response.json())
+            .then(data => {
+                const formationList = document.getElementById('formationList');
+                formationList.innerHTML = ''; // Vider la liste existante
+
+                data.forEach(formation => {
+                    const div = document.createElement('div');
+                    div.className = 'formation-item'; 
+                    div.textContent = formation.nom; // Remplacez title par nom
+                    div.addEventListener('click', () => loadModules(formation._id));
+                    formationList.appendChild(div);
+                });
+            });
+    }
+
+
+
+// Charge les modules en fonction de la formation sélectionnée
+function loadModules(formationId) {
+    console.log(`Chargement des modules pour la formation ID: ${formationId}`); // Log de l'ID de la formation
+    fetch(`/formations/${formationId}/modules`)
+        .then(response => {
+            console.log('Réponse du serveur reçue pour les modules:', response); // Log de la réponse
+            if (!response.ok) {
+                throw new Error('Erreur de chargement des modules');
             }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Données des modules reçues:', data); // Log des données des modules
 
-            // Charge les modules en fonction de la formation sélectionnée
-            function loadModules(formationId) {
-                fetch(`/formations/${formationId}/modules`) 
+            const formationList = document.getElementById('formationList');
+            formationList.innerHTML = ''; // Vider la liste des formations
+
+            // Afficher les modules à la place
+            data.forEach(module => {
+                const div = document.createElement('div');
+                div.className = 'module-item'; 
+                div.textContent = module.nom; 
+                div.addEventListener('click', () => loadContent(formationId, module._id)); // Inclure l'ID du module
+                formationList.appendChild(div); 
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des modules:', error);
+        });
+}
+
+
+
+
+// Charge le contenu d'un module sélectionné
+           // Charge le contenu d'un module sélectionné
+           function loadContent(formationId, moduleId) {
+                console.log(`Chargement du contenu pour la formation ID: ${formationId} et le module ID: ${moduleId}`); // Log des IDs
+                fetch(`/formations/${formationId}/modules/${moduleId}/content`)
                     .then(response => {
+                        console.log('Réponse du serveur reçue:', response); // Log de la réponse
                         if (!response.ok) {
-                            throw new Error('Erreur de chargement des modules');
+                            throw new Error('Erreur de chargement du contenu');
                         }
                         return response.json();
                     })
                     .then(data => {
-                        const formationList = document.getElementById('formationList');
-                        formationList.innerHTML = ''; // Vider la liste des formations
+                        console.log('Données du module reçues:', data); // Log des données du module
 
-                        // Afficher les modules à la place
-                        data.forEach(module => {
-                            const div = document.createElement('div');
-                            div.className = 'module-item'; 
-                            div.textContent = module.nom; 
-                            div.addEventListener('click', () => loadContent(formationId, module._id)); // Inclure l'ID du module
-                            formationList.appendChild(div); 
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors du chargement des modules:', error);
-                    });
-            }
-
-            // Charge le contenu d'un module sélectionné
-            function loadContent(formationId, moduleId) {
-                fetch(`/formations/${formationId}/modules/${moduleId}`) 
-                    .then(response => response.json())
-                    .then(data => {
-                        const formationList = document.getElementById('formationList');
-                        formationList.innerHTML = ''; // Vider la liste des modules
-
-                        const contentDisplay = document.getElementById('contentDisplay');
+                        const contentDisplay = document.getElementById('formationList');
                         contentDisplay.innerHTML = ''; // Vider le contenu existant
                         contentDisplay.classList.remove('hidden'); // Afficher le contenu
 
@@ -114,15 +136,22 @@
                         title.textContent = data.title; // Utilisez 'title' du contenu
                         const description = document.createElement('p');
                         description.textContent = data.description; // Utilisez 'description' du contenu
+                        const video = document.createElement('p');
+                        video.textContent = `Vidéo: ${data.video || 'Aucune vidéo disponible'}`; // Affichage du lien vidéo
+                        const quiz = document.createElement('p');
+                        quiz.textContent = `Quiz: ${data.quiz || 'Aucun quiz disponible'}`; // Affichage du lien quiz
 
                         contentDisplay.appendChild(title);
                         contentDisplay.appendChild(description);
+                        contentDisplay.appendChild(video);
+                        contentDisplay.appendChild(quiz);
                     })
                     .catch(error => {
                         console.error('Erreur lors du chargement du contenu:', error);
                     });
             }
-        });
+
+});
     </script>
 </body>
 </html>
