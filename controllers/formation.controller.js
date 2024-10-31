@@ -4,11 +4,10 @@ const Formation = require("../database/models/formation.model");
 exports.getAllFormations = async (req, res) => {
     try {
         const formations = await Formation.find({}, { modules: 0 }); // Exclut les modules pour n'obtenir que les formations
-        res.render("formations", { formations }); // Rend la vue 'formations' avec les données récupérées
+        res.json(formations); // Renvoie les formations en format JSON
     } catch (error) {
         console.error("Erreur lors de la récupération des formations:", error);
-        // res.status(500).json({ error: "Erreur lors de la récupération des formations" });
-        res.render("error", { error: "Erreur lors de la récupération des formations" });
+        res.status(500).json({ error: "Erreur lors de la récupération des formations" });
     }
 };
 
@@ -16,16 +15,14 @@ exports.getAllFormations = async (req, res) => {
 exports.getModulesByFormation = async (req, res) => {
     const { formationId } = req.params;
     try {
-        const formation = await Formation.findOne({ formationId }, { "modules.contenu": 0 }); // Exclut le contenu pour n'obtenir que les modules
+        const formation = await Formation.findOne({ _id: formationId }, { "modules.contenu": 0 }); // Exclut le contenu pour n'obtenir que les modules
         if (!formation) {
-            // res.status(404).json({ error: "Formation non trouvée" });
-            return res.render("error", { error: "Formation non trouvée" });
+            return res.status(404).json({ error: "Formation non trouvée" });
         }
-        res.render("modules", { formation }); // Rend la vue 'modules' avec les données de la formation
+        res.json(formation.modules); // Renvoie les modules en format JSON
     } catch (error) {
         console.error("Erreur lors de la récupération des modules:", error);
-        // res.status(500).json({ error: "Erreur lors de la récupération des modules" });
-        res.render("error", { error: "Erreur lors de la récupération des modules" });
+        res.status(500).json({ error: "Erreur lors de la récupération des modules" });
     }
 };
 
@@ -33,22 +30,19 @@ exports.getModulesByFormation = async (req, res) => {
 exports.getModuleContent = async (req, res) => {
     const { formationId, moduleId } = req.params;
     try {
-        const formation = await Formation.findOne({ formationId });
+        const formation = await Formation.findOne({ _id: formationId });
         if (!formation) {
-            // res.status(404).json({ error: "Formation non trouvée" });
-            return res.render("error", { error: "Formation non trouvée" });
+            return res.status(404).json({ error: "Formation non trouvée" });
         }
 
-        const module = formation.modules.find(mod => mod.moduleId === moduleId);
+        const module = formation.modules.find(mod => mod._id.toString() === moduleId); // Assurez-vous que l'ID est une chaîne
         if (!module) {
-            // res.status(404).json({ error: "Module non trouvé" });
-            return res.render("error", { error: "Module non trouvé" });
+            return res.status(404).json({ error: "Module non trouvé" });
         }
 
-        res.render("moduleContent", { module }); // Rend la vue 'moduleContent' avec les données du module
+        res.json(module); // Renvoie le module en format JSON
     } catch (error) {
         console.error("Erreur lors de la récupération du contenu du module:", error);
-        // res.status(500).json({ error: "Erreur lors de la récupération du contenu du module" });
-        res.render("error", { error: "Erreur lors de la récupération du contenu du module" });
+        res.status(500).json({ error: "Erreur lors de la récupération du contenu du module" });
     }
 };
