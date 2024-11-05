@@ -5,22 +5,29 @@ const router = express.Router();
 const { getAllFormations, getModulesByFormation, getModuleContent } = require("../controllers/formation.controller");
 const Formation = require("../database/models/formation.model"); // Assurez-vous d'importer votre modèle Formation
 
+// Fonctions pour colorer les logs
+const logColor = (message, color) => console.log(`\x1b[${color}m%s\x1b[0m`, message);
+const colors = {
+    cyan: 36,
+    magenta: 35,
+    yellow: 33
+};
 
 // Route pour récupérer toutes les formations
 router.get("/", (req, res, next) => {
-    console.log("Requête reçue pour récupérer toutes les formations"); // Log de la requête
+    logColor("Requête reçue pour récupérer toutes les formations", colors.cyan); // Log en cyan
     next(); // Appelle le prochain middleware
 }, getAllFormations);
 
 // Route pour récupérer les modules d'une formation spécifique
 router.get("/:formationId/modules", (req, res, next) => {
-    console.log(`Requête reçue pour récupérer les modules de la formation ID: ${req.params.formationId}`); // Log de l'ID de formation
+    logColor(`Requête reçue pour récupérer les modules de la formation ID: ${req.params.formationId}`, colors.magenta); // Log en magenta
     next(); // Appelle le prochain middleware
 }, getModulesByFormation);
 
 // Route pour récupérer le contenu d'un module spécifique d'une formation
 router.get("/:formationId/modules/:moduleId/content", (req, res, next) => {
-    console.log(`Requête reçue pour récupérer le contenu du module ID: ${req.params.moduleId} de la formation ID: ${req.params.formationId}`); // Log de l'ID de module et de formation
+    logColor(`Requête reçue pour récupérer le contenu du module ID: ${req.params.moduleId} de la formation ID: ${req.params.formationId}`, colors.yellow); // Log en jaune
     next(); // Appelle le prochain middleware
 }, getModuleContent);
 
