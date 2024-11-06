@@ -36,7 +36,7 @@
     font-weight: 500;
     background-color: var(--primary-color);
     color: #FFFFFF;
-    padding: 10px 20px;
+    padding: 10px 20px; 
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
@@ -165,6 +165,26 @@
 .video-container:hover, .quiz-container:hover {
     transform: scale(1.03);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Mise en forme de la description dans le module */
+.content-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--background-color);
+    border-left: 5px solid var(--primary-color);
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+}
+
+/* Effet au survol pour la description dans le module */
+.content-description:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: var(--card-bg);
 }
 
 /* Effets de transition et d’animation */

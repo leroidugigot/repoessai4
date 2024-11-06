@@ -1,0 +1,10 @@
+{
+    "moduleId": "moduleA2",
+    "nom": "Module A2",
+    "videoUrl": "https://www.youtube.com/watch?v=videoA2",
+    "cours": "Cours A2 en 20 mots sur le module A2.",
+    "quiz": [
+        { "question": "Question 1 sur A2?", "options": ["Option 1", "Option 2", "Option 3", "Option 4"], "answer": "Option 1" },
+        { "question": "Question 2 sur A2?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option B" }
+    ]
+}

@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const fs = require('fs').promises;
+const path = require('path');
 const Formation = require('./database/models/formation.model');
 
 const connectDB = async () => {
@@ -8,109 +10,82 @@ const connectDB = async () => {
     });
 };
 
+// Fonction pour créer des modules avec leur contenu
+const createModule = (moduleData) => ({
+    moduleId: moduleData.moduleId,
+    nom: moduleData.nom,
+    contenu: {
+        video: moduleData.videoUrl,
+        cours: moduleData.cours,
+        quiz: moduleData.quiz
+    }
+});
+
 const seedData = async () => {
     await connectDB();
 
     // Supprimer les anciennes données
     await Formation.deleteMany({});
 
-    // Création des formations
-    const formation1 = new Formation({
-        formationId: "formation1",
-        nom: "Formation 1",
-        modules: [
-            {
-                moduleId: "moduleA1",
-                nom: "Module A1",
-                contenu: {
-                    video: "https://www.youtube.com/watch?v=videoA1",
-                    cours: "Cours A1 en 20 mots sur le module A1.",
-                    quiz: [
-                        {
-                            question: "Question 1 sur A1?",
-                            options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                            answer: "Option 1"
-                        },
-                        {
-                            question: "Question 2 sur A1?",
-                            options: ["Option A", "Option B", "Option C", "Option D"],
-                            answer: "Option B"
-                        }
-                    ]
-                }
-            },
-            {
-                moduleId: "moduleA2",
-                nom: "Module A2",
-                contenu: {
-                    video: "https://www.youtube.com/watch?v=videoA2",
-                    cours: "Cours A2 en 20 mots sur le module A2.",
-                    quiz: [
-                        {
-                            question: "Question 1 sur A2?",
-                            options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                            answer: "Option 1"
-                        },
-                        {
-                            question: "Question 2 sur A2?",
-                            options: ["Option A", "Option B", "Option C", "Option D"],
-                            answer: "Option B"
-                        }
-                    ]
-                }
-            }
-        ]
-    });
+    // Récupérer tous les fichiers de module depuis le répertoire
+    const moduleFiles = await fs.readdir('./modules'); // 'modules' est le dossier contenant les fichiers JSON
 
-    const formation2 = new Formation({
-        formationId: "formation2",
-        nom: "Formation 2",
-        modules: [
-            {
-                moduleId: "moduleB1",
-                nom: "Module B1",
-                contenu: {
-                    video: "https://www.youtube.com/watch?v=videoB1",
-                    cours: "Cours B1 en 20 mots sur le module B1.",
-                    quiz: [
-                        {
-                            question: "Question 1 sur B1?",
-                            options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                            answer: "Option 1"
-                        },
-                        {
-                            question: "Question 2 sur B1?",
-                            options: ["Option A", "Option B", "Option C", "Option D"],
-                            answer: "Option B"
-                        }
-                    ]
-                }
-            },
-            {
-                moduleId: "moduleB2",
-                nom: "Module B2",
-                contenu: {
-                    video: "https://www.youtube.com/watch?v=videoB2",
-                    cours: "Cours B2 en 20 mots sur le module B2.",
-                    quiz: [
-                        {
-                            question: "Question 1 sur B2?",
-                            options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                            answer: "Option 1"
-                        },
-                        {
-                            question: "Question 2 sur B2?",
-                            options: ["Option A", "Option B", "Option C", "Option D"],
-                            answer: "Option B"
-                        }
-                    ]
-                }
-            }
-        ]
-    });
+    const formations = [
+        new Formation({
+            formationId: "formation1",
+            nom: "Formation 1",
+            modules: []
+        }),
+        new Formation({
+            formationId: "formation2",
+            nom: "Formation 2",
+            modules: []
+        }),
+        new Formation({
+            formationId: "formation3",
+            nom: "Formation 3",
+            modules: []
+        }),
+        new Formation({
+            formationId: "formation4",
+            nom: "Formation 4",
+            modules: []
+        }),
+        new Formation({
+            formationId: "formation5",
+            nom: "Formation 5",
+            modules: []
+        }),
+        new Formation({
+            formationId: "formation6",
+            nom: "Formation 6",
+            modules: []
+        })
+    ];
 
-    await formation1.save();
-    await formation2.save();
+    // Pour chaque fichier de module, charger les données et les ajouter aux formations correspondantes
+    for (const file of moduleFiles) {
+        if (file.endsWith('.json')) {
+            const moduleData = JSON.parse(await fs.readFile(path.join('./modules', file), 'utf-8'));
+            const module = createModule(moduleData);
+
+            // Associer chaque module à sa formation
+            if (moduleData.moduleId.includes('A')) {
+                formations[0].modules.push(module);
+                formations[1].modules.push(module); // Exemple : Ajouter ce module à plusieurs formations
+            }
+            else if (moduleData.moduleId.includes('B')) {
+                formations[2].modules.push(module);
+                formations[3].modules.push(module); // Exemple : Ajouter ce module à plusieurs formations
+            }
+            // Ajoutez ici d'autres règles pour les formations si nécessaire
+        }
+    }
+
+    // Sauvegarde de toutes les formations
+    for (const formation of formations) {
+        await formation.save();
+    }
 
     console.log("Données insérées avec succès !");
     mongoose.connection.close();
