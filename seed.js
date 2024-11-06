@@ -33,32 +33,43 @@ const seedData = async () => {
     const formations = [
         new Formation({
             formationId: "formation1",
-            nom: "Formation 1",
+            nom: "Formation GQS",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
             modules: []
         }),
         new Formation({
-            formationId: "formation2",
-            nom: "Formation 2",
+            formationId: "formation ",
+            nom: "Formation PSC 1",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+
             modules: []
         }),
         new Formation({
             formationId: "formation3",
-            nom: "Formation 3",
+            nom: "Formation PSE 1",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+
             modules: []
         }),
         new Formation({
             formationId: "formation4",
-            nom: "Formation 4",
+            nom: "Formation PSE 2",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+
             modules: []
         }),
         new Formation({
             formationId: "formation5",
-            nom: "Formation 5",
+            nom: "Formation BNSSA",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+
             modules: []
         }),
         new Formation({
             formationId: "formation6",
             nom: "Formation 6",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+
             modules: []
         })
     ];

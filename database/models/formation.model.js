@@ -20,6 +20,7 @@ const ModuleSchema = new mongoose.Schema({
 const FormationSchema = new mongoose.Schema({
     formationId: { type: String, required: true },
     nom: { type: String, required: true },
+    description: { type: String, required: true },
     modules: [ModuleSchema],
 });
 
