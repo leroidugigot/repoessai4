@@ -270,18 +270,50 @@
                     .then(response => response.json())
                     .then(data => {
                         formationList.innerHTML = data.map(formation => `
-                            <div class="formation-item fade-in" onclick="loadModules('${formation._id}', '${formation.nom}')">
+                            <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
                                 <div class="icon-container">
                                     <i class="fas fa-graduation-cap"></i>
                                 </div>
                                 <div class="formation-content">
                                     <h3>${formation.nom}</h3>
+                                    
+                                </div>
+                            </div>
+                        `).join('');
+                    });
+            }
+            
+            window.loadFormationsDescription = function(formationId, formationName) {
+
+                const formationList = document.getElementById('formationList');
+                showLoading(formationList);
+                
+                currentFormation = null;
+                currentModule = null;
+                updateBreadcrumb();
+
+                fetch('/formations')
+                    .then(response => response.json())
+                    .then(data => {
+                        formationList.innerHTML = data.map(formation => `
+                            <div class="formation-item fade-in" onclick="loadModules('${formation._id}', '${formation.nom}')">
+                                <div class="icon-container">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="formation-content">
+                                    
                                     <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
                                 </div>
                             </div>
                         `).join('');
                     });
             }
+
+
+
+            
+
+
 
             window.loadModules = function(formationId, formationName) {
                 const moduleList = document.getElementById('moduleList');
@@ -366,6 +398,7 @@
             }
 
             loadFormations();
+            
         });
     </script>
 </body>
