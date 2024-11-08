@@ -10,6 +10,30 @@ exports.getAllFormations = async (req, res) => {
     }
 };
 
+// formation.controller.js
+exports.getFormationById = async (req, res) => {
+    const formationId = req.params.id;
+
+    try {
+        // Utilisez _id pour chercher par ID MongoDB
+        const formation = await Formation.findById(formationId);
+
+        if (formation) {
+            res.json(formation);
+        } else {
+            res.status(404).json({ message: 'Formation non trouvée' });
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la formation :", error);
+        res.status(500).json({ message: 'Erreur lors de la récupération de la formation', error });
+    }
+};
+
+
+
+
+
+
 // Récupérer les modules d'une formation spécifique
 exports.getModulesByFormation = async (req, res) => {
     const { formationId } = req.params;

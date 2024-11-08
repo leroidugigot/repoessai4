@@ -258,60 +258,59 @@
                 `;
             }
 
-            function loadFormations() {
-                const formationList = document.getElementById('formationList');
-                showLoading(formationList);
-                formationList.classList.remove('hidden');
-                currentFormation = null;
-                currentModule = null;
-                updateBreadcrumb();
+function loadFormations() {
+    const formationList = document.getElementById('formationList');
+    showLoading(formationList);
+    formationList.classList.remove('hidden');
+    currentFormation = null;
+    currentModule = null;
+    updateBreadcrumb();
 
-                fetch('/formations')
-                    .then(response => response.json())
-                    .then(data => {
-                        formationList.innerHTML = data.map(formation => `
-                            <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
-                                <div class="icon-container">
-                                    <i class="fas fa-graduation-cap"></i>
-                                </div>
-                                <div class="formation-content">
-                                    <h3>${formation.nom}</h3>
-                                    
-                                </div>
-                            </div>
-                        `).join('');
-                    });
-            }
-            
-            window.loadFormationsDescription = function(formationId, formationName) {
+    fetch('/formations')
+        .then(response => response.json())
+        .then(data => {
+            formationList.innerHTML = data.map(formation => `
+                <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
+                    <div class="icon-container">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="formation-content">
+                        <h3>${formation.nom}</h3>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
 
-                const formationList = document.getElementById('formationList');
-                showLoading(formationList);
-                
-                currentFormation = null;
-                currentModule = null;
-                updateBreadcrumb();
+window.loadFormationsDescription = function(formationId, formationName) {
+    const formationList = document.getElementById('formationList');
+    showLoading(formationList);
+    
+    currentFormation = null;
+    currentModule = null;
+    updateBreadcrumb();
 
-                fetch('/formations')
-                    .then(response => response.json())
-                    .then(data => {
-                        formationList.innerHTML = data.map(formation => `
-                            <div class="formation-item fade-in" onclick="loadModules('${formation._id}', '${formation.nom}')">
-                                <div class="icon-container">
-                                    <i class="fas fa-graduation-cap"></i>
-                                </div>
-                                <div class="formation-content">
-                                    
-                                    <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
-                                </div>
-                            </div>
-                        `).join('');
-                    });
-            }
+    fetch(`/formations/${formationId}`)
+        .then(response => response.json())
+        .then(formation => {
+            console.log(formation); // Affiche la réponse du serveur dans la console
+            formationList.innerHTML = `
+                <div class="formation-item fade-in" onclick="loadModules('${formation._id}', '${formation.nom}')">
+                    <div class="icon-container">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="formation-content">
+                        <h3>${formation.nom}</h3>
+                        <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération de la formation:', error);
+        });
+}
 
-
-
-            
 
 
 

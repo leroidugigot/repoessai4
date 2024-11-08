@@ -34,20 +34,20 @@ const seedData = async () => {
         new Formation({
             formationId: "formation1",
             nom: "Formation GQS",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+            description: "descritpion ggs    secouri gfhjfgj la sécurité et le bien-êtrghjsecours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
             modules: []
         }),
         new Formation({
             formationId: "formation ",
             nom: "Formation PSC 1",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+            description: "description psc1  s er la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
 
             modules: []
         }),
         new Formation({
             formationId: "formation3",
             nom: "Formation PSE 1",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essefghjgjrer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
 
             modules: []
         }),
@@ -61,14 +61,14 @@ const seedData = async () => {
         new Formation({
             formationId: "formation5",
             nom: "Formation BNSSA",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentjkhjkarrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
 
             modules: []
         }),
         new Formation({
             formationId: "formation6",
             nom: "Formation 6",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécuritghjhjhjétresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
 
             modules: []
         })
@@ -77,7 +77,14 @@ const seedData = async () => {
     // Pour chaque fichier de module, charger les données et les ajouter aux formations correspondantes
     for (const file of moduleFiles) {
         if (file.endsWith('.json')) {
-            const moduleData = JSON.parse(await fs.readFile(path.join('./modules', file), 'utf-8'));
+            let moduleData;
+            try {
+                moduleData = JSON.parse(await fs.readFile(path.join('./modules', file), 'utf-8'));
+            } catch (err) {
+                console.error(`Erreur lors du parsing du fichier ${file}: ${err.message}`);
+                continue; // Passe au fichier suivant en cas d'erreur
+            }
+
             const module = createModule(moduleData);
 
             // Associer chaque module à sa formation
