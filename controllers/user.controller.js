@@ -20,7 +20,7 @@ exports.userCreate = async (req, res, next) => {
     req.login(user);
 
     // Redirection vers la page protégée après création
-    res.redirect('/formations/protected');
+    res.redirect('/protected');
   } catch (e) {
     console.error('Error during user creation:', e.message);
     res.render('signup', { error: e.message });

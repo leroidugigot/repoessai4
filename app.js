@@ -8,6 +8,7 @@ const errorHandler = require("errorhandler");
 require("dotenv").config();
 const { extractUserFromToken, addJwtFeatures } = require('./config/jwt.config'); // Importer les fonctions
 
+
 const app = express(); // Crée l'application Express
 
 app.use(cookieParser());
@@ -46,6 +47,8 @@ app.use(
 app.use(express.static(path.join(__dirname, 'public/javascripts')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
 
 app.use(router);
 

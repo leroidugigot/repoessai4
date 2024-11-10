@@ -267,19 +267,28 @@ function loadFormations() {
     updateBreadcrumb();
 
     fetch('/formations')
-        .then(response => response.json())
-        .then(data => {
-            formationList.innerHTML = data.map(formation => `
-                <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
-                    <div class="icon-container">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="formation-content">
-                        <h3>${formation.nom}</h3>
-                    </div>
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Réponse du serveur non valide');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Traitement des données JSON
+        formationList.innerHTML = data.map(formation => `
+            <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
+                <div class="icon-container">
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
-            `).join('');
-        });
+                <div class="formation-content">
+                    <h3>${formation.nom}</h3>
+                </div>
+            </div>
+        `).join('');
+    })
+    .catch(error => {
+        console.error('Erreur lors du chargement des formations:', error);
+    });
 }
 
 window.loadFormationsDescription = function(formationId, formationName) {
