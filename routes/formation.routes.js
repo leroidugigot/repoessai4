@@ -1,6 +1,7 @@
+
 const express = require("express");
 const router = express.Router();
-const { getAllFormations, getFormationById, getModulesByFormation, getModuleContent } = require("../controllers/formation.controller");
+const { getAllFormations, getFormationById, getModulesByFormation, getModuleContent ,inscrireAFormation } = require("../controllers/formation.controller");
 
 // Fonctions pour colorer les logs
 const logColor = (message, color) => console.log(`\x1b[${color}m%s\x1b[0m`, message);
@@ -14,6 +15,8 @@ router.get("/", (req, res, next) => {
 
 // Route pour obtenir une formation par son ID
 router.get('/:id', getFormationById);
+
+router.post('/:formationId/inscription', inscrireAFormation, );
 
 // Route pour récupérer les modules d'une formation spécifique
 router.get("/:formationId/modules", (req, res, next) => {

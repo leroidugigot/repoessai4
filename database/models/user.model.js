@@ -7,7 +7,8 @@ const userSchema = schema({
   local: {
     email: { type: String, required: true, unique: true },
     password: { type: String },  // Rend le champ facultatif pour Google OAuth
-    googleId: { type: String }
+    googleId: { type: String },
+    formations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Formation' }]  // Tableau des formations inscrites
   },
   avatar: { type: String, default: '/images/default-profile.svg' },
 });

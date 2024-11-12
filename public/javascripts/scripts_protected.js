@@ -83,4 +83,10 @@ document.getElementById('toggleButton').addEventListener('click', function() {
 
         divsHidden = false;
     }
+
+
+
+
+    
+    
 });

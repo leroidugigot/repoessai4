@@ -232,6 +232,9 @@
     </div>
 
     <script>
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
             let currentFormation = null;
             let currentModule = null;
@@ -291,34 +294,70 @@ function loadFormations() {
     });
 }
 
-window.loadFormationsDescription = function(formationId, formationName) {
-    const formationList = document.getElementById('formationList');
-    showLoading(formationList);
-    
-    currentFormation = null;
-    currentModule = null;
-    updateBreadcrumb();
 
-    fetch(`/formations/${formationId}`)
-        .then(response => response.json())
-        .then(formation => {
-            console.log(formation); // Affiche la réponse du serveur dans la console
-            formationList.innerHTML = `
-                <div class="formation-item fade-in" onclick="loadModules('${formation._id}', '${formation.nom}')">
-                    <div class="icon-container">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="formation-content">
-                        <h3>${formation.nom}</h3>
-                        <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
-                    </div>
-                </div>
-            `;
-        })
-        .catch(error => {
-            console.error('Erreur lors de la récupération de la formation:', error);
-        });
-}
+
+
+
+window.loadFormationsDescription = function(formationId, formationName) {
+                const formationList = document.getElementById('formationList');
+                showLoading(formationList);
+                currentFormation = null;
+                currentModule = null;
+                updateBreadcrumb();
+
+                fetch(`/formations/${formationId}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur lors de la récupération de la formation');
+                        return response.json();
+                    })
+                    .then(formation => {
+                        formationList.innerHTML = ` 
+                            <div class="formation-item fade-in">
+                                <div class="icon-container">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="formation-content">
+                                    <h3>${formation.nom}</h3>
+                                    <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
+                                    <button class="btn-inscription" data-formation-id="${formation._id}">S'inscrire</button>
+                                </div>
+                            </div>
+                        `;
+
+                        // Ajouter l'événement de clic pour le bouton d'inscription
+                        document.querySelector('.btn-inscription').addEventListener('click', function() {
+                            inscrireAFormation(formation._id);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération de la formation:', error);
+                    });
+            };
+
+            function inscrireAFormation(formationId,formationName) {
+                fetch(`/formations/${formationId}/inscription`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({}) // Si des données supplémentaires sont nécessaires, tu peux les ajouter ici
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.message); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // Affiche le message de succès ou d'erreur
+                    
+                    loadModules(formationId, formationName);
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'inscriptionA:', error);
+                    alert('Erreur lors de l\'inscription : ' + error.message);
+                });
+            }
 
 
 
@@ -404,6 +443,15 @@ window.loadFormationsDescription = function(formationId, formationName) {
                         `;
                     });
             }
+
+
+
+
+
+
+
+
+
 
             loadFormations();
             

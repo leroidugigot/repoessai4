@@ -6,7 +6,7 @@ const app = require('../app');
 const createJwtToken = ({ user = null, id = null }) => {
   const jwtToken = jwt.sign({
     sub: id || user._id.toString(),
-    exp: Math.floor(Date.now() / 1000) + 5 // Expiration après 5 secondes pour les tests
+    exp: Math.floor(Date.now() / 1000) + (60 * 60) // Expiration après 1 heure
   }, secret);
   
   return jwtToken;
