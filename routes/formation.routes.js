@@ -1,7 +1,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { getAllFormations, getFormationById, getModulesByFormation, getModuleContent ,inscrireAFormation } = require("../controllers/formation.controller");
+const { getAllFormations, getFormationById, getModulesByFormation, getModuleContent ,inscrireAFormation ,getLessonOnline} = require("../controllers/formation.controller");
 
 // Fonctions pour colorer les logs
 const logColor = (message, color) => console.log(`\x1b[${color}m%s\x1b[0m`, message);
@@ -29,6 +29,8 @@ router.get("/:formationId/modules/:moduleId/content", (req, res, next) => {
     logColor(`Requête reçue pour récupérer le contenu du module ID: ${req.params.moduleId} de la formation ID: ${req.params.formationId}`, colors.yellow);
     next();
 }, getModuleContent);
+
+router.get('/lesson-online',getLessonOnline);
 
 // Route de test
 router.get("/test", (req, res) => {

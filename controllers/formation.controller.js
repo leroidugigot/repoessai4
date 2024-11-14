@@ -140,3 +140,26 @@ exports.getModuleContent = async (req, res) => {
         return res.status(500).json({ error: "Erreur lors de la récupération du contenu du module" }); // Utilisation de return
     }
 };
+
+// in your controller.formation.js file
+exports.getLessonOnline = async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const user = await User.findById(userId).populate('local.formations');
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const currentFormation = user.local.formations.find(formation => formation.participants.includes(userId));
+  
+      if (!currentFormation) {
+        return res.status(404).json({ message: 'User is not enrolled in any formation' });
+      }
+  
+      res.render('protected', { user, currentFormation });
+    } catch (error) {
+      console.error('Error getting lesson online:', error);
+      return res.status(500).json({ message: 'Error getting lesson online' });
+    }
+  };
