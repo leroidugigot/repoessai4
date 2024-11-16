@@ -7,21 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
 :root {
-    --primary-color: #1A73E8; /* Couleur principale : bleu plus vif */
-    --accent-color: #F2994A; /* Couleur d'accent : orange chaud */
-    --background-color: #F4F7FA; /* Couleur de fond : gris léger */
-    --card-bg: #FFFFFF; /* Fond des cartes : blanc pur */
-    --shadow: rgba(0, 0, 0, 0.1); /* Ombre douce */
+    --primary-color: #1A73E8;
+    --accent-color: #F2994A;
+    --background-color: #F4F7FA;
+    --card-bg: #FFFFFF;
+    --shadow: rgba(0, 0, 0, 0.1);
     --text-color: #333333;
     --border-color: #E0E6ED;
 }
-
-
 
 /* Navigation */
 .navigation {
     display: flex;
     align-items: center;
+    gap: 20px;
     padding: 12px 24px;
     background-color: var(--card-bg);
     border-radius: 10px;
@@ -39,12 +38,33 @@
     padding: 10px 20px; 
     border-radius: 8px;
     cursor: pointer;
+    border: none;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .nav-button:hover {
-    background-color: darken(var(--primary-color), 8%);
+    background-color: #1557b0;
     transform: translateY(-2px);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.breadcrumb-item {
+    padding: 6px 12px;
+    background-color: var(--background-color);
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.breadcrumb-separator {
+    color: var(--text-color);
+    font-size: 12px;
 }
 
 /* Conteneurs principaux */
@@ -66,7 +86,6 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Style des items de formation et de module */
 .formation-item, .module-item {
     background: var(--card-bg);
     padding: 16px;
@@ -86,7 +105,6 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Barre colorée à gauche des items */
 .formation-item::before, .module-item::before {
     content: '';
     position: absolute;
@@ -98,7 +116,6 @@
     border-radius: 12px 0 0 12px;
 }
 
-/* Icône dans les items */
 .icon-container {
     width: 48px;
     height: 48px;
@@ -114,7 +131,6 @@
     color: var(--primary-color);
 }
 
-/* Animation de chargement */
 .loading-animation {
     display: flex;
     justify-content: center;
@@ -131,7 +147,6 @@
     animation: spin 1s linear infinite;
 }
 
-/* Contenu principal */
 .content-header {
     display: flex;
     align-items: center;
@@ -153,7 +168,6 @@
     line-height: 1.6;
 }
 
-/* Vidéo et quiz */
 .video-container, .quiz-container {
     background: rgba(26, 115, 232, 0.05);
     padding: 1.5rem;
@@ -167,7 +181,6 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Mise en forme de la description dans le module */
 .content-description {
     font-size: 1.1rem;
     line-height: 1.8;
@@ -180,44 +193,38 @@
     transition: transform 0.3s, box-shadow 0.3s ease-in-out;
 }
 
-/* Effet au survol pour la description dans le module */
 .content-description:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background-color: var(--card-bg);
 }
 
-/* Effets de transition et d’animation */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* Cacher les éléments */
 .hidden {
     display: none;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .icon-container {
         width: 40px;
         height: 40px;
     }
 }
-
-
     </style>
 </head>
 <body>
     <nav class="navigation">
-        <button class="nav-button active" onclick="window.location.reload()">
+        <button class="nav-button" onclick="window.location.reload()">
             <i class="fas fa-home"></i> Accueil
         </button>
         <div class="breadcrumb"></div>
     </nav>
 
-    <div class="container ">
+    <div class="container">
         <div id="formationList" class="hidden">
             <!-- Liste des formations -->
         </div>
@@ -232,9 +239,6 @@
     </div>
 
     <script>
-
-
-
         document.addEventListener('DOMContentLoaded', function() {
             let currentFormation = null;
             let currentModule = null;
@@ -244,9 +248,17 @@
                 let html = '';
                 
                 if (currentFormation) {
-                    html += `<span class="breadcrumb-item">${currentFormation}</span>`;
+                    html += `
+                        <span class="breadcrumb-item">${currentFormation}</span>
+                    `;
+                    
                     if (currentModule) {
-                        html += ` / <span class="breadcrumb-item">${currentModule}</span>`;
+                        html += `
+                            <span class="breadcrumb-separator">
+                                <i class="fas fa-chevron-right"></i>
+                            </span>
+                            <span class="breadcrumb-item">${currentModule}</span>
+                        `;
                     }
                 }
                 
@@ -261,48 +273,44 @@
                 `;
             }
 
-function loadFormations() {
-    const formationList = document.getElementById('formationList');
-    showLoading(formationList);
-    formationList.classList.remove('hidden');
-    currentFormation = null;
-    currentModule = null;
-    updateBreadcrumb();
-
-    fetch('/formations')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Réponse du serveur non valide');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Traitement des données JSON
-        formationList.innerHTML = data.map(formation => `
-            <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
-                <div class="icon-container">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="formation-content">
-                    <h3>${formation.nom}</h3>
-                </div>
-            </div>
-        `).join('');
-    })
-    .catch(error => {
-        console.error('Erreur lors du chargement des formations:', error);
-    });
-}
-
-
-
-
-
-window.loadFormationsDescription = function(formationId, formationName) {
+            function loadFormations() {
                 const formationList = document.getElementById('formationList');
                 showLoading(formationList);
+                formationList.classList.remove('hidden');
+                document.getElementById('moduleList').classList.add('hidden');
+                document.getElementById('contentDisplay').classList.add('hidden');
                 currentFormation = null;
                 currentModule = null;
+                updateBreadcrumb();
+
+                fetch('/formations')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Réponse du serveur non valide');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        formationList.innerHTML = data.map(formation => `
+                            <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
+                                <div class="icon-container">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="formation-content">
+                                    <h3>${formation.nom}</h3>
+                                </div>
+                            </div>
+                        `).join('');
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des formations:', error);
+                    });
+            }
+
+            window.loadFormationsDescription = function(formationId, formationName) {
+                const formationList = document.getElementById('formationList');
+                showLoading(formationList);
+                currentFormation = formationName;
                 updateBreadcrumb();
 
                 fetch(`/formations/${formationId}`)
@@ -324,9 +332,8 @@ window.loadFormationsDescription = function(formationId, formationName) {
                             </div>
                         `;
 
-                        // Ajouter l'événement de clic pour le bouton d'inscription
                         document.querySelector('.btn-inscription').addEventListener('click', function() {
-                            inscrireAFormation(formation._id);
+                            inscrireAFormation(formation._id, formationName);
                         });
                     })
                     .catch(error => {
@@ -334,13 +341,13 @@ window.loadFormationsDescription = function(formationId, formationName) {
                     });
             };
 
-            function inscrireAFormation(formationId,formationName) {
+            function inscrireAFormation(formationId, formationName) {
                 fetch(`/formations/${formationId}/inscription`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({}) // Si des données supplémentaires sont nécessaires, tu peux les ajouter ici
+                    body: JSON.stringify({})
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -349,18 +356,14 @@ window.loadFormationsDescription = function(formationId, formationName) {
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message); // Affiche le message de succès ou d'erreur
-                    
+                    alert(data.message);
                     loadModules(formationId, formationName);
                 })
                 .catch(error => {
-                    console.error('Erreur lors de l\'inscriptionA:', error);
+                    console.error('Erreur lors de l\'inscription:', error);
                     alert('Erreur lors de l\'inscription : ' + error.message);
                 });
             }
-
-
-
 
             window.loadModules = function(formationId, formationName) {
                 const moduleList = document.getElementById('moduleList');
@@ -430,7 +433,7 @@ window.loadFormationsDescription = function(formationId, formationName) {
                                 <div class="quiz-container">
                                     <h3><i class="fas fa-question-circle"></i> Quiz</h3>
                                     <p>${data.quiz || 'Aucun quiz disponible'}</p>
-                                </div>
+                                    </div>
                             </div>
                         `;
                     })
@@ -443,15 +446,6 @@ window.loadFormationsDescription = function(formationId, formationName) {
                         `;
                     });
             }
-
-
-
-
-
-
-
-
-
 
             loadFormations();
             
