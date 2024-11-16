@@ -1,7 +1,7 @@
 {
     "moduleId": "moduleA1",
     "nom": "Module A1",
-    "videoUrl": "https://www.youtube.com/watch?v=videoA1",
+    "videoUrl": "https://youtu.be/fxYmKtQgu7E?si=Ur4KnSVEBN2w9KZ3",
     "cours": "Lorem ipsum dolor sit, amet consectetur adiipisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperioipisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperioipisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperioipisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperioipisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperioipisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperiopisicing elit. Nisi, maxime placeat necessitatibus dolore culpa voluptate illo omnis quibusdam esse magni, cumque quo asperiores? Sapiente tenetur ipsam alias soluta dolor maiores",
     "quiz": [
         { "question": "Question 1 sur A1?", "options": ["Option 1", "Option 2", "Option 3", "Option 4"], "answer": "Option 1" },
