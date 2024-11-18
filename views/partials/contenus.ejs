@@ -225,7 +225,7 @@
     </nav>
 
     <div class="container">
-        <div id="formationList" class="hidden">
+        <div id="formationList" class="hidden ">
             <!-- Liste des formations -->
         </div>
         
@@ -239,18 +239,16 @@
     </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', function() {
+    // State management
     let currentFormation = null;
     let currentModule = null;
-
-    // Gestionnaires pour les éléments de la navbar
-    const gptButton = document.getElementById('gptButton');
-    const gptIconActive = document.getElementById('gptIconActive');
-    const gptIconInactive = document.getElementById('gptIconInactive');
-    const toggleButton = document.getElementById('toggleButton');
-    const navbar = document.querySelector('nav');
-
-    // Liens de navigation
+    let currentModuleContent = null;
+    
+    // DOM Elements
+    const navbarHidden = document.getElementById('navbarHidden');
+    const mainContent = document.getElementById('mainContent');
     const videoLink = document.querySelector('a[href="/videos"]');
     const coursLink = document.querySelector('a[href="/cours"]');
     const quizLink = document.querySelector('a[href="/quiz"]');
@@ -262,7 +260,9 @@
         
         if (currentFormation) {
             html += `
-                <span class="breadcrumb-item">${currentFormation}</span>
+                <span class="breadcrumb-item cursor-pointer" onclick="loadFormations()">
+                    ${currentFormation}
+                </span>
             `;
             
             if (currentModule) {
@@ -270,7 +270,9 @@
                     <span class="breadcrumb-separator">
                         <i class="fas fa-chevron-right"></i>
                     </span>
-                    <span class="breadcrumb-item">${currentModule}</span>
+                    <span class="breadcrumb-item">
+                        ${currentModule}
+                    </span>
                 `;
             }
         }
@@ -286,26 +288,27 @@
         `;
     }
 
-    function loadFormations() {
+    window.loadFormations = function() {
         const formationList = document.getElementById('formationList');
         showLoading(formationList);
         formationList.classList.remove('hidden');
         document.getElementById('moduleList').classList.add('hidden');
         document.getElementById('contentDisplay').classList.add('hidden');
+        if (navbarHidden) {
+            navbarHidden.style.display = 'none';
+        }
         currentFormation = null;
         currentModule = null;
         updateBreadcrumb();
 
         fetch('/formations')
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Réponse du serveur non valide');
-                }
+                if (!response.ok) throw new Error('Réponse du serveur non valide');
                 return response.json();
             })
             .then(data => {
                 formationList.innerHTML = data.map(formation => `
-                    <div class="formation-item fade-in" onclick="loadFormationsDescription('${formation._id}', '${formation.nom}')">
+                    <div class="formation-item fade-in" onclick="loadFormationDescription('${formation._id}', '${formation.nom}')">
                         <div class="icon-container">
                             <i class="fas fa-graduation-cap"></i>
                         </div>
@@ -315,18 +318,10 @@
                     </div>
                 `).join('');
             })
-            .catch(error => {
-                console.error('Erreur lors du chargement des formations:', error);
-                formationList.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        Une erreur est survenue lors du chargement des formations
-                    </div>
-                `;
-            });
-    }
+            .catch(error => handleError(formationList, error));
+    };
 
-    window.loadFormationsDescription = function(formationId, formationName) {
+    window.loadFormationDescription = function(formationId, formationName) {
         const formationList = document.getElementById('formationList');
         showLoading(formationList);
         currentFormation = formationName;
@@ -338,7 +333,7 @@
                 return response.json();
             })
             .then(formation => {
-                formationList.innerHTML = ` 
+                formationList.innerHTML = `
                     <div class="formation-item fade-in">
                         <div class="icon-container">
                             <i class="fas fa-graduation-cap"></i>
@@ -346,30 +341,15 @@
                         <div class="formation-content">
                             <h3>${formation.nom}</h3>
                             <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
-                            <button class="btn-inscription" data-formation-id="${formation._id}">S'inscrire</button>
+                            <button class="btn-inscription" onclick="inscrireAFormation('${formation._id}', '${formation.nom}')">S'inscrire</button>
                         </div>
                     </div>
                 `;
-
-                const inscriptionButton = document.querySelector('.btn-inscription');
-                if (inscriptionButton) {
-                    inscriptionButton.addEventListener('click', function() {
-                        inscrireAFormation(formation._id, formationName);
-                    });
-                }
             })
-            .catch(error => {
-                console.error('Erreur lors de la récupération de la formation:', error);
-                formationList.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        Une erreur est survenue lors de la récupération de la formation
-                    </div>
-                `;
-            });
+            .catch(error => handleError(formationList, error));
     };
 
-    function inscrireAFormation(formationId, formationName) {
+    window.inscrireAFormation = function(formationId, formationName) {
         fetch(`/formations/${formationId}/inscription`, {
             method: 'POST',
             headers: {
@@ -391,7 +371,7 @@
             console.error('Erreur lors de l\'inscription:', error);
             alert('Erreur lors de l\'inscription : ' + error.message);
         });
-    }
+    };
 
     window.loadModules = function(formationId, formationName) {
         const moduleList = document.getElementById('moduleList');
@@ -421,15 +401,7 @@
                     </div>
                 `).join('');
             })
-            .catch(error => {
-                console.error('Erreur lors du chargement des modules:', error);
-                moduleList.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        Une erreur est survenue lors du chargement des modules
-                    </div>
-                `;
-            });
+            .catch(error => handleError(moduleList, error));
     };
 
     window.loadContent = function(formationId, moduleId, moduleName) {
@@ -440,6 +412,9 @@
         
         currentModule = moduleName;
         updateBreadcrumb();
+        if (navbarHidden) {
+            navbarHidden.style.display = 'block';
+        }
 
         fetch(`/formations/${formationId}/modules/${moduleId}/content`)
             .then(response => {
@@ -447,119 +422,259 @@
                 return response.json();
             })
             .then(data => {
-                contentDisplay.innerHTML = `
-                    <div class="content-header fade-in">
-                        <h2>${moduleName}</h2>
-                    </div>
-                    <div class="content-body fade-in">
-                        <p class="content-description">${data.description || 'Aucune description disponible'}</p>
-                        ${data.content || ''}
-                    </div>
-                `;
-
-                setupNavigationHandlers(contentDisplay);
+                currentModuleContent = data;
+                displayModuleContent(data);
             })
-            .catch(error => {
-                console.error('Erreur lors du chargement du contenu:', error);
-                contentDisplay.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle"></i>
-                        Une erreur est survenue lors du chargement du contenu
-                    </div>
-                `;
-            });
+            .catch(error => handleError(contentDisplay, error));
     };
 
-    function setupNavigationHandlers(contentDisplay) {
-        if (videoLink) {
-            videoLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showVideoContent(contentDisplay);
-            });
-        }
-
-        if (coursLink) {
-            coursLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showCourseContent();
-            });
-        }
-
-        if (quizLink) {
-            quizLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showQuizContent(contentDisplay);
-            });
-        }
-
-        if (nextLink) {
-            nextLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showNextStepsContent(contentDisplay);
-            });
-        }
-    }
-
-    function showVideoContent(contentDisplay) {
-        contentDisplay.classList.remove('hidden');
-        document.getElementById('formationList').classList.add('hidden');
-        document.getElementById('moduleList').classList.add('hidden');
-
+    function displayModuleContent(data) {
+        const contentDisplay = document.getElementById('contentDisplay');
         contentDisplay.innerHTML = `
             <div class="content-header fade-in">
-                <h2>Vidéos du cours</h2>
+                <h2>${currentModule}</h2>
             </div>
             <div class="content-body fade-in">
-                <div class="video-container">
-                    <h3><i class="fas fa-video"></i> Liste des vidéos</h3>
-                    <p>Contenu vidéo à afficher ici</p>
+                <p class="content-description">${data.description || 'Aucune description disponible'}</p>
+                <div class="module-content w-full">
+                    ${data.course || ''}
                 </div>
             </div>
         `;
+
+        // Make videos responsive
+        const videos = contentDisplay.querySelectorAll('iframe');
+        videos.forEach(video => {
+            video.style.width = '100%';
+            video.style.height = '600px';
+            video.style.maxWidth = '100%';
+        });
     }
 
-    function showCourseContent() {
-        document.getElementById('formationList').classList.remove('hidden');
-        document.getElementById('moduleList').classList.add('hidden');
-        document.getElementById('contentDisplay').classList.add('hidden');
+    if (videoLink) {
+        videoLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!currentModuleContent || !currentModuleContent.video) {
+                alert('Aucune vidéo disponible pour ce module');
+                return;
+            }
+            
+            const contentDisplay = document.getElementById('contentDisplay');
+            contentDisplay.innerHTML = `
+                <div class="content-header fade-in">
+                    <h2>Vidéo: ${currentModule}</h2>
+                </div>
+                <div class="content-body fade-in">
+                    <div class="video-container">
+                        ${currentModuleContent.video || 'Aucune vidéo disponible'}
+                    </div>
+                </div>
+            `;
+        });
     }
 
-    function showQuizContent(contentDisplay) {
-        contentDisplay.classList.remove('hidden');
-        document.getElementById('formationList').classList.add('hidden');
-        document.getElementById('moduleList').classList.add('hidden');
+    if (coursLink) {
+        coursLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!currentModuleContent) return;
+            
+            const contentDisplay = document.getElementById('contentDisplay');
+            contentDisplay.innerHTML = `
+                <div class="content-header fade-in">
+                    <h2>Cours: ${currentModule}</h2>
+                </div>
+                <div class="content-body fade-in">
+                    <div class="course-container">
+                        ${currentModuleContent.cours || currentModuleContent.description || 'Aucun cours disponible'}
+                    </div>
+                </div>
+            `;
+        });
+    }
 
-        contentDisplay.innerHTML = `
-            <div class="content-header fade-in">
-                <h2>Quiz disponibles</h2>
-            </div>
-            <div class="content-body fade-in">
-                <div class="quiz-container">
-                    <h3><i class="fas fa-question-circle"></i> Liste des quiz</h3>
-                    <p>Contenu des quiz à afficher ici</p>
+    if (quizLink) {
+        quizLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!currentModuleContent || !currentModuleContent.quiz) return;
+            
+            renderQuizModal(currentModuleContent.quiz);
+        });
+    }
+
+    if (nextLink) {
+        nextLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!currentFormation || !currentModule) {
+                alert('Veuillez sélectionner un module');
+                return;
+            }
+            
+            fetch(`/formations/${currentFormation}/modules/${currentModule}/next`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Erreur lors du chargement du prochain module');
+                    return response.json();
+                })
+                .then(nextModule => {
+                    if (nextModule) {
+                        loadContent(currentFormation, nextModule._id, nextModule.nom);
+                    } else {
+                        alert('Vous avez terminé tous les modules de cette formation!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Impossible de charger le prochain module: ' + error.message);
+                });
+        });
+    }
+
+    function renderQuizModal(quizData) {
+        const modalHtml = `
+            <div id="quiz-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                <div class="bg-white p-6 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                    <div class="content-header">
+                        <h2>Quiz: ${currentModule}</h2>
+                    </div>
+                    <form id="quiz-form">
+                        ${quizData.map((question, index) => `
+                            <div class="quiz-question mb-4 p-4 bg-gray-100 rounded-lg">
+                                <h3 class="font-bold mb-2">${question.question}</h3>
+                                <div class="quiz-options">
+                                    ${question.options.map((option, optionIndex) => `
+                                        <label class="block mb-2">
+                                            <input 
+                                                type="radio" 
+                                                name="question-${index}" 
+                                                value="${option}" 
+                                                data-correct="${question.answer === option}"
+                                                class="mr-2 quiz-option"
+                                                required
+                                            >
+                                            ${option}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="flex justify-between">
+                            <button 
+                                type="submit" 
+                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            >
+                                Soumettre le Quiz
+                            </button>
+                            <button 
+                                type="button" 
+                                onclick="closeQuizModal()"
+                                class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                            >
+                                Fermer
+                            </button>
+                        </div>
+                    </form>
+                    <div id="quiz-result" class="mt-4 text-center"></div>
                 </div>
             </div>
         `;
+
+        // Remove any existing modal first
+        const existingModal = document.getElementById('quiz-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Append modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        // Add event listener for form submission
+        document.getElementById('quiz-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const resultDiv = document.getElementById('quiz-result');
+            let correctAnswers = 0;
+            const totalQuestions = quizData.length;
+
+            const radioGroups = document.querySelectorAll('input[type="radio"]:checked');
+            if (radioGroups.length !== totalQuestions) {
+                alert('Veuillez répondre à toutes les questions');
+                return;
+            }
+
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                if (radio.getAttribute('data-correct') === 'true') {
+                    correctAnswers++;
+                }
+            });
+
+            const score = Math.round((correctAnswers / totalQuestions) * 100);
+            resultDiv.innerHTML = `
+                <p class="font-bold text-lg">
+                    Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
+                </p>
+                <p class="${score >= 80 ? 'text-green-600' : 'text-red-600'}">
+                    ${score >= 80 ? 'Félicitations !' : 'Vous pouvez améliorer votre score'}
+                </p>
+            `;
+        });
     }
 
-    function showNextStepsContent(contentDisplay) {
-        contentDisplay.classList.remove('hidden');
-        document.getElementById('formationList').classList.add('hidden');
-        document.getElementById('moduleList').classList.add('hidden');
+    // Function to close quiz modal
+    window.closeQuizModal = function() {
+        const modal = document.getElementById('quiz-modal');
+        if (modal) {
+            modal.remove();
+        }
+    };
 
-        contentDisplay.innerHTML = `
-            <div class="content-header fade-in">
-                <h2>Prochaines étapes</h2>
-            </div>
-            <div class="content-body fade-in">
-                <p class="content-description">Voici les prochaines étapes de votre formation</p>
+    if (nextLink) {
+        nextLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!currentFormation) return;
+            
+            fetch(`/formations/next-module`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    formationId: currentFormation,
+                    currentModuleId: currentModule
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur lors du chargement du prochain module');
+                return response.json();
+            })
+            .then(nextModule => {
+                if (nextModule) {
+                    loadModules(currentFormation, nextModule.nom);
+                } else {
+                    alert('Vous avez terminé tous les modules de cette formation!');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Impossible de charger le prochain module: ' + error.message);
+            });
+        });
+    }
+
+    function handleError(element, error) {
+        console.error('Erreur:', error);
+        element.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                ${error.message || 'Une erreur est survenue'}
             </div>
         `;
     }
 
-    // Chargement initial des formations
+    // Initial load
     loadFormations();
 });
+    
+
 </script>
 </body>
 </html>
+
+
