@@ -1,6 +1,7 @@
 {
     "moduleId": "moduleA2",
     "nom": "Module A2",
+    "description":"descrption de merdeA1",
     "videoUrl": "https://www.youtube.com/watch?v=videoA2",
     "cours": "Cours A2 en 20 mots sur le module A2.",
     "quiz": [

@@ -1,5 +1,7 @@
 const Formation = require("../database/models/formation.model");
 const User = require('../database/models/user.model')
+const mongoose = require('mongoose');
+
 
 // Récupérer toutes les formations
 exports.getAllFormations = async (req, res) => {
@@ -48,51 +50,50 @@ exports.getFormationById = async (req, res) => {
 
 exports.inscrireAFormation = async (req, res) => {
     const { formationId } = req.params; // Récupérer l'ID de la formation depuis les paramètres de l'URL
-    const userId = req.user._id;  // Supposons que l'ID de l'utilisateur est stocké dans req.user après l'authentification
+    const userId = req.user?._id; // Supposons que l'ID de l'utilisateur est stocké dans req.user après l'authentification
 
     try {
+        // Vérification de l'existence de l'utilisateur
+        if (!userId) {
+            return res.status(401).json({ message: "Utilisateur non authentifié." });
+        }
+
         // Vérifier si la formation existe
         const formation = await Formation.findById(formationId);
         if (!formation) {
-            return res.status(404).json({ message: 'Formation non trouvée' });
+            return res.status(404).json({ message: "Formation non trouvée." });
         }
 
-    // Vérifier si l'utilisateur est déjà inscrit
-    if (formation.participants.includes(userId)) {
-        // Si l'utilisateur est déjà inscrit, on lui permet d'accéder à la formation sans bloquer
-        return res.status(200).json({ message: 'Vous êtes déjà inscrit à cette formation. Accès autorisé.' });
-    }
-
-        // Assurez-vous que le tableau participants existe
-        if (!formation.participants) {
-            formation.participants = [];
+        // Vérifier si le tableau participants est défini et si l'utilisateur y est déjà inscrit
+        if (formation.participants && formation.participants.includes(userId)) {
+            return res.status(200).json({ message: "Vous êtes déjà inscrit à cette formation. Accès autorisé." });
         }
 
-        // Ajouter l'utilisateur à la liste des participants de la formation
+        // Ajouter l'utilisateur à la liste des participants
+        formation.participants = formation.participants || []; // Initialiser si indéfini
         formation.participants.push(userId);
         await formation.save();
 
-        // Vérifier si l'utilisateur existe
+        // Vérifier si l'utilisateur existe dans la base de données
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
         }
 
-        // Assurez-vous que le tableau formations de l'utilisateur existe et est initialisé
-        if (!user.local.formations) {
-            user.local.formations = [];
+        // Ajouter la formation au tableau des formations de l'utilisateur
+        user.local.formations = user.local.formations || []; // Initialiser si indéfini
+        if (!user.local.formations.includes(formationId)) {
+            user.local.formations.push(formationId);
         }
-
-        // Ajouter la formation au tableau de formations de l'utilisateur
-        user.local.formations.push(formationId);
         await user.save();
 
-        res.status(200).json({ message: 'Inscription réussie à la formation' });
+        return res.status(200).json({ message: "Inscription réussie à la formation." });
     } catch (error) {
-        console.error('Erreur lors de l\'inscription:', error);
-        res.status(500).json({ message: 'Erreur serveur lors de l\'inscription' });
+        console.error("Erreur lors de l'inscription :", error);
+        return res.status(500).json({ message: "Erreur serveur lors de l'inscription." });
     }
 };
+
 
 
 
@@ -102,17 +103,28 @@ exports.getModulesByFormation = async (req, res) => {
     const { formationId } = req.params;
 
     try {
-        const formation = await Formation.findOne({ _id: formationId }, { "modules.contenu": 0 }); // Exclut le contenu pour n'obtenir que les modules
+        console.log('Formation ID:', formationId); // Log de l'ID de la formation
+        const formation = await Formation.findOne({ _id: formationId });
 
         if (!formation) {
-            return res.status(404).json({ error: "Formation non trouvée" }); // Utilisation de return
+            console.log('Formation non trouvée'); // Log si la formation n'est pas trouvée
+            return res.status(404).json({ error: "Formation non trouvée" });
         }
 
-        return res.json(formation.modules); // Renvoie les modules en format JSON, utilisation de return
+        console.log('Modules récupérés:', formation.modules); // Log des modules récupérés
+        return res.json(formation.modules);
     } catch (error) {
-        return res.status(500).json({ error: "Erreur lors de la récupération des modules" }); // Utilisation de return
+        console.error('Erreur lors de la récupération des modules:', error); // Log de l'erreur
+        return res.status(500).json({ error: "Erreur lors de la récupération des modules" });
     }
 };
+
+
+
+
+
+
+
 
 // Récupérer le contenu d'un module spécifique
 exports.getModuleContent = async (req, res) => {
@@ -167,10 +179,45 @@ exports.getLessonOnline = async (req, res) => {
 
 
 
+  exports.getNextModule = async (req, res) => {
+    try {
+        const { formationId, currentModuleId } = req.params;
+        console.log('Formation ID reçu:', formationId); // Log des paramètres
+        console.log('Module actuel ID reçu:', currentModuleId); // Log des paramètres
 
+        // Vérification si l'ID de la formation est valide
+        if (!mongoose.Types.ObjectId.isValid(formationId)) {
+            console.error('formationId invalide:', formationId); // Log si l'ID de formation est invalide
+            return res.status(400).json({ message: 'formationId invalide' });
+        }
 
+        // Récupérer la formation
+        const formation = await Formation.findById(formationId).populate('modules');
+        if (!formation) {
+            console.error('Formation non trouvée pour ID:', formationId); // Log si la formation n'est pas trouvée
+            return res.status(404).json({ message: 'Formation non trouvée' });
+        }
 
+        // Trouver le module actuel
+        const currentModule = formation.modules.find(module => module.moduleId === currentModuleId);
+        if (!currentModule) {
+            console.error('Module non trouvé pour ID:', currentModuleId); // Log si le module actuel n'est pas trouvé
+            return res.status(404).json({ message: 'Module non trouvé' });
+        }
 
+        // Trouver le prochain module
+        const currentIndex = formation.modules.indexOf(currentModule);
+        const nextModule = formation.modules[currentIndex + 1];
+        if (!nextModule) {
+            console.error('Aucun module suivant trouvé pour le module:', currentModuleId); // Log si aucun module suivant n'est trouvé
+            return res.status(404).json({ message: 'Aucun module suivant' });
+        }
 
-
+        // Retourner le prochain module
+        res.status(200).json(nextModule);
+    } catch (error) {
+        console.error('Erreur lors de la récupération du module suivant:', error); // Log d'erreur général
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};
 

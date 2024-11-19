@@ -1,112 +1,162 @@
 const mongoose = require('mongoose');
-const fs = require('fs').promises;
-const path = require('path');
 const Formation = require('./database/models/formation.model');
+const { ObjectId } = mongoose.Types;
 
+// Fonction de connexion à la base de données
 const connectDB = async () => {
-    await mongoose.connect('mongodb+srv://familleaitbella:123@clustermomo.5krbhd5.mongodb.net/test', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
+    try {
+        await mongoose.connect(
+            'mongodb+srv://familleaitbella:123@clustermomo.5krbhd5.mongodb.net/test',
+            {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+            }
+        );
+        console.log("Connecté à MongoDB avec succès !");
+    } catch (err) {
+        console.error("Erreur de connexion à MongoDB :", err);
+        process.exit(1);
+    }
 };
 
-// Fonction pour créer des modules avec leur contenu
-const createModule = (moduleData) => ({
-    moduleId: moduleData.moduleId,
-    nom: moduleData.nom,
-    contenu: {
-        video: moduleData.videoUrl,
-        cours: moduleData.cours,
-        quiz: moduleData.quiz
-    }
-});
-
+// Fonction de seed des données
 const seedData = async () => {
     await connectDB();
 
-    // Supprimer les anciennes données
-    await Formation.deleteMany({});
+    try {
+        // Supprimer les anciennes données
+        await Formation.deleteMany({});
+        console.log("Anciennes données supprimées avec succès.");
 
-    // Récupérer tous les fichiers de module depuis le répertoire
-    const moduleFiles = await fs.readdir('./modules'); // 'modules' est le dossier contenant les fichiers JSON
-
-    const formations = [
-        new Formation({
+        // Création des formations
+        const formation1 = new Formation({
+            _id: new ObjectId(),
             formationId: "formation1",
-            nom: "Formation GQS",
-            description: "descritpion ggs    secouri gfhjfgj la sécurité et le bien-êtrghjsecours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
-            modules: []
-        }),
-        new Formation({
-            formationId: "formation ",
-            nom: "Formation PSC 1",
-            description: "description psc1  s er la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+            nom: "Formation Développement Web",
+            description: "Formation complète pour apprendre les bases du développement web.",
+            modules: [
+                {
+                    _id: new ObjectId(),
+                    moduleId: "moduleA1",
+                    nom: "Introduction au HTML",
+                    description: "Ce module couvre les bases du langage HTML pour créer des pages web.",
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoA1",
+                        cours: "Ce cours introduit les concepts fondamentaux de la structure HTML.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Qu'est-ce qu'une balise HTML ?",
+                                options: ["Une balise", "Un attribut", "Un style", "Un script"],
+                                answer: "Une balise",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Quelle balise est utilisée pour les paragraphes ?",
+                                options: ["<p>", "<h1>", "<div>", "<span>"],
+                                answer: "<p>",
+                            },
+                        ],
+                    },
+                },
+                {
+                    _id: new ObjectId(),
+                    moduleId: "moduleA2",
+                    nom: "CSS pour la mise en page",
+                    description: "Découvrez comment styliser et mettre en page des sites web avec CSS.",
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoA2",
+                        cours: "Ce cours explique les bases du CSS pour le style et la mise en page.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quelle propriété CSS est utilisée pour la couleur du texte ?",
+                                options: ["color", "background-color", "font-size", "text-align"],
+                                answer: "color",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment appliquer une bordure en CSS ?",
+                                options: ["border", "outline", "margin", "padding"],
+                                answer: "border",
+                            },
+                        ],
+                    },
+                },
+            ],
+        });
 
-            modules: []
-        }),
-        new Formation({
-            formationId: "formation3",
-            nom: "Formation PSE 1",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essefghjgjrer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+        const formation2 = new Formation({
+            _id: new ObjectId(),
+            formationId: "formation2",
+            nom: "Formation Python pour débutants",
+            description: "Apprenez à programmer en Python, un langage populaire et polyvalent.",
+            modules: [
+                {
+                    _id: new ObjectId(),
+                    moduleId: "moduleB1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                },
+                {
+                    _id: new ObjectId(),
+                    moduleId: "moduleB2",
+                    nom: "Structures de contrôle en Python",
+                    description: "Apprenez à utiliser les boucles et les conditions en Python.",
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB2",
+                        cours: "Ce module explore les instructions conditionnelles et les boucles en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quelle boucle est utilisée pour parcourir une liste ?",
+                                options: ["for", "while", "do-while", "foreach"],
+                                answer: "for",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment écrire une condition en Python ?",
+                                options: ["if", "when", "switch", "case"],
+                                answer: "if",
+                            },
+                        ],
+                    },
+                },
+            ],
+        });
 
-            modules: []
-        }),
-        new Formation({
-            formationId: "formation4",
-            nom: "Formation PSE 2",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécurité et le bien-être d'une personne en détresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
+        // Enregistrement des formations
+        await formation1.save();
+        await formation2.save();
 
-            modules: []
-        }),
-        new Formation({
-            formationId: "formation5",
-            nom: "Formation BNSSA",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentjkhjkarrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
-
-            modules: []
-        }),
-        new Formation({
-            formationId: "formation6",
-            nom: "Formation 6",
-            description: "Les GQS (Gestes de Secours) en secourisme sont des actions essentielles à réaliser pour assurer la sécuritghjhjhjétresse avant l'arrivée des secours professionnels. Ces gestes incluent la réanimation cardio-pulmonaire (RCP), la prise en charge des blessures, et la gestion des situations d'urgence telles que l'étouffement ou les brûlures. Apprendre ces gestes permet de sauver des vies en apportant une assistance immédiate et appropriée lors d'un accident ou d'une urgence médicale.",
-
-            modules: []
-        })
-    ];
-
-    // Pour chaque fichier de module, charger les données et les ajouter aux formations correspondantes
-    for (const file of moduleFiles) {
-        if (file.endsWith('.json')) {
-            let moduleData;
-            try {
-                moduleData = JSON.parse(await fs.readFile(path.join('./modules', file), 'utf-8'));
-            } catch (err) {
-                console.error(`Erreur lors du parsing du fichier ${file}: ${err.message}`);
-                continue; // Passe au fichier suivant en cas d'erreur
-            }
-
-            const module = createModule(moduleData);
-
-            // Associer chaque module à sa formation
-            if (moduleData.moduleId.includes('A')) {
-                formations[0].modules.push(module);
-                formations[1].modules.push(module); // Exemple : Ajouter ce module à plusieurs formations
-            }
-            else if (moduleData.moduleId.includes('B')) {
-                formations[2].modules.push(module);
-                formations[3].modules.push(module); // Exemple : Ajouter ce module à plusieurs formations
-            }
-            // Ajoutez ici d'autres règles pour les formations si nécessaire
-        }
+        console.log("Données insérées avec succès !");
+    } catch (err) {
+        console.error("Erreur lors de l'insertion des données :", err);
+    } finally {
+        mongoose.connection.close();
+        console.log("Connexion MongoDB fermée.");
     }
-
-    // Sauvegarde de toutes les formations
-    for (const formation of formations) {
-        await formation.save();
-    }
-
-    console.log("Données insérées avec succès !");
-    mongoose.connection.close();
 };
 
-seedData().catch(err => console.error("Erreur lors de l'insertion des données :", err));
+// Exécuter le script de seed
+seedData().catch((err) =>
+    console.error("Erreur inattendue lors de l'exécution du seed :", err)
+);

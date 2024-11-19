@@ -374,35 +374,40 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.loadModules = function(formationId, formationName) {
-        const moduleList = document.getElementById('moduleList');
-        showLoading(moduleList);
-        moduleList.classList.remove('hidden');
-        document.getElementById('formationList').classList.add('hidden');
-        
-        currentFormation = formationName;
-        currentModule = null;
-        updateBreadcrumb();
+    const moduleList = document.getElementById('moduleList');
+    showLoading(moduleList);
+    moduleList.classList.remove('hidden');
+    document.getElementById('formationList').classList.add('hidden');
 
-        fetch(`/formations/${formationId}/modules`)
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur de chargement des modules');
-                return response.json();
-            })
-            .then(data => {
-                moduleList.innerHTML = data.map(module => `
-                    <div class="module-item fade-in" onclick="loadContent('${formationId}', '${module._id}', '${module.nom}')">
-                        <div class="icon-container">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <div class="module-content">
-                            <h3>${module.nom}</h3>
-                            <p class="module-description">${module.description || 'Aucune description disponible'}</p>
-                        </div>
-                    </div>
-                `).join('');
-            })
-            .catch(error => handleError(moduleList, error));
-    };
+    currentFormation = formationName;
+    currentModule = null;
+    updateBreadcrumb();
+
+    fetch(`/formations/${formationId}/modules`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur de chargement des modules');
+            }
+            return response.json();
+        })
+        .then(data => {
+    
+    moduleList.innerHTML = data.map(module => `
+        <div class="module-item fade-in" onclick="loadContent('${formationId}', '${module._id}', '${module.nom}')">
+            <div class="icon-container">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="module-content">
+                <h3>${module.nom}</h3>
+                <p class="module-description">${module.description || 'Aucune description disponible'}</p>
+            </div>
+        </div>
+    `).join('');
+})
+
+        .catch(error => handleError(moduleList, error));
+};
+
 
     window.loadContent = function(formationId, moduleId, moduleName) {
         const contentDisplay = document.getElementById('contentDisplay');
@@ -473,24 +478,68 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (coursLink) {
-        coursLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!currentModuleContent) return;
-            
-            const contentDisplay = document.getElementById('contentDisplay');
-            contentDisplay.innerHTML = `
-                <div class="content-header fade-in">
-                    <h2>Cours: ${currentModule}</h2>
-                </div>
-                <div class="content-body fade-in">
-                    <div class="course-container">
-                        ${currentModuleContent.cours || currentModuleContent.description || 'Aucun cours disponible'}
+    if (nextLink) {
+    nextLink.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // Vérifiez si une formation et un module sont sélectionnés
+        if (!currentFormation) {
+            alert('Veuillez sélectionner une formation');
+            return;
+        }
+
+        // Requête pour charger tous les modules de la formation
+        fetch(`/formations/${currentFormation}/modules`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur de chargement des modules');
+                }
+                return response.json();
+            })
+            .then(modules => {
+                const moduleList = document.getElementById('moduleList');
+                moduleList.classList.remove('hidden');
+                document.getElementById('formationList').classList.add('hidden');
+                document.getElementById('contentDisplay').classList.add('hidden');
+
+                // Afficher tous les modules
+                moduleList.innerHTML = modules.map((module, index) => `
+                    <div class="module-item fade-in ${index === modules.length - 1 ? 'module-validated' : ''}" 
+                         data-module-id="${module._id}" 
+                         onclick="loadContent('${currentFormation}', '${module._id}', '${module.nom}')">
+                        <div class="icon-container">
+                            <i class="fas fa-book"></i>
+                            ${index === modules.length - 1 ? '<i class="fas fa-check-circle" style="color: green; position: absolute; right: 10px; top: 10px;"></i>' : ''}
+                        </div>
+                        <div class="module-content">
+                            <h3>${module.nom}</h3>
+                            <p class="module-description">${module.description || 'Aucune description disponible'}</p>
+                            ${index === modules.length - 1 ? '<span class="module-status">Validé</span>' : ''}
+                        </div>
                     </div>
-                </div>
-            `;
-        });
-    }
+                `).join('');
+
+                // Ajouter du CSS pour mettre en évidence le dernier module validé
+                const styleTag = document.createElement('style');
+                styleTag.textContent = `
+                    .module-validated {
+                        background-color: #e6f3e6;
+                        border: 2px solid #4CAF50;
+                    }
+                    .module-status {
+                        color: green;
+                        font-weight: bold;
+                        margin-left: 10px;
+                    }
+                `;
+                document.head.appendChild(styleTag);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Impossible de charger les modules : ' + error.message);
+            });
+    });
+}
 
     if (quizLink) {
         quizLink.addEventListener('click', function(e) {
@@ -509,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            fetch(`/formations/${currentFormation}/modules/${currentModule}/next`)
+            fetch(`/formations/${formationId}/modules/${currentModuleId}/next`)
                 .then(response => {
                     if (!response.ok) throw new Error('Erreur lors du chargement du prochain module');
                     return response.json();
@@ -626,37 +675,62 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     if (nextLink) {
-        nextLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!currentFormation) return;
+    nextLink.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // Log de l'événement de clic
+        console.log("Clic sur le bouton 'Suivant' détecté.");
+
+        // Vérifiez si currentFormation est défini
+        if (!currentFormation) {
+            console.log("Aucune formation sélectionnée. Arrêt du processus.");
+            return;
+        }
+
+        // Log des données envoyées dans la requête
+        console.log("Envoi des données à l'API pour charger le prochain module...");
+        console.log("Formation ID:", currentFormation);
+        console.log("Module actuel ID:", currentModule);
+
+        fetch(`/formations/next-module`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                formationId: currentFormation,
+                currentModuleId: currentModule
+            })
+        })
+        .then(response => {
+            // Log de la réponse de l'API
+            console.log("Réponse de l'API reçue. Statut :", response.status);
             
-            fetch(`/formations/next-module`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    formationId: currentFormation,
-                    currentModuleId: currentModule
-                })
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur lors du chargement du prochain module');
-                return response.json();
-            })
-            .then(nextModule => {
-                if (nextModule) {
-                    loadModules(currentFormation, nextModule.nom);
-                } else {
-                    alert('Vous avez terminé tous les modules de cette formation!');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Impossible de charger le prochain module: ' + error.message);
-            });
+            if (!response.ok) {
+                console.log("Erreur dans la réponse de l'API : Impossible de charger le prochain module.");
+                throw new Error('Erreur lors du chargement du prochain module');
+            }
+
+            return response.json();
+        })
+        .then(nextModule => {
+            // Log si le module suivant est trouvé ou non
+            if (nextModule) {
+                console.log("Prochain module trouvé :", nextModule.nom);
+                loadModules(currentFormation, nextModule.nom);
+            } else {
+                console.log("Aucun module suivant trouvé. Fin de la formation.");
+                alert('Vous avez terminé tous les modules de cette formation!');
+            }
+        })
+        .catch(error => {
+            // Log des erreurs
+            console.error('Erreur:', error);
+            alert('Impossible de charger le prochain module: ' + error.message);
         });
-    }
+    });
+}
+
 
     function handleError(element, error) {
         console.error('Erreur:', error);
