@@ -478,6 +478,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    if (coursLink) {
+        coursLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!currentModuleContent) return;
+            
+            const contentDisplay = document.getElementById('contentDisplay');
+            contentDisplay.innerHTML = `
+                <div class="content-header fade-in">
+                    <h2>Cours: ${currentModule}</h2>
+                </div>
+                <div class="content-body fade-in">
+                    <div class="course-container">
+                        ${currentModuleContent.cours || currentModuleContent.description || 'Aucun cours disponible'}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
     if (nextLink) {
     nextLink.addEventListener('click', function(e) {
         e.preventDefault();
