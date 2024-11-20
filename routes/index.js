@@ -4,7 +4,7 @@ const userRoutes = require("./user.routes");
 const authRoutes = require("./auth.routes");
 const formationRoutes = require("./formation.routes");
 const router = require("express").Router();
-const User = require('../database/models/user.model'); // Import the User model
+const User = require('../database/models/user.model');
 require("dotenv").config();
 
 // Routes pour les utilisateurs et l'authentification
@@ -16,15 +16,23 @@ router.use('/protected', ensureAuthenticated, async (req, res, next) => {
     try {
         const user = req.user;
         const userId = req.user._id;
-        const userWithFormations = await User.findById(userId).populate('local.formations');
+        
+        // Récupérer l'utilisateur avec ses formations
+        const userWithFormations = await User.findById(userId)
+            .populate('local.formations.formation');  // Modifier le chemin de population selon votre schéma
 
         if (!userWithFormations) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const currentFormation = userWithFormations.local.formations.find(formation => formation.participants.includes(userId));
+        // Récupérer les formations de l'utilisateur
+        const userFormations = userWithFormations.local.formations || [];
 
-        res.render("protected", { user, currentFormation });
+        res.render("protected", { 
+            user,
+            formations: userFormations, // Passer toutes les formations à la vue
+            currentFormation: userFormations[0] // Optionnel : passer la première formation comme formation courante
+        });
     } catch (error) {
         console.error("Error displaying protected view:", error);
         res.status(500).send("Error displaying protected view");
