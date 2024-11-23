@@ -1,277 +1,305 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Formations</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
-:root {
-    --primary-color: #1A73E8;
-    --accent-color: #F2994A;
-    --background-color: #F4F7FA;
-    --card-bg: #FFFFFF;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --text-color: #333333;
-    --border-color: #E0E6ED;
-}
+      :root {
+        --primary-color: #1a73e8;
+        --accent-color: #f2994a;
+        --background-color: #f4f7fa;
+        --card-bg: #ffffff;
+        --shadow: rgba(0, 0, 0, 0.1);
+        --text-color: #333333;
+        --border-color: #e0e6ed;
+      }
 
-/* Navigation */
-.navigation {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 12px 24px;
-    background-color: var(--card-bg);
-    border-radius: 10px;
-    box-shadow: 0 5px 15px var(--shadow);
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 1200px;
-}
+      /* Navigation */
+      .navigation {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 12px 24px;
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px var(--shadow);
+        margin-bottom: 20px;
+        width: 100%;
+        max-width: 1200px;
+      }
 
-.nav-button {
-    font-size: 16px;
-    font-weight: 500;
-    background-color: var(--primary-color);
-    color: #FFFFFF;
-    padding: 10px 20px; 
-    border-radius: 8px;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s, transform 0.2s;
-}
+      .nav-button {
+        font-size: 16px;
+        font-weight: 500;
+        background-color: var(--primary-color);
+        color: #ffffff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s, transform 0.2s;
+      }
 
-.nav-button:hover {
-    background-color: #1557b0;
-    transform: translateY(-2px);
-}
+      .nav-button:hover {
+        background-color: #1557b0;
+        transform: translateY(-2px);
+      }
 
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text-color);
-}
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: var(--text-color);
+      }
 
-.breadcrumb-item {
-    padding: 6px 12px;
-    background-color: var(--background-color);
-    border-radius: 6px;
-    transition: background-color 0.2s;
-}
+      .breadcrumb-item {
+        padding: 6px 12px;
+        background-color: var(--background-color);
+        border-radius: 6px;
+        transition: background-color 0.2s;
+      }
 
-.breadcrumb-separator {
-    color: var(--text-color);
-    font-size: 12px;
-}
+      .breadcrumb-separator {
+        color: var(--text-color);
+        font-size: 12px;
+      }
 
-/* Conteneurs principaux */
-.container {
-    width: 100%;
-    max-width: 1200px;
-}
+      /* Conteneurs principaux */
+      .container {
+        width: 100%;
+        max-width: 1200px;
+      }
 
-#formationList, #moduleList, #contentDisplay {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 5px 20px var(--shadow);
-    transition: box-shadow 0.3s, transform 0.2s;
-    margin-bottom: 24px;
-}
+      #formationList,
+      #moduleList,
+      #contentDisplay {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 5px 20px var(--shadow);
+        transition: box-shadow 0.3s, transform 0.2s;
+        margin-bottom: 24px;
+      }
 
-#formationList:hover, #moduleList:hover, #contentDisplay:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
+      #formationList:hover,
+      #moduleList:hover,
+      #contentDisplay:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
 
-.formation-item, .module-item {
-    background: var(--card-bg);
-    padding: 16px;
-    margin: 1.2rem 0;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    position: relative;
-    border: 1px solid var(--border-color);
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
+      .formation-item,
+      .module-item {
+        background: var(--card-bg);
+        padding: 16px;
+        margin: 1.2rem 0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        position: relative;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
 
-.formation-item:hover, .module-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
+      .formation-item:hover,
+      .module-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
 
-.formation-item::before, .module-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 5px;
-    background-color: var(--accent-color);
-    border-radius: 12px 0 0 12px;
-}
+      .formation-item::before,
+      .module-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 5px;
+        background-color: var(--accent-color);
+        border-radius: 12px 0 0 12px;
+      }
 
-.icon-container {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: rgba(26, 115, 232, 0.1);
-}
+      .icon-container {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(26, 115, 232, 0.1);
+      }
 
-.formation-item i, .module-item i {
-    font-size: 24px;
-    color: var(--primary-color);
-}
+      .formation-item i,
+      .module-item i {
+        font-size: 24px;
+        color: var(--primary-color);
+      }
 
-.loading-animation {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
-}
+      .loading-animation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+      }
 
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.content-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2.4rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.content-body {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-    margin-bottom: 24px;
-    line-height: 1.6;
-}
-
-.video-container, .quiz-container {
-    background: rgba(26, 115, 232, 0.05);
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin: 1rem 0;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.video-container:hover, .quiz-container:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-}
-
-.content-description {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--text-color);
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background-color: var(--background-color);
-    border-left: 5px solid var(--primary-color);
-    border-radius: 8px;
-    transition: transform 0.3s, box-shadow 0.3s ease-in-out;
-}
-
-.content-description:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    background-color: var(--card-bg);
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.hidden {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .icon-container {
+      .spinner {
         width: 40px;
         height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .content-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 0;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      background: var(--card-bg);
+      border-radius: 12px 12px 0 0;
     }
-}
+
+      .content-body {
+      height: calc(100vh - 150px); /* Ajusté pour laisser de l'espace pour le header */
+      width: 100%;
+      background: var(--card-bg);
+      padding: 0; /* Supprimé le padding pour maximiser l'espace */
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+      margin-bottom: 24px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+      .video-container,
+      .quiz-container {
+        flex: 1;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      background: rgba(26, 115, 232, 0.05);
+      border-radius: 0 0 12px 12px; /* Arrondi uniquement en bas */
+    }
+
+      .video-container:hover,
+      .quiz-container:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .video-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+      .content-description {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: var(--background-color);
+        border-left: 5px solid var(--primary-color);
+        border-radius: 8px;
+        transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+      }
+
+      .content-description:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: var(--card-bg);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .icon-container {
+          width: 40px;
+          height: 40px;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <nav class="navigation">
-        <button class="nav-button" onclick="window.location.reload()">
-            <i class="fas fa-home"></i> Accueil
-        </button>
-        <div class="breadcrumb"></div>
+      <button class="nav-button" onclick="window.location.reload()">
+        <i class="fas fa-home"></i> Accueil
+      </button>
+      <div class="breadcrumb"></div>
     </nav>
 
     <div class="container">
-        <div id="formationList" class="hidden ">
-            <!-- Liste des formations -->
-        </div>
-        
-        <div id="moduleList" class="hidden">
-            <!-- Liste des modules -->
-        </div>
-        
-        <div id="contentDisplay" class="hidden">
-            <!-- Contenu -->
-        </div>
+      <div id="formationList" class="hidden">
+        <!-- Liste des formations -->
+      </div>
+
+      <div id="moduleList" class="hidden">
+        <!-- Liste des modules -->
+      </div>
+
+      <div id="contentDisplay" class="hidden">
+        <!-- Contenu -->
+      </div>
     </div>
 
-<script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // State management avec des let pour permettre la modification
+        let currentFormation = null;
+        let currentModule = null;
+        let currentModuleContent = null;
+        let formationId = null; // Ajout de formationId dans le state
+        let currentModuleId = null; // Ajout de currentModuleId dans le state
 
+        // DOM Elements
+        const navbarHidden = document.getElementById("navbarHidden");
+        const mainContent = document.getElementById("mainContent");
+        const videoLink = document.querySelector('a[href="/videos"]');
+        const coursLink = document.querySelector('a[href="/cours"]');
+        const quizLink = document.querySelector('a[href="/quiz"]');
+        const nextLink = document.querySelector('a[href="/next"]');
 
-document.addEventListener('DOMContentLoaded', function() {
-    // State management avec des let pour permettre la modification
-    let currentFormation = null;
-    let currentModule = null;
-    let currentModuleContent = null;
-    let formationId = null;  // Ajout de formationId dans le state
-    let currentModuleId = null;  // Ajout de currentModuleId dans le state
-    
-    // DOM Elements
-    const navbarHidden = document.getElementById('navbarHidden');
-    const mainContent = document.getElementById('mainContent');
-    const videoLink = document.querySelector('a[href="/videos"]');
-    const coursLink = document.querySelector('a[href="/cours"]');
-    const quizLink = document.querySelector('a[href="/quiz"]');
-    const nextLink = document.querySelector('a[href="/next"]');
+        function updateBreadcrumb() {
+          const breadcrumb = document.querySelector(".breadcrumb");
+          if (!breadcrumb) return; // Protection contre l'élément manquant
 
-    function updateBreadcrumb() {
-        const breadcrumb = document.querySelector('.breadcrumb');
-        if (!breadcrumb) return;  // Protection contre l'élément manquant
-        
-        let html = '';
-        
-        if (currentFormation) {
+          let html = "";
+
+          if (currentFormation) {
             html += `
                 <span class="breadcrumb-item cursor-pointer" onclick="loadFormations()">
                     ${currentFormation}
                 </span>
             `;
-            
+
             if (currentModule) {
-                html += `
+              html += `
                     <span class="breadcrumb-separator">
                         <i class="fas fa-chevron-right"></i>
                     </span>
@@ -280,50 +308,54 @@ document.addEventListener('DOMContentLoaded', function() {
                     </span>
                 `;
             }
-        }
-        
-        breadcrumb.innerHTML = html;
-    }
+          }
 
-    function showLoading(element) {
-        if (!element) return;  // Protection contre l'élément manquant
-        element.innerHTML = `
+          breadcrumb.innerHTML = html;
+        }
+
+        function showLoading(element) {
+          if (!element) return; // Protection contre l'élément manquant
+          element.innerHTML = `
             <div class="loading-animation">
                 <div class="spinner"></div>
             </div>
         `;
-    }
+        }
 
-    window.loadFormations = function() {
-        const formationList = document.getElementById('formationList');
-        if (!formationList) return;  // Protection contre l'élément manquant
-        
-        showLoading(formationList);
-        formationList.classList.remove('hidden');
-        
-        const moduleList = document.getElementById('moduleList');
-        const contentDisplay = document.getElementById('contentDisplay');
-        
-        if (moduleList) moduleList.classList.add('hidden');
-        if (contentDisplay) contentDisplay.classList.add('hidden');
-        if (navbarHidden) navbarHidden.style.display = 'none';
-        
-        // Réinitialisation du state
-        currentFormation = null;
-        currentModule = null;
-        formationId = null;
-        currentModuleId = null;
-        updateBreadcrumb();
+        window.loadFormations = function () {
+          const formationList = document.getElementById("formationList");
+          if (!formationList) return; // Protection contre l'élément manquant
 
-        fetch('/formations')
-            .then(response => {
-                if (!response.ok) throw new Error('Réponse du serveur non valide');
-                return response.json();
+          showLoading(formationList);
+          formationList.classList.remove("hidden");
+
+          const moduleList = document.getElementById("moduleList");
+          const contentDisplay = document.getElementById("contentDisplay");
+
+          if (moduleList) moduleList.classList.add("hidden");
+          if (contentDisplay) contentDisplay.classList.add("hidden");
+          if (navbarHidden) navbarHidden.style.display = "none";
+
+          // Réinitialisation du state
+          currentFormation = null;
+          currentModule = null;
+          formationId = null;
+          currentModuleId = null;
+          updateBreadcrumb();
+
+          fetch("/formations")
+            .then((response) => {
+              if (!response.ok)
+                throw new Error("Réponse du serveur non valide");
+              return response.json();
             })
-            .then(data => {
-                if (!Array.isArray(data)) throw new Error('Format de données invalide');
-                
-                formationList.innerHTML = data.map(formation => `
+            .then((data) => {
+              if (!Array.isArray(data))
+                throw new Error("Format de données invalide");
+
+              formationList.innerHTML = data
+                .map(
+                  (formation) => `
                     <div class="formation-item fade-in" onclick="loadFormationDescription('${formation._id}', '${formation.nom}')">
                         <div class="icon-container">
                             <i class="fas fa-graduation-cap"></i>
@@ -332,304 +364,358 @@ document.addEventListener('DOMContentLoaded', function() {
                             <h3>${formation.nom}</h3>
                         </div>
                     </div>
-                `).join('');
+                `
+                )
+                .join("");
             })
-            .catch(error => handleError(formationList, error));
-    };
+            .catch((error) => handleError(formationList, error));
+        };
 
-    window.loadFormationDescription = function(id, name) {
-        const formationList = document.getElementById('formationList');
-        if (!formationList) return;
-        
-        showLoading(formationList);
-        currentFormation = name;
-        formationId = id;  // Sauvegarde de l'ID de formation
-        updateBreadcrumb();
+        window.loadFormationDescription = function (id, name) {
+          const formationList = document.getElementById("formationList");
+          if (!formationList) return;
 
-        fetch(`/formations/${id}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur lors de la récupération de la formation');
-                return response.json();
+          showLoading(formationList);
+          currentFormation = name;
+          formationId = id; // Sauvegarde de l'ID de formation
+          updateBreadcrumb();
+
+          fetch(`/formations/${id}`)
+            .then((response) => {
+              if (!response.ok)
+                throw new Error(
+                  "Erreur lors de la récupération de la formation"
+                );
+              return response.json();
             })
-            .then(formation => {
-                formationList.innerHTML = `
+            .then((formation) => {
+              formationList.innerHTML = `
                     <div class="formation-item fade-in">
                         <div class="icon-container">
                             <i class="fas fa-graduation-cap"></i>
                         </div>
                         <div class="formation-content">
                             <h3>${formation.nom}</h3>
-                            <p class="formation-description">${formation.description || 'Aucune description disponible'}</p>
-                            <button class="btn-inscription" onclick="inscrireAFormation('${formation._id}', '${formation.nom}')">
+                            <p class="formation-description">${
+                              formation.description ||
+                              "Aucune description disponible"
+                            }</p>
+                            <button class="btn-inscription" onclick="inscrireAFormation('${
+                              formation._id
+                            }', '${formation.nom}')">
                                 S'inscrire
                             </button>
                         </div>
                     </div>
                 `;
             })
-            .catch(error => handleError(formationList, error));
-    };
+            .catch((error) => handleError(formationList, error));
+        };
 
-    window.inscrireAFormation = function(id, name) {
-        fetch(`/formations/${id}/inscription`, {
-            method: 'POST',
+        window.inscrireAFormation = function (id, name) {
+          fetch(`/formations/${id}/inscription`, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({})
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.message); });
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message);
-            loadModules(id, name);
-        })
-        .catch(error => {
-            console.error('Erreur lors de l\'inscription:', error);
-            alert('Erreur lors de l\'inscription : ' + error.message);
-        });
-    };
-
-    window.loadModules = function(id, name) {
-        const moduleList = document.getElementById('moduleList');
-        if (!moduleList) return;
-        
-        showLoading(moduleList);
-        moduleList.classList.remove('hidden');
-        
-        const formationList = document.getElementById('formationList');
-        if (formationList) formationList.classList.add('hidden');
-
-        currentFormation = name;
-        formationId = id;
-        currentModule = null;
-        currentModuleId = null;
-        updateBreadcrumb();
-
-        fetch(`/formations/${id}/modules`)
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur de chargement des modules');
-                return response.json();
+            body: JSON.stringify({}),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((err) => {
+                  throw new Error(err.message);
+                });
+              }
+              return response.json();
             })
-            .then(data => {
-                if (!Array.isArray(data)) throw new Error('Format de données invalide');
-                
-                moduleList.innerHTML = data.map(module => `
-                    <div class="module-item fade-in" onclick="loadContent('${id}', '${module._id}', '${module.nom}')">
+            .then((data) => {
+              alert(data.message);
+              loadModules(id, name);
+            })
+            .catch((error) => {
+              console.error("Erreur lors de l'inscription:", error);
+              alert("Erreur lors de l'inscription : " + error.message);
+            });
+        };
+
+        window.loadModules = function (id, name) {
+          const moduleList = document.getElementById("moduleList");
+          if (!moduleList) return;
+
+          showLoading(moduleList);
+          moduleList.classList.remove("hidden");
+
+          const formationList = document.getElementById("formationList");
+          if (formationList) formationList.classList.add("hidden");
+
+          currentFormation = name;
+          formationId = id;
+          currentModule = null;
+          currentModuleId = null;
+          updateBreadcrumb();
+
+          fetch(`/formations/${id}/modules`)
+            .then((response) => {
+              if (!response.ok)
+                throw new Error("Erreur de chargement des modules");
+              return response.json();
+            })
+            .then((data) => {
+              if (!Array.isArray(data))
+                throw new Error("Format de données invalide");
+
+              moduleList.innerHTML = data
+                .map(
+                  (module) => `
+                    <div class="module-item fade-in" onclick="loadContent('${id}', '${
+                    module._id
+                  }', '${module.nom}')">
                         <div class="icon-container">
                             <i class="fas fa-book"></i>
                         </div>
                         <div class="module-content">
                             <h3>${module.nom}</h3>
-                            <p class="module-description">${module.description || 'Aucune description disponible'}</p>
+                            <p class="module-description">${
+                              module.description ||
+                              "Aucune description disponible"
+                            }</p>
                         </div>
                     </div>
-                `).join('');
+                `
+                )
+                .join("");
             })
-            .catch(error => handleError(moduleList, error));
-    };
+            .catch((error) => handleError(moduleList, error));
+        };
 
-    window.loadContent = function(fId, mId, mName) {
-        const contentDisplay = document.getElementById('contentDisplay');
-        if (!contentDisplay) return;
-        
-        showLoading(contentDisplay);
-        contentDisplay.classList.remove('hidden');
-        
-        const moduleList = document.getElementById('moduleList');
-        if (moduleList) moduleList.classList.add('hidden');
-        
-        currentModule = mName;
-        currentModuleId = mId;
-        updateBreadcrumb();
-        
-        if (navbarHidden) navbarHidden.style.display = 'block';
+        window.loadContent = function (fId, mId, mName) {
+          const contentDisplay = document.getElementById("contentDisplay");
+          if (!contentDisplay) return;
 
-        fetch(`/formations/${fId}/modules/${mId}/content`)
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur de chargement du contenu');
-                return response.json();
+          showLoading(contentDisplay);
+          contentDisplay.classList.remove("hidden");
+
+          const moduleList = document.getElementById("moduleList");
+          if (moduleList) moduleList.classList.add("hidden");
+
+          currentModule = mName;
+          currentModuleId = mId;
+          updateBreadcrumb();
+
+          if (navbarHidden) navbarHidden.style.display = "block";
+
+          fetch(`/formations/${fId}/modules/${mId}/content`)
+            .then((response) => {
+              if (!response.ok)
+                throw new Error("Erreur de chargement du contenu");
+              return response.json();
             })
-            .then(data => {
-                currentModuleContent = data;
-                displayModuleContent(data);
+            .then((data) => {
+              currentModuleContent = data;
+              displayModuleContent(data);
             })
-            .catch(error => handleError(contentDisplay, error));
-    };
+            .catch((error) => handleError(contentDisplay, error));
+        };
 
-    function displayModuleContent(data) {
-        const contentDisplay = document.getElementById('contentDisplay');
-        if (!contentDisplay || !data) return;
-        
-        contentDisplay.innerHTML = `
+        function displayModuleContent(data) {
+          const contentDisplay = document.getElementById("contentDisplay");
+          if (!contentDisplay || !data) return;
+
+          contentDisplay.innerHTML = `
             <div class="content-header fade-in">
                 <h2>${currentModule}</h2>
             </div>
             <div class="content-body fade-in">
-                <p class="content-description">${data.description || 'Aucune description disponible'}</p>
+                <p class="content-description">${
+                  data.description || "Aucune description disponible"
+                }</p>
                 <div class="module-content w-full">
-                    ${data.course || ''}
+                    ${data.course || ""}
                 </div>
             </div>
         `;
 
-        // Rendre les vidéos responsives
-        const videos = contentDisplay.querySelectorAll('iframe');
-        videos.forEach(video => {
-            video.style.width = '100%';
-            video.style.height = '600px';
-            video.style.maxWidth = '100%';
-        });
-    }
+          // Rendre les vidéos responsives
+          const videos = contentDisplay.querySelectorAll("iframe");
+          videos.forEach((video) => {
+            video.style.width = "100%";
+            video.style.height = "600px";
+            video.style.maxWidth = "100%";
+          });
+        }
 
-    // Gestionnaires d'événements pour les liens de navigation
-    if (videoLink) {
-        videoLink.addEventListener('click', function(e) {
+        // Gestionnaires d'événements pour les liens de navigation
+        if (videoLink) {
+          videoLink.addEventListener("click", function (e) {
             e.preventDefault();
             if (!currentModuleContent || !currentModuleContent.video) {
-                alert('Aucune vidéo disponible pour ce module');
-                return;
+              alert("Aucune vidéo disponible pour ce module");
+              return;
             }
-            
-            const contentDisplay = document.getElementById('contentDisplay');
-            if (!contentDisplay) return;
-            
-            contentDisplay.innerHTML = `
-                <div class="content-header fade-in">
-                    <h2>Vidéo: ${currentModule}</h2>
-                </div>
-                <div class="content-body fade-in">
-                    <div class="video-container">
-                        ${currentModuleContent.video || 'Aucune vidéo disponible'}
-                    </div>
-                </div>
-            `;
-        });
-    }
 
-    if (coursLink) {
-        coursLink.addEventListener('click', function(e) {
+            const contentDisplay = document.getElementById("contentDisplay");
+            if (!contentDisplay) return;
+
+            const videoUrl = currentModuleContent.video;
+            let videoIframe = "";
+            if (videoUrl.includes("youtube.com/watch")) {
+              const videoId = videoUrl.split("v=")[1];
+              videoIframe = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            } else {
+              videoIframe = "Aucune vidéo disponible ou format non supporté.";
+            }
+
+            contentDisplay.innerHTML = `
+              <div class="content-header fade-in">
+                  <h2>Vidéo: ${currentModule}</h2>
+              </div>
+              <div class="content-body fade-in">
+                  <div class="video-container">
+                      ${videoIframe}
+                  </div>
+              </div>
+            `;
+          });
+        }
+
+        if (coursLink) {
+          coursLink.addEventListener("click", function (e) {
             e.preventDefault();
             if (!currentModuleContent) return;
-            
-            const contentDisplay = document.getElementById('contentDisplay');
+
+            const contentDisplay = document.getElementById("contentDisplay");
             if (!contentDisplay) return;
-            
+
             contentDisplay.innerHTML = `
                 <div class="content-header fade-in">
                     <h2>Cours: ${currentModule}</h2>
                 </div>
                 <div class="content-body fade-in">
                     <div class="course-container">
-                        ${currentModuleContent.cours || currentModuleContent.description || 'Aucun cours disponible'}
+                        ${
+                          currentModuleContent.cours ||
+                          currentModuleContent.description ||
+                          "Aucun cours disponible"
+                        }
                     </div>
                 </div>
             `;
-        });
-    }
+          });
+        }
 
-    if (quizLink) {
-        quizLink.addEventListener('click', function(e) {
+        if (quizLink) {
+          quizLink.addEventListener("click", function (e) {
             e.preventDefault();
             if (!currentModuleContent || !currentModuleContent.quiz) {
-                alert('Aucun quiz disponible pour ce module');
-                return;
+              alert("Aucun quiz disponible pour ce module");
+              return;
             }
-            
-            renderQuizModal(currentModuleContent.quiz);
-        });
-    }
 
-    if (nextLink) {
-        nextLink.addEventListener('click', function(e) {
+            renderQuizModal(currentModuleContent.quiz);
+          });
+        }
+
+        if (nextLink) {
+          nextLink.addEventListener("click", function (e) {
             e.preventDefault();
 
             // Vérification de la présence d'une formation sélectionnée
             if (!formationId) {
-                alert('Veuillez sélectionner une formation');
-                return;
+              alert("Veuillez sélectionner une formation");
+              return;
             }
 
             // Chargement de la liste complète des modules
-            const moduleList = document.getElementById('moduleList');
+            const moduleList = document.getElementById("moduleList");
             if (!moduleList) return;
 
             showLoading(moduleList);
-            moduleList.classList.remove('hidden');
-            
+            moduleList.classList.remove("hidden");
+
             // Cacher les autres éléments
-            const contentDisplay = document.getElementById('contentDisplay');
-            if (contentDisplay) contentDisplay.classList.add('hidden');
+            const contentDisplay = document.getElementById("contentDisplay");
+            if (contentDisplay) contentDisplay.classList.add("hidden");
 
             fetch(`/formations/${formationId}/modules`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Erreur de chargement des modules');
-                    return response.json();
-                })
-                .then(data => {
-                    if (!Array.isArray(data)) throw new Error('Format de données invalide');
-                    
-                    moduleList.innerHTML = data.map(module => `
-                        <div class="module-item fade-in" onclick="loadContent('${formationId}', '${module._id}', '${module.nom}')">
+              .then((response) => {
+                if (!response.ok)
+                  throw new Error("Erreur de chargement des modules");
+                return response.json();
+              })
+              .then((data) => {
+                if (!Array.isArray(data))
+                  throw new Error("Format de données invalide");
+
+                moduleList.innerHTML = data
+                  .map(
+                    (module) => `
+                        <div class="module-item fade-in" onclick="loadContent('${formationId}', '${
+                      module._id
+                    }', '${module.nom}')">
                             <div class="icon-container">
                                 <i class="fas fa-book"></i>
                             </div>
                             <div class="module-content">
                                 <h3>${module.nom}</h3>
-                                <p class="module-description">${module.description || 'Aucune description disponible'}</p>
+                                <p class="module-description">${
+                                  module.description ||
+                                  "Aucune description disponible"
+                                }</p>
                             </div>
                         </div>
-                    `).join('');
-                })
-                .catch(error => handleError(moduleList, error));
-        });
-    }
-
-
-
-
-
-
-
-    
-
-    function renderQuizModal(quizData) {
-        if (!Array.isArray(quizData)) {
-            console.error('Format de quiz invalide');
-            return;
+                    `
+                  )
+                  .join("");
+              })
+              .catch((error) => handleError(moduleList, error));
+          });
         }
 
-        const modalHtml = `
+        function renderQuizModal(quizData) {
+          if (!Array.isArray(quizData)) {
+            console.error("Format de quiz invalide");
+            return;
+          }
+
+          const modalHtml = `
             <div id="quiz-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
                 <div class="bg-white p-6 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
                     <div class="content-header">
                         <h2>Quiz: ${currentModule}</h2>
                     </div>
                     <form id="quiz-form">
-                        ${quizData.map((question, index) => `
+                        ${quizData
+                          .map(
+                            (question, index) => `
                             <div class="quiz-question mb-4 p-4 bg-gray-100 rounded-lg">
-                                <h3 class="font-bold mb-2">${question.question}</h3>
+                                <h3 class="font-bold mb-2">${
+                                  question.question
+                                }</h3>
                                 <div class="quiz-options">
-                                    ${question.options.map((option, optionIndex) => `
+                                    ${question.options
+                                      .map(
+                                        (option, optionIndex) => `
                                         <label class="block mb-2">
                                             <input 
                                                 type="radio" 
                                                 name="question-${index}" 
                                                 value="${option}" 
-                                                data-correct="${question.answer === option}"
+                                                data-correct="${
+                                                  question.answer === option
+                                                }"
                                                 class="mr-2 quiz-option"
                                                 required
                                             >
                                             ${option}
                                         </label>
-                                    `).join('')}
+                                    `
+                                      )
+                                      .join("")}
                                 </div>
                             </div>
-                        `).join('')}
+                        `
+                          )
+                          .join("")}
                         <div class="flex justify-between">
                             <button 
                                 type="submit" 
@@ -651,107 +737,115 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        // Supprimer modal existante
-        const existingModal = document.getElementById('quiz-modal');
-        if (existingModal) {
+          // Supprimer modal existante
+          const existingModal = document.getElementById("quiz-modal");
+          if (existingModal) {
             existingModal.remove();
-        }
+          }
 
-        // Ajouter nouvelle modal
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+          // Ajouter nouvelle modal
+          document.body.insertAdjacentHTML("beforeend", modalHtml);
 
-        // Gestionnaire de soumission du quiz
-        const quizForm = document.getElementById('quiz-form');
-        if (quizForm) {
-            quizForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const resultDiv = document.getElementById('quiz-result');
-                if (!resultDiv) return;
+          // Gestionnaire de soumission du quiz
+          const quizForm = document.getElementById("quiz-form");
+          if (quizForm) {
+            quizForm.addEventListener("submit", function (e) {
+              e.preventDefault();
+              const resultDiv = document.getElementById("quiz-result");
+              if (!resultDiv) return;
 
-                let correctAnswers = 0;
-                const totalQuestions = quizData.length;
+              let correctAnswers = 0;
+              const totalQuestions = quizData.length;
 
-                const radioGroups = document.querySelectorAll('input[type="radio"]:checked');
-                if (radioGroups.length !== totalQuestions) {
-                    alert('Veuillez répondre à toutes les questions');
-                    return;
+              const radioGroups = document.querySelectorAll(
+                'input[type="radio"]:checked'
+              );
+              if (radioGroups.length !== totalQuestions) {
+                alert("Veuillez répondre à toutes les questions");
+                return;
+              }
+
+              radioGroups.forEach((radio) => {
+                if (radio.getAttribute("data-correct") === "true") {
+                  correctAnswers++;
                 }
+              });
 
-                radioGroups.forEach(radio => {
-                    if (radio.getAttribute('data-correct') === 'true') {
-                        correctAnswers++;
-                    }
-                });
-
-                const score = Math.round((correctAnswers / totalQuestions) * 100);
-                resultDiv.innerHTML = `
+              const score = Math.round((correctAnswers / totalQuestions) * 100);
+              resultDiv.innerHTML = `
                     <p class="font-bold text-lg">
                         Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
                     </p>
-                    <p class="${score >= 80 ? 'text-green-600' : 'text-red-600'}">
-                        ${score >= 80 ? 'Félicitations !' : 'Vous pouvez améliorer votre score'}
+                    <p class="${
+                      score >= 80 ? "text-green-600" : "text-red-600"
+                    }">
+                        ${
+                          score >= 80
+                            ? "Félicitations !"
+                            : "Vous pouvez améliorer votre score"
+                        }
                     </p>
                 `;
             });
+          }
         }
-    }
 
-    // Fonction pour fermer la modal du quiz
-    window.closeQuizModal = function() {
-        const modal = document.getElementById('quiz-modal');
-        if (modal) {
+        // Fonction pour fermer la modal du quiz
+        window.closeQuizModal = function () {
+          const modal = document.getElementById("quiz-modal");
+          if (modal) {
             modal.remove();
-        }
-    };
+          }
+        };
 
-    function handleError(element, error) {
-        if (!element) return;
-        
-        console.error('Erreur:', error);
-        element.innerHTML = `
+        function handleError(element, error) {
+          if (!element) return;
+
+          console.error("Erreur:", error);
+          element.innerHTML = `
             <div class="error-message">
                 <i class="fas fa-exclamation-circle"></i>
-                <span>${error.message || 'Une erreur est survenue'}</span>
+                <span>${error.message || "Une erreur est survenue"}</span>
             </div>
         `;
-    }
+        }
 
-    // Fonction utilitaire pour sécuriser les chaînes de caractères
-    function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
+        // Fonction utilitaire pour sécuriser les chaînes de caractères
+        function escapeHtml(str) {
+          const div = document.createElement("div");
+          div.textContent = str;
+          return div.innerHTML;
+        }
 
-    // Fonction pour valider les IDs
-    function isValidId(id) {
-        return typeof id === 'string' && id.length > 0;
-    }
+        // Fonction pour valider les IDs
+        function isValidId(id) {
+          return typeof id === "string" && id.length > 0;
+        }
 
-    // Fonction pour valider les objets de données
-    function isValidData(data) {
-        return data && typeof data === 'object';
-    }
+        // Fonction pour valider les objets de données
+        function isValidData(data) {
+          return data && typeof data === "object";
+        }
 
-    // Gestion des erreurs globale
-    window.addEventListener('error', function(e) {
-        console.error('Erreur globale:', e.error);
-        alert('Une erreur inattendue est survenue. Veuillez rafraîchir la page.');
-    });
+        // Gestion des erreurs globale
+        window.addEventListener("error", function (e) {
+          console.error("Erreur globale:", e.error);
+          alert(
+            "Une erreur inattendue est survenue. Veuillez rafraîchir la page."
+          );
+        });
 
-    // Gestion des rejets de promesses non gérés
-    window.addEventListener('unhandledrejection', function(e) {
-        console.error('Promesse rejetée non gérée:', e.reason);
-        alert('Une erreur de communication avec le serveur est survenue. Veuillez réessayer.');
-    });
+        // Gestion des rejets de promesses non gérés
+        window.addEventListener("unhandledrejection", function (e) {
+          console.error("Promesse rejetée non gérée:", e.reason);
+          alert(
+            "Une erreur de communication avec le serveur est survenue. Veuillez réessayer."
+          );
+        });
 
-    // Chargement initial
-    loadFormations();
-});
-
-
-</script>
-</body>
+        // Chargement initial
+        loadFormations();
+      });
+    </script>
+  </body>
 </html>
-
-
