@@ -1,1 +1,80 @@
-*.ejs
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*
+
+# Secrets et configuration sensible
+.env
+.env.local
+.env.*.local
+*.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Builds et artefacts
+dist/
+build/
+.temp/
+.tmp/
+out/
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+~$*
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Tests et couverture
+coverage/
+.nyc_output/
+jest-html-reports/
+cypress/videos/
+cypress/screenshots/
+test-report.html
+
+# Systèmes CI/CD
+/.cache
+/.next
+/.nuxt
+
+# Docker et conteneurs
+.dockerignore
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Autres fichiers sensibles
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+*.pfx
+
+# Ignorer tout fichier personnalisé sensible
+!README.md
+!LICENSE
+!*.example
+
+
