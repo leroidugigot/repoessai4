@@ -26,9 +26,34 @@
       .text-shadow {
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
       }
+      /* Ajout d'animations pour les éléments */
+      .fade-in {
+        animation: fadeIn 3s ease-in;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .slide-up {
+        animation: slideUp 3s ease-out;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
     </style>
   </head>
-  <body>
+  <body class="">
     <header class="fixed left-0 right-0 top-0 z-50 bg-black">
       <nav class="flex h-16 items-center justify-between p-0">
         <div class="m-0 flex h-full items-center p-0">
@@ -97,7 +122,9 @@
           >Mon sac de secouriste</a
         >
         <a href="#" onclick="handleClickConnexion()">Connexion</a>
-        <a href="#" onclick="handleClickCommencer()" class="w-full py-2">Commencer</a>
+        <a href="#" onclick="handleClickCommencer()" class="w-full py-2"
+          >Commencer</a
+        >
       </nav>
     </header>
 
@@ -146,45 +173,65 @@
     </section>
 
     <section class="relative flex h-screen flex-col items-center">
-      <!-- Arrière-plan -->
-      <img src="./images/img/bg.jpg" alt="Arrière-plan" class="h-full w-full" />
-
-      <!-- Voile avec dégradé, flou, bords arrondis et ombre -->
+      <img
+        src="./images/img/bg.jpg"
+        alt="Background"
+        class="h-full w-full object-cover"
+      />
       <div
-        class="rounded-shadow absolute inset-0 z-10 bg-gradient-to-r from-gray-900 via-gray-800 to-transparent opacity-80 backdrop-blur-md"
+        class="absolute inset-0 z-10 bg-gradient-to-r from-gray-900 via-gray-800 to-transparent opacity-80 backdrop-blur-md"
       ></div>
 
-      <!-- Contenu au premier plan avec animation de révélation -->
       <div
-        class="animate-fadeIn absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-7xl text-white"
-      >
-        <strong
-          ><span class="text-green-600">Savoir</span> sauver,<br />
-          c'est vouloir
-          <span class="slide-in border-white text-blue-500">agir</span></strong
-        >
-      </div>
-
-      <!-- Ligne décorative avec ombre -->
+        class="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center">
+        <h1 class="mb-6 text-4xl font-bold text-white md:text-6xl">
+          <span class="text-green-600">Chaque</span>  Geste Compte,<br />
+          Chaque Seconde Aussi <span class="slide-in text-blue-500">agissons</span>
+        </h1>
+        <p class="mb-8 text-xl text-gray-300 md:text-2xl">
+          Plus qu'une formation, une mission.
+        </p>
       <div
-        class="top-3/4 flex h-1 w-20 content-center justify-center bg-white shadow-lg"
-      ></div>
-
-      <!-- Bouton COMMERCER dynamique avec effet de zoom -->
-      <div
-        class="heartbeat absolute top-3/4 z-30 flex h-14 content-center items-center justify-center rounded-3xl bg-blue-500 px-2 text-3xl text-white transition-transform duration-300 hover:scale-110 hover:bg-green-600"
-        onclick="handleClickCommencer()"
-      >
-        Commencer
-      </div>
-
-      <!-- Flèche de navigation avec animation -->
-      <div
-        class="absolute top-[calc(75%_+_5rem)] z-30 flex animate-bounce justify-center text-3xl text-white"
-      >
-        <i class="fas fa-chevron-down"></i>
+          class="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+          <button
+            onclick="handleClickCommencer()"
+            class="heartbeat rounded-full bg-blue-500 px-8 py-3 text-lg font-semibold text-white transition hover:bg-green-600"
+          >
+            Commencer maintenant
+          </button>
+          <button
+            class="rounded-full border-2 border-white px-8 py-3 text-lg font-semibold text-white transition hover:bg-white hover:text-gray-900"
+          >
+            Voir les formations
+          </button>
+        </div>
       </div>
     </section>
+
+    <!-- Statistiques -->
+    <section class="bg-white py-16">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+          <div class="text-center">
+            <h3 class="text-4xl font-bold text-blue-500">98%</h3>
+            <p class="text-gray-600">Taux de satisfaction</p>
+          </div>
+          <div class="text-center">
+            <h3 class="text-4xl font-bold text-blue-500">10,000+</h3>
+            <p class="text-gray-600">Apprenants formés</p>
+          </div>
+          <div class="text-center">
+            <h3 class="text-4xl font-bold text-blue-500">200+</h3>
+            <p class="text-gray-600">Formateurs certifiés</p>
+          </div>
+          <div class="text-center">
+            <h3 class="text-4xl font-bold text-blue-500">15+</h3>
+            <p class="text-gray-600">Formations disponibles</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section
       class="mt-20 flex h-full flex-col items-center justify-center gap-y-8 bg-gradient-to-r from-white via-gray-100 to-white px-6 text-center sm:px-8 md:mt-32 md:px-12 lg:mt-40 lg:px-16"
     >
@@ -236,191 +283,482 @@
       </div>
     </section>
 
-    <section class="relative p-12 bg-gradient-to-br from-blue-50 to-blue-100">
+    <!-- Pourquoi nous choisir -->
+    <section class="relative p-16 bg-[#0a0a0a]">
       <div class="container mx-auto">
-        <!-- Section Title -->
-        <div class="mb-16 text-center">
-          <h2 class="text-4xl font-bold text-gray-800 sm:text-5xl md:text-6xl">
-            Devenez un Secouriste Professionel
+        <!-- En-tête de section amélioré -->
+        <div class="mb-20 text-center">
+          <div class="flex justify-center">
+            <span
+              class="text-white font-bold mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-500 px-8 py-4 rounded-full animate-pulse text-xl shadow-[0_0_30px_rgba(236,72,153,0.5)]"
+            >
+              <i class="fas fa-crown mr-2"></i>OPPORTUNITÉ UNIQUE
+            </span>
+          </div>
+          <h2 class="text-5xl font-bold text-white mb-6 mt-8">
+            Votre aventure commence ici
           </h2>
-          <p class="mt-4 text-lg text-gray-600 sm:text-xl md:text-2xl">
-            Explorez nos formations certifiées pour maîtriser les gestes qui
-            sauvent.
+          <p class="text-2xl text-blue-200 max-w-3xl mx-auto leading-relaxed">
+            Chaque formation débloque des avantages exclusifs
           </p>
         </div>
 
-        <!-- Card Grid Layout with Interactions -->
-        <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
-          <!-- Card 1: GSQ -->
-          <div
-            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
-          >
+        <!-- Grille de cartes améliorée -->
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <!-- GQS Card - Bleu Électrique -->
+          <div class="transform transition-all duration-300 hover:scale-105">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-teal-500 to-teal-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 p-6 space-y-6 text-center">
-              <h3
-                class="text-3xl font-semibold text-white group-hover:text-teal-100"
-              >
-                GQS: Héros du Quotidien
-              </h3>
-              <p
-                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              >
-                Apprenez à sauver des vies avec des gestes simples mais
-                cruciaux.
-              </p>
-              <a
-              href="/users/new"
-              class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              class="relative overflow-hidden rounded-2xl h-full"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3)
+                );
+              "
             >
-              Commencer votre formation !
-            </a>
-            
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(45deg, #00e5ff, #2979ff);
+                  opacity: 0.9;
+                  transition: all 0.3s ease;
+                "
+              ></div>
+              <div class="relative z-10 p-8 space-y-6 text-center">
+                <!-- Cercle avec icône -->
+                <div
+                  class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,229,255,0.5)] transition-transform duration-500 hover:rotate-12"
+                >
+                  <i
+                    class="fas fa-heartbeat text-5xl"
+                    style="color: #00e5ff"
+                  ></i>
+                </div>
+
+                <h3 class="text-3xl font-bold text-white">
+                  GQS : 2H Pour Sauver
+                </h3>
+
+                <div class="h-px w-24 bg-white/50 mx-auto"></div>
+
+                <div class="space-y-4 text-white">
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock"></i>
+                    <span>2 heures de formation</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-tag"></i>
+                    <span>15% sur le matériel</span>
+                  </div>
+                </div>
+
+                <button
+                  class="w-full hover:w-4/5 mx-auto transition-all duration-300 rounded-xl py-4 text-lg font-bold flex items-center justify-center"
+                  style="
+                    background: linear-gradient(45deg, white, #e0f7fa);
+                    color: #00b8d4;
+                  "
+                >
+                  <i class="fas fa-bolt mr-2"></i>Je me lance
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Card 2: PSC 1 -->
-          <div
-            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
-          >
+          <!-- PSC1 Card - Rose Néon -->
+          <div class="transform transition-all duration-300 hover:scale-105">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-lime-500 to-lime-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 p-6 space-y-6 text-center">
-              <h3
-                class="text-3xl font-semibold text-white group-hover:text-lime-100"
-              >
-                PSC 1: Réactions Critiques
-              </h3>
-              <p
-                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              >
-                Sauvez des vies dans des situations d’urgence grâce à une
-                formation complète.
-              </p>
-              <a
-              href="/users/new"
-              class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              class="relative overflow-hidden rounded-2xl h-full"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3)
+                );
+              "
             >
-              Commencer votre formation !
-            </a>
-            
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(45deg, #ff0080, #7928ca);
+                  opacity: 0.9;
+                  transition: all 0.3s ease;
+                "
+              ></div>
+              <div class="relative z-10 p-8 space-y-6 text-center">
+                <div
+                  class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,0,128,0.5)] transition-transform duration-500 hover:rotate-12"
+                >
+                  <i class="fas fa-medal text-5xl" style="color: #ff0080"></i>
+                </div>
+
+                <h3 class="text-3xl font-bold text-white">
+                  PSC1 : L'Essentiel
+                </h3>
+
+                <div class="h-px w-24 bg-white/50 mx-auto"></div>
+
+                <div class="space-y-4 text-white">
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock"></i>
+                    <span>7 heures de formation</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-tag"></i>
+                    <span>25% sur le matériel</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-percentage"></i>
+                    <span>20% sur les stages</span>
+                  </div>
+                </div>
+
+                <button
+                  class="w-full hover:w-4/5 mx-auto transition-all duration-300 rounded-xl py-4 text-lg font-bold flex items-center justify-center"
+                  style="
+                    background: linear-gradient(45deg, white, #ffe0f0);
+                    color: #ff0080;
+                  "
+                >
+                  <i class="fas fa-rocket mr-2"></i>Je fonce
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Card 3: PSE 1 -->
-          <div
-            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
-          >
+          <!-- PSE1 Card - Orange Intense -->
+          <div class="transform transition-all duration-300 hover:scale-105">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-indigo-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 p-6 space-y-6 text-center">
-              <h3
-                class="text-3xl font-semibold text-white group-hover:text-indigo-100"
-              >
-                PSE 1: Premiers Secours en Équipe
-              </h3>
-              <p
-                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              >
-                Maîtrisez les secours d’urgence en collaboration avec d'autres
-                intervenants.
-              </p>
-              <a
-              href="/users/new"
-              class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              class="relative overflow-hidden rounded-2xl h-full"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3)
+                );
+              "
             >
-              Commencer votre formation !
-            </a>
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(45deg, #ff9900, #ff5500);
+                  opacity: 0.9;
+                  transition: all 0.3s ease;
+                "
+              ></div>
+              <div class="relative z-10 p-8 space-y-6 text-center">
+                <div
+                  class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,153,0,0.5)] transition-transform duration-500 hover:rotate-12"
+                >
+                  <i class="fas fa-star text-5xl" style="color: #ff9900"></i>
+                </div>
+
+                <h3 class="text-3xl font-bold text-white">PSE1 : L'Expert</h3>
+
+                <div class="h-px w-24 bg-white/50 mx-auto"></div>
+
+                <div class="space-y-4 text-white">
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock"></i>
+                    <span>35 heures de formation</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-tag"></i>
+                    <span>35% sur le matériel pro</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-percentage"></i>
+                    <span>30% sur les stages</span>
+                  </div>
+                </div>
+
+                <button
+                  class="w-full hover:w-4/5 mx-auto transition-all duration-300 rounded-xl py-4 text-lg font-bold flex items-center justify-center"
+                  style="
+                    background: linear-gradient(45deg, white, #fff0e0);
+                    color: #ff9900;
+                  "
+                >
+                  <i class="fas fa-fire mr-2"></i>Je saisis ma chance
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Card 4: PSE 2 -->
-          <div
-            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
-          >
+          <!-- PSE2 Card - Rouge Intense -->
+          <div class="transform transition-all duration-300 hover:scale-105">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 p-6 space-y-6 text-center">
-              <h3
-                class="text-3xl font-semibold text-white group-hover:text-red-100"
-              >
-                PSE 2: Secours Avancés
-              </h3>
-              <p
-                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              >
-                Passez au niveau supérieur avec des techniques avancées de
-                secours.
-              </p>
-              <a
-              href="/users/new"
-              class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              class="relative overflow-hidden rounded-2xl h-full"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3)
+                );
+              "
             >
-              Commencer votre formation !
-            </a>
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(45deg, #ff0000, #cc0000);
+                  opacity: 0.9;
+                  transition: all 0.3s ease;
+                "
+              ></div>
+              <div class="relative z-10 p-8 space-y-6 text-center">
+                <div
+                  class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,0,0,0.5)] transition-transform duration-500 hover:rotate-12"
+                >
+                  <i
+                    class="fas fa-shield-alt text-5xl"
+                    style="color: #ff0000"
+                  ></i>
+                </div>
+
+                <h3 class="text-3xl font-bold text-white">PSE2 : Le Pro</h3>
+
+                <div class="h-px w-24 bg-white/50 mx-auto"></div>
+
+                <div class="space-y-4 text-white">
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock"></i>
+                    <span>28 heures de formation</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-tag"></i>
+                    <span>40% sur tout le matériel</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-percentage"></i>
+                    <span>35% sur les stages pro</span>
+                  </div>
+                </div>
+
+                <button
+                  class="w-full hover:w-4/5 mx-auto transition-all duration-300 rounded-xl py-4 text-lg font-bold flex items-center justify-center"
+                  style="
+                    background: linear-gradient(45deg, white, #ffe0e0);
+                    color: #ff0000;
+                  "
+                >
+                  <i class="fas fa-crown mr-2"></i>Je deviens pro
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Card 5: Recyclage -->
-          <div
-            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
-          >
+          <!-- Recyclage Card - Vert Émeraude -->
+          <div class="transform transition-all duration-300 hover:scale-105">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 p-6 space-y-6 text-center">
-              <h3
-                class="text-3xl font-semibold text-white group-hover:text-amber-100"
-              >
-                Recyclage: Compétences à Jour
-              </h3>
-              <p
-                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              >
-                Actualisez vos connaissances et gardez vos certifications à
-                jour.
-              </p>
-              <a
-              href="/users/new"
-              class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              class="relative overflow-hidden rounded-2xl h-full"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3)
+                );
+              "
             >
-              Commencer votre formation !
-            </a>
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(45deg, #00ff00, #00cc00);
+                  opacity: 0.9;
+                  transition: all 0.3s ease;
+                "
+              ></div>
+              <div class="relative z-10 p-8 space-y-6 text-center">
+                <div
+                  class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,255,0,0.5)] transition-transform duration-500 hover:rotate-12"
+                >
+                  <i
+                    class="fas fa-sync-alt text-5xl"
+                    style="color: #00cc00"
+                  ></i>
+                </div>
+
+                <h3 class="text-3xl font-bold text-white">
+                  Recyclage : À Jour
+                </h3>
+
+                <div class="h-px w-24 bg-white/50 mx-auto"></div>
+
+                <div class="space-y-4 text-white">
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock"></i>
+                    <span>7 heures de mise à jour</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-tag"></i>
+                    <span>25% sur le matériel</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-gift"></i>
+                    <span>Kit de recyclage offert</span>
+                  </div>
+                </div>
+
+                <button
+                  class="w-full hover:w-4/5 mx-auto transition-all duration-300 rounded-xl py-4 text-lg font-bold flex items-center justify-center"
+                  style="
+                    background: linear-gradient(45deg, white, #e0ffe0);
+                    color: #00cc00;
+                  "
+                >
+                  <i class="fas fa-sync-alt mr-2"></i>Je me mets à jour
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Card 6: FC PSE 2 -->
-          <div
-            class="group relative overflow-hidden rounded-lg bg-white shadow-lg transform transition-transform duration-500 hover:scale-105 hover:shadow-2xl"
-          >
+          <!-- FC PSE2 Card - Violet Royal -->
+          <div class="transform transition-all duration-300 hover:scale-105">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-rose-500 to-rose-700 opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-            ></div>
-            <div class="relative z-10 p-6 space-y-6 text-center">
-              <h3
-                class="text-3xl font-semibold text-white group-hover:text-rose-100"
-              >
-                FC PSE 2: Expert en Secours
-              </h3>
-              <p
-                class="text-base text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              >
-                Devenez un expert reconnu en secourisme d'équipe avec cette
-                formation avancée.
-              </p>
-              <a
-              href="/users/new"
-              class="mt-4 rounded-full bg-white px-6 py-2 text-sm font-semibold text-teal-600 shadow-md hover:bg-teal-100"
+              class="relative overflow-hidden rounded-2xl h-full"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  rgba(0, 0, 0, 0.7),
+                  rgba(0, 0, 0, 0.3)
+                );
+              "
             >
-              Commencer votre formation !
-            </a>
+              <div
+                class="absolute inset-0"
+                style="
+                  background: linear-gradient(45deg, #9900ff, #6600cc);
+                  opacity: 0.9;
+                  transition: all 0.3s ease;
+                "
+              ></div>
+              <div class="relative z-10 p-8 space-y-6 text-center">
+                <div
+                  class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(153,0,255,0.5)] transition-transform duration-500 hover:rotate-12"
+                >
+                  <i class="fas fa-award text-5xl" style="color: #9900ff"></i>
+                </div>
+
+                <h3 class="text-3xl font-bold text-white">FC PSE2 : L'Élite</h3>
+
+                <div class="h-px w-24 bg-white/50 mx-auto"></div>
+
+                <div class="space-y-4 text-white">
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-clock"></i>
+                    <span>14 heures avancées</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-tag"></i>
+                    <span>50% sur le matériel pro</span>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-star"></i>
+                    <span>Accès VIP événements</span>
+                  </div>
+                </div>
+
+                <button
+                  class="w-full hover:w-4/5 mx-auto transition-all duration-300 rounded-xl py-4 text-lg font-bold flex items-center justify-center"
+                  style="
+                    background: linear-gradient(45deg, white, #f0e0ff);
+                    color: #9900ff;
+                  "
+                >
+                  <i class="fas fa-chess-king mr-2"></i>Je rejoins l'élite
+                </button>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Ajout du style spécifique pour les effets de hover -->
+      <style>
+        /* Effet de brillance au hover */
+        .rounded-2xl:hover .absolute {
+          opacity: 1 !important;
+          filter: brightness(1.1);
+        }
+
+        /* Effet de pulse sur les boutons */
+        button:hover {
+          transform: scale(1.02);
+          box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Animation douce pour les icônes */
+        .fa-beat {
+          animation: beat 1s infinite;
+        }
+
+        @keyframes beat {
+          0%,
+          100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+        }
+      </style>
+    </section>
+
+    <!-- Témoignages -->
+    <section class="bg-white py-16">
+      <div class="container mx-auto px-4">
+        <h2
+          class="mb-12 text-center text-3xl font-bold text-gray-900 md:text-4xl"
+        >
+          Ce que disent nos apprenants
+        </h2>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-lg bg-gray-50 p-6 shadow-lg">
+            <div class="mb-4 text-yellow-400">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="mb-4 text-gray-600">
+              "Une formation exceptionnelle qui m'a donné confiance en mes
+              capacités à intervenir en cas d'urgence."
+            </p>
+            <div class="flex items-center">
+              <div class="mr-4 h-12 w-12 overflow-hidden rounded-full">
+                <img
+                  src="/api/placeholder/100/100"
+                  alt="Marie L."
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <h4 class="font-semibold">Marie L.</h4>
+                <p class="text-sm text-gray-500">Formation PSC1</p>
+              </div>
+            </div>
+          </div>
+          <!-- Répétez pour d'autres témoignages -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="bg-blue-500 py-16 text-white">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="mb-8 text-3xl font-bold md:text-4xl">
+          Prêt à sauver des vies ?
+        </h2>
+        <p class="mb-8 text-xl">
+          Rejoignez la communauté LifeAcademy et devenez un héros du quotidien
+        </p>
+        <button
+          onclick="handleClickCommencer()"
+          class="rounded-full bg-white px-8 py-3 text-lg font-semibold text-blue-500 transition hover:bg-gray-100"
+        >
+          Commencer gratuitement
+        </button>
       </div>
     </section>
 
