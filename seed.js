@@ -40,8 +40,9 @@ const seedData = async () => {
                     moduleId: "moduleA1",
                     nom: "Introduction au HTML",
                     description: "Ce module couvre les bases du langage HTML pour créer des pages web.",
+                    ordre: 1, // Ajout du champ ordre
                     contenu: {
-                        video: "https://www.youtube.com/watch?v=videoA1",
+                        video: "https://youtu.be/orbkg5JH9C8?si=PQSdmLfxbkEBRUZG",
                         cours: "Ce cours introduit les concepts fondamentaux de la structure HTML.",
                         quiz: [
                             {
@@ -64,6 +65,7 @@ const seedData = async () => {
                     moduleId: "moduleA2",
                     nom: "CSS pour la mise en page",
                     description: "Découvrez comment styliser et mettre en page des sites web avec CSS.",
+                    ordre: 2, // Ajout du champ ordre
                     contenu: {
                         video: "https://www.youtube.com/watch?v=videoA2",
                         cours: "Ce cours explique les bases du CSS pour le style et la mise en page.",
@@ -97,6 +99,7 @@ const seedData = async () => {
                     moduleId: "moduleB1",
                     nom: "Introduction à Python",
                     description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 1, // Ajout du champ ordre
                     contenu: {
                         video: "https://www.youtube.com/watch?v=videoB1",
                         cours: "Introduction aux variables, types de données et fonctions en Python.",
@@ -121,6 +124,7 @@ const seedData = async () => {
                     moduleId: "moduleB2",
                     nom: "Structures de contrôle en Python",
                     description: "Apprenez à utiliser les boucles et les conditions en Python.",
+                    ordre: 2, // Ajout du champ ordre
                     contenu: {
                         video: "https://www.youtube.com/watch?v=videoB2",
                         cours: "Ce module explore les instructions conditionnelles et les boucles en Python.",
@@ -139,7 +143,199 @@ const seedData = async () => {
                             },
                         ],
                     },
-                },
+                },{
+                    _id: new ObjectId(),
+                    moduleId: "modulghj1",
+                    nom: "Introdughjython",
+                    description: "Ce moduleghj programmation en Python.",
+                    ordre: 3, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction ghjet fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel esghj de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment défighjonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                },{
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 4, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                },{
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 5, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                }, {
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 6, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                },  {
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 7, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                }, {
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 8, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                }, {
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 9, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                }, {
+                    _id: new ObjectId(),
+                    moduleId: "modudfgh1",
+                    nom: "Introduction à Python",
+                    description: "Ce module couvre les bases de la programmation en Python.",
+                    ordre: 10, // Ajout du champ ordre
+                    contenu: {
+                        video: "https://www.youtube.com/watch?v=videoB1",
+                        cours: "Introduction aux variables, types de données et fonctions en Python.",
+                        quiz: [
+                            {
+                                _id: new ObjectId(),
+                                question: "Quel est le type de données pour 42 ?",
+                                options: ["int", "float", "string", "bool"],
+                                answer: "int",
+                            },
+                            {
+                                _id: new ObjectId(),
+                                question: "Comment définir une fonction en Python ?",
+                                options: ["def", "function", "func", "lambda"],
+                                answer: "def",
+                            },
+                        ],
+                    },
+                }, 
             ],
         });
 

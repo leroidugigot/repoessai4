@@ -13,32 +13,32 @@ router.use("/auth", authRoutes);
 
 // Route protégée pour accéder à la vue 'protected' et les formations
 router.use('/protected', ensureAuthenticated, async (req, res, next) => {
-    try {
-        const user = req.user;
-        const userId = req.user._id;
-        
-        // Récupérer l'utilisateur avec ses formations
-        const userWithFormations = await User.findById(userId)
-            .populate('local.formations.formation');  // Modifier le chemin de population selon votre schéma
+    
 
+    // Vérifiez si req.user est défini avant de continuer
+    if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
+
+    try {
+        const userId = req.user._id;
+        const userWithFormations = await User.findById(userId)
+            .populate('local.formations.formation');
+        
         if (!userWithFormations) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: "User not found" });
         }
 
-        // Récupérer les formations de l'utilisateur
-        const userFormations = userWithFormations.local.formations || [];
-
         res.render("protected", { 
-            user,
-            formations: userFormations, // Passer toutes les formations à la vue
-            currentFormation: userFormations[0] // Optionnel : passer la première formation comme formation courante
+            user: req.user,
+            formations: userWithFormations.local.formations || [],
+            currentFormation: userWithFormations.local.formations[0] || null
         });
     } catch (error) {
-        console.error("Error displaying protected view:", error);
-        res.status(500).send("Error displaying protected view");
+        console.error("Error in /protected:", error);
+        res.status(500).send("Internal server error");
     }
 });
-
 // Routes protégées pour les formations
 router.use('/formations', ensureAuthenticated, formationRoutes);
 

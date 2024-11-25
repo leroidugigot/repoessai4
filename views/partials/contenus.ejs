@@ -158,42 +158,44 @@
         animation: spin 1s linear infinite;
       }
       .content-header {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 0;
-      padding: 1rem;
-      border-bottom: 1px solid var(--border-color);
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      background: var(--card-bg);
-      border-radius: 12px 12px 0 0;
-    }
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 0;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        background: var(--card-bg);
+        border-radius: 12px 12px 0 0;
+      }
 
       .content-body {
-      height: calc(100vh - 150px); /* Ajusté pour laisser de l'espace pour le header */
-      width: 100%;
-      background: var(--card-bg);
-      padding: 0; /* Supprimé le padding pour maximiser l'espace */
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-      margin-bottom: 24px;
-      line-height: 1.6;
-      display: flex;
-      flex-direction: column;
-    }
+        height: calc(
+          100vh - 150px
+        ); /* Ajusté pour laisser de l'espace pour le header */
+        width: 100%;
+        background: var(--card-bg);
+        padding: 0; /* Supprimé le padding pour maximiser l'espace */
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+        margin-bottom: 24px;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+      }
 
       .video-container,
       .quiz-container {
         flex: 1;
-      width: 100%;
-      height: 100%;
-      padding: 0;
-      margin: 0;
-      background: rgba(26, 115, 232, 0.05);
-      border-radius: 0 0 12px 12px; /* Arrondi uniquement en bas */
-    }
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        background: rgba(26, 115, 232, 0.05);
+        border-radius: 0 0 12px 12px; /* Arrondi uniquement en bas */
+      }
 
       .video-container:hover,
       .quiz-container:hover {
@@ -202,10 +204,10 @@
       }
 
       .video-container iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
 
       .content-description {
         font-size: 1.1rem;
@@ -244,6 +246,78 @@
           height: 40px;
         }
       }
+
+      .status-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+      }
+
+      .status-icon .fa-circle {
+        color: #ccc;
+      }
+
+      .status-icon .fa-check-circle {
+        color: #4caf50;
+      }
+
+      .status-icon .fa-lock {
+        color: #f44336;
+      }
+
+      .complete-module-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .complete-module-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .module-item.completed {
+        border-left: 5px solid #4caf50;
+      }
+
+      .module-item.locked {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .quiz-score {
+        font-size: 14px;
+        color: var(--primary-color);
+        margin-top: 8px;
+      }
+      .complete-module-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .progress-status {
+        border: 1px solid #e2e8f0;
+        margin-top: 1rem;
+      }
+
+      .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+      }
+
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
     </style>
   </head>
   <body>
@@ -267,15 +341,317 @@
         <!-- Contenu -->
       </div>
     </div>
-
     <script>
+      // Security Utils
+      const SecurityUtils = {
+        escapeHtml(unsafe) {
+          return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        },
+
+        validateId(id) {
+          return /^[a-zA-Z0-9-_]+$/.test(id);
+        },
+
+        validateYoutubeUrl(url) {
+          const youtubeRegex =
+            /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}$/;
+          return youtubeRegex.test(url);
+        },
+
+        getCsrfToken() {
+          return document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute("content");
+        },
+
+        getHeaders() {
+          return {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": this.getCsrfToken(),
+          };
+        },
+      };
+
+      // Rate Limiter
+      const RateLimiter = {
+        limits: {},
+
+        canPerformAction(action, minInterval = 1000) {
+          const now = Date.now();
+          if (this.limits[action] && now - this.limits[action] < minInterval) {
+            return false;
+          }
+          this.limits[action] = now;
+          return true;
+        },
+      };
+
+      // API Client
+      const ApiClient = {
+        async fetchWithSecurity(url, options = {}) {
+          try {
+            const response = await fetch(url, {
+              ...options,
+              headers: {
+                ...SecurityUtils.getHeaders(),
+                ...options.headers,
+              },
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.message || "Une erreur est survenue");
+            }
+
+            return await response.json();
+          } catch (error) {
+            console.error("API Error:", error);
+            throw error;
+          }
+        },
+
+        async getFormations() {
+          return this.fetchWithSecurity("/formations");
+        },
+
+        async getFormation(id) {
+          if (!SecurityUtils.validateId(id)) throw new Error("ID invalide");
+          return this.fetchWithSecurity(`/formations/${id}`);
+        },
+
+        async getModules(formationId) {
+          if (!SecurityUtils.validateId(formationId))
+            throw new Error("ID invalide");
+          return this.fetchWithSecurity(`/formations/${formationId}/modules`);
+        },
+
+        async saveProgress(formationId, moduleId, progressData) {
+          if (
+            !SecurityUtils.validateId(formationId) ||
+            !SecurityUtils.validateId(moduleId)
+          ) {
+            throw new Error("ID invalide");
+          }
+
+          if (!RateLimiter.canPerformAction(`progress-${moduleId}`)) {
+            return;
+          }
+
+          return this.fetchWithSecurity(
+            `/formations/${formationId}/modules/${moduleId}/progress`,
+            {
+              method: "POST",
+              body: JSON.stringify(progressData),
+            }
+          );
+        },
+      };
+
+      // Progress Tracker
+      const ProgressTracker = {
+        state: {
+          videoProgress: 0,
+          readingTime: 0,
+          quizScore: 0,
+          conditions: {
+            videoWatched: false,
+            timeSpentReading: false,
+            quizPassed: false,
+          },
+        },
+
+        readingInterval: null,
+
+        async saveProgress(type, value) {
+          const validTypes = ["video", "quiz", "reading"];
+          if (!validTypes.includes(type)) {
+            throw new Error("Type de progression invalide");
+          }
+
+          if (
+            typeof value !== "number" ||
+            value < 0 ||
+            (type === "video" && value > 100) ||
+            (type === "quiz" && value > 100)
+          ) {
+            throw new Error("Valeur de progression invalide");
+          }
+
+          this.state[`${type}Progress`] = value;
+          await ApiClient.saveProgress(
+            window.currentFormationId,
+            window.currentModuleId,
+            {
+              type,
+              value,
+            }
+          );
+        },
+
+        startReadingTracking() {
+          this.stopReadingTracking();
+
+          const startTime = Date.now() - this.state.readingTime * 1000;
+          this.readingInterval = setInterval(() => {
+            this.state.readingTime = Math.floor(
+              (Date.now() - startTime) / 1000
+            );
+            if (this.state.readingTime >= 180) {
+              this.state.conditions.timeSpentReading = true;
+              this.saveProgress("reading", this.state.readingTime);
+            }
+            UI.updateProgressUI(this.state);
+          }, 1000);
+        },
+
+        stopReadingTracking() {
+          if (this.readingInterval) {
+            clearInterval(this.readingInterval);
+            this.readingInterval = null;
+          }
+        },
+
+        initializeVideoTracking(videoElement) {
+          if (!videoElement?.src.includes("youtube")) return;
+
+          return new YT.Player(videoElement, {
+            events: {
+              onStateChange: (event) => {
+                if (event.data === YT.PlayerState.PLAYING) {
+                  setInterval(() => {
+                    const duration = player.getDuration();
+                    const currentTime = player.getCurrentTime();
+                    const progress = (currentTime / duration) * 100;
+
+                    this.state.videoProgress = progress;
+                    if (progress >= 70) {
+                      this.state.conditions.videoWatched = true;
+                      this.saveProgress("video", progress);
+                    }
+                    UI.updateProgressUI(this.state);
+                  }, 1000);
+                }
+              },
+            },
+          });
+        },
+      };
+
+      // UI Manager
+      const UI = {
+        elements: {
+          contentDisplay: document.getElementById("contentDisplay"),
+          moduleList: document.getElementById("moduleList"),
+          formationList: document.getElementById("formationList"),
+          breadcrumb: document.querySelector(".breadcrumb"),
+          navbarHidden: document.getElementById("navbarHidden"),
+        },
+
+        showLoading(element) {
+          if (!element) return;
+          element.innerHTML = `
+            <div class="loading-animation">
+                <div class="spinner"></div>
+            </div>
+        `;
+        },
+
+        updateProgressUI(state) {
+          const progressHtml = `
+            <div class="progress-status mb-4 p-4 bg-gray-100 rounded-lg">
+                <h3 class="font-bold mb-2">Progression du module</h3>
+                <div class="grid gap-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fas ${
+                          state.conditions.videoWatched
+                            ? "fa-check-circle text-green-500"
+                            : "fa-circle text-gray-300"
+                        }"></i>
+                        <span>Vidéo (${Math.round(
+                          state.videoProgress
+                        )}% / 70% requis)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas ${
+                          state.conditions.timeSpentReading
+                            ? "fa-check-circle text-green-500"
+                            : "fa-circle text-gray-300"
+                        }"></i>
+                        <span>Lecture (${Math.floor(
+                          state.readingTime / 60
+                        )}:${String(state.readingTime % 60).padStart(
+            2,
+            "0"
+          )} / 3:00)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas ${
+                          state.conditions.quizPassed
+                            ? "fa-check-circle text-green-500"
+                            : "fa-circle text-gray-300"
+                        }"></i>
+                        <span>Quiz (${state.quizScore}% / 100% requis)</span>
+                    </div>
+                </div>
+            </div>`;
+
+          const contentHeader = document.querySelector(".content-header");
+          if (contentHeader) {
+            let progressStatus = document.querySelector(".progress-status");
+            if (progressStatus) {
+              progressStatus.remove();
+            }
+            contentHeader.insertAdjacentHTML("afterend", progressHtml);
+          }
+        },
+
+        handleError(element, error) {
+          if (!element) return;
+          console.error("Error:", error);
+          element.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${SecurityUtils.escapeHtml(
+                  error.message || "Une erreur est survenue"
+                )}</span>
+            </div>
+        `;
+        },
+      };
+
       document.addEventListener("DOMContentLoaded", function () {
-        // State management avec des let pour permettre la modification
+        // State management
         let currentFormation = null;
         let currentModule = null;
         let currentModuleContent = null;
-        let formationId = null; // Ajout de formationId dans le state
-        let currentModuleId = null; // Ajout de currentModuleId dans le state
+        let formationId = null;
+        let currentModuleId = null;
+
+        // Ajout du state pour le suivi de la progression
+        let moduleProgress = {
+          videoProgress: 0,
+          readingTime: 0,
+          quizScore: 0,
+          conditions: {
+            videoWatched: false,
+            timeSpentReading: false,
+            quizPassed: false,
+          },
+        };
+        let readingTimeInterval = null;
+
+        // Configuration constantes
+        const ContentTypes = {
+          MODULE: "module",
+          VIDEO: "video",
+          COURSE: "course",
+          QUIZ: "quiz",
+        };
 
         // DOM Elements
         const navbarHidden = document.getElementById("navbarHidden");
@@ -285,46 +661,151 @@
         const quizLink = document.querySelector('a[href="/quiz"]');
         const nextLink = document.querySelector('a[href="/next"]');
 
+        // Fonctions de suivi et de validation
+        function updateProgressUI() {
+          const progressHtml = `
+      <div class="progress-status mb-4 p-4 bg-gray-100 rounded-lg">
+        <h3 class="font-bold mb-2">Progression du module</h3>
+        <div class="grid gap-2">
+          <div class="flex items-center gap-2">
+            <i class="fas ${
+              moduleProgress.conditions.videoWatched
+                ? "fa-check-circle text-green-500"
+                : "fa-circle text-gray-300"
+            }"></i>
+            <span>Vidéo (${Math.round(
+              moduleProgress.videoProgress
+            )}% / 70% requis)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas ${
+              moduleProgress.conditions.timeSpentReading
+                ? "fa-check-circle text-green-500"
+                : "fa-circle text-gray-300"
+            }"></i>
+            <span>Lecture (${Math.floor(
+              moduleProgress.readingTime / 60
+            )}:${String(moduleProgress.readingTime % 60).padStart(
+            2,
+            "0"
+          )} / 3:00)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas ${
+              moduleProgress.conditions.quizPassed
+                ? "fa-check-circle text-green-500"
+                : "fa-circle text-gray-300"
+            }"></i>
+            <span>Quiz (${moduleProgress.quizScore}% / 100% requis)</span>
+          </div>
+        </div>
+      </div>`;
+
+          const contentHeader = document.querySelector(".content-header");
+          if (contentHeader) {
+            let progressStatus = document.querySelector(".progress-status");
+            if (progressStatus) {
+              progressStatus.remove();
+            }
+            contentHeader.insertAdjacentHTML("afterend", progressHtml);
+          }
+
+          // Vérifier si toutes les conditions sont remplies
+          const allConditionsMet = Object.values(
+            moduleProgress.conditions
+          ).every((condition) => condition);
+          const completeBtn = document.querySelector(".complete-module-btn");
+          if (completeBtn) {
+            completeBtn.disabled = !allConditionsMet;
+          }
+        }
+
+        function initializeVideoTracking(videoElement) {
+          if (!videoElement) return;
+
+          if (videoElement.src.includes("youtube")) {
+            const player = new YT.Player(videoElement, {
+              events: {
+                onStateChange: function (event) {
+                  if (event.data === YT.PlayerState.PLAYING) {
+                    setInterval(() => {
+                      const duration = player.getDuration();
+                      const currentTime = player.getCurrentTime();
+                      const progress = (currentTime / duration) * 100;
+
+                      moduleProgress.videoProgress = progress;
+                      if (progress >= 70) {
+                        moduleProgress.conditions.videoWatched = true;
+                      }
+                      updateProgressUI();
+                    }, 1000);
+                  }
+                },
+              },
+            });
+          }
+        }
+
+        function startReadingTimeTracking() {
+          if (readingTimeInterval) {
+            clearInterval(readingTimeInterval);
+          }
+
+          const startTime = Date.now() - moduleProgress.readingTime * 1000;
+          readingTimeInterval = setInterval(() => {
+            moduleProgress.readingTime = Math.floor(
+              (Date.now() - startTime) / 1000
+            );
+            if (moduleProgress.readingTime >= 180) {
+              moduleProgress.conditions.timeSpentReading = true;
+            }
+            updateProgressUI();
+          }, 1000);
+        }
+
+        function stopReadingTimeTracking() {
+          if (readingTimeInterval) {
+            clearInterval(readingTimeInterval);
+          }
+        }
         function updateBreadcrumb() {
           const breadcrumb = document.querySelector(".breadcrumb");
-          if (!breadcrumb) return; // Protection contre l'élément manquant
+          if (!breadcrumb) return;
 
           let html = "";
-
           if (currentFormation) {
             html += `
-                <span class="breadcrumb-item cursor-pointer" onclick="loadFormations()">
-                    ${currentFormation}
-                </span>
-            `;
+        <span class="breadcrumb-item cursor-pointer" onclick="loadFormations()">
+          ${currentFormation}
+        </span>
+      `;
 
             if (currentModule) {
               html += `
-                    <span class="breadcrumb-separator">
-                        <i class="fas fa-chevron-right"></i>
-                    </span>
-                    <span class="breadcrumb-item">
-                        ${currentModule}
-                    </span>
-                `;
+          <span class="breadcrumb-separator">
+            <i class="fas fa-chevron-right"></i>
+          </span>
+          <span class="breadcrumb-item">
+            ${currentModule}
+          </span>
+        `;
             }
           }
-
           breadcrumb.innerHTML = html;
         }
 
         function showLoading(element) {
-          if (!element) return; // Protection contre l'élément manquant
+          if (!element) return;
           element.innerHTML = `
-            <div class="loading-animation">
-                <div class="spinner"></div>
-            </div>
-        `;
+      <div class="loading-animation">
+        <div class="spinner"></div>
+      </div>
+    `;
         }
 
         window.loadFormations = function () {
           const formationList = document.getElementById("formationList");
-          if (!formationList) return; // Protection contre l'élément manquant
+          if (!formationList) return;
 
           showLoading(formationList);
           formationList.classList.remove("hidden");
@@ -336,7 +817,6 @@
           if (contentDisplay) contentDisplay.classList.add("hidden");
           if (navbarHidden) navbarHidden.style.display = "none";
 
-          // Réinitialisation du state
           currentFormation = null;
           currentModule = null;
           formationId = null;
@@ -356,15 +836,15 @@
               formationList.innerHTML = data
                 .map(
                   (formation) => `
-                    <div class="formation-item fade-in" onclick="loadFormationDescription('${formation._id}', '${formation.nom}')">
-                        <div class="icon-container">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="formation-content">
-                            <h3>${formation.nom}</h3>
-                        </div>
-                    </div>
-                `
+          <div class="formation-item fade-in" onclick="loadFormationDescription('${formation._id}', '${formation.nom}')">
+            <div class="icon-container">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="formation-content">
+              <h3>${formation.nom}</h3>
+            </div>
+          </div>
+        `
                 )
                 .join("");
             })
@@ -377,7 +857,7 @@
 
           showLoading(formationList);
           currentFormation = name;
-          formationId = id; // Sauvegarde de l'ID de formation
+          formationId = id;
           updateBreadcrumb();
 
           fetch(`/formations/${id}`)
@@ -390,24 +870,23 @@
             })
             .then((formation) => {
               formationList.innerHTML = `
-                    <div class="formation-item fade-in">
-                        <div class="icon-container">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="formation-content">
-                            <h3>${formation.nom}</h3>
-                            <p class="formation-description">${
-                              formation.description ||
-                              "Aucune description disponible"
-                            }</p>
-                            <button class="btn-inscription" onclick="inscrireAFormation('${
-                              formation._id
-                            }', '${formation.nom}')">
-                                S'inscrire
-                            </button>
-                        </div>
-                    </div>
-                `;
+          <div class="formation-item fade-in">
+            <div class="icon-container">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="formation-content">
+              <h3>${formation.nom}</h3>
+              <p class="formation-description">${
+                formation.description || "Aucune description disponible"
+              }</p>
+              <button class="btn-inscription" onclick="inscrireAFormation('${
+                formation._id
+              }', '${formation.nom}')">
+                S'inscrire
+              </button>
+            </div>
+          </div>
+        `;
             })
             .catch((error) => handleError(formationList, error));
         };
@@ -438,59 +917,149 @@
             });
         };
 
-        window.loadModules = function (id, name) {
-          const moduleList = document.getElementById("moduleList");
-          if (!moduleList) return;
+        function updateProgressionUI(progression) {
+          const moduleItems = document.querySelectorAll(".module-item");
 
+          moduleItems.forEach((moduleItem) => {
+            const moduleId = moduleItem.dataset.moduleId;
+            const statusIcon = moduleItem.querySelector(".status-icon i");
+            const quizScore = moduleItem.querySelector(".quiz-score");
+
+            const moduleProgress = progression.find(
+              (p) => p.moduleId === moduleId
+            );
+
+            if (moduleProgress) {
+              // Update status icon
+              if (moduleProgress.completed) {
+                statusIcon.className = "fas fa-check-circle text-green-500";
+                moduleItem.classList.add("completed");
+              } else if (moduleProgress.locked) {
+                statusIcon.className = "fas fa-lock text-red-500";
+                moduleItem.classList.add("locked");
+              }
+
+              // Update quiz score if available
+              if (moduleProgress.quizScore !== undefined) {
+                quizScore.textContent = `Score: ${moduleProgress.quizScore}%`;
+              }
+            }
+          });
+        }
+        window.loadModules = function (id, name) {
+          console.log(`loadModules called with id: ${id}, name: ${name}`);
+
+          const moduleList = document.getElementById("moduleList");
+          if (!moduleList) {
+            console.error("moduleList not found in the DOM");
+            return;
+          }
+
+          console.log(
+            "Afficher le chargement et configurer la liste des modules"
+          );
           showLoading(moduleList);
           moduleList.classList.remove("hidden");
 
           const formationList = document.getElementById("formationList");
-          if (formationList) formationList.classList.add("hidden");
+          if (formationList) {
+            console.log("Masquer la liste des formations");
+            formationList.classList.add("hidden");
+          }
 
           currentFormation = name;
           formationId = id;
           currentModule = null;
           currentModuleId = null;
+          console.log("Mise à jour du breadcrumb");
           updateBreadcrumb();
 
+          console.log(`Fetching modules for formation id: ${id}`);
           fetch(`/formations/${id}/modules`)
             .then((response) => {
-              if (!response.ok)
-                throw new Error("Erreur de chargement des modules");
+              console.log(`Modules fetch response status: ${response.status}`);
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
               return response.json();
             })
-            .then((data) => {
-              if (!Array.isArray(data))
-                throw new Error("Format de données invalide");
+            .then((modules) => {
+              console.log("Modules reçus:", modules);
 
-              moduleList.innerHTML = data
+              if (!Array.isArray(modules)) {
+                throw new Error("Format de données invalide pour les modules");
+              }
+
+              moduleList.innerHTML = modules
                 .map(
                   (module) => `
-                    <div class="module-item fade-in" onclick="loadContent('${id}', '${
-                    module._id
-                  }', '${module.nom}')">
-                        <div class="icon-container">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <div class="module-content">
-                            <h3>${module.nom}</h3>
-                            <p class="module-description">${
-                              module.description ||
-                              "Aucune description disponible"
-                            }</p>
-                        </div>
+            <div class="module-item fade-in" 
+                 data-module-id="${module._id}"
+                 onclick="loadContent('${id}', '${module._id}', '${
+                    module.nom
+                  }')">
+                <div class="icon-container">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="module-content">
+                    <h3>${module.nom}</h3>
+                    <p class="module-description">${
+                      module.description || "Aucune description disponible"
+                    }</p>
+                    <div class="status-icon">
+                        <i class="fas fa-circle"></i>
                     </div>
-                `
+                    <div class="quiz-score"></div>
+                </div>
+            </div>`
                 )
                 .join("");
+
+              console.log(`Modules affichés dans moduleList`);
+              return fetch(`/formations/${id}/progression`);
             })
-            .catch((error) => handleError(moduleList, error));
+            .then((response) => {
+              console.log(
+                `Progression fetch response status: ${response.status}`
+              );
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((progression) => {
+              console.log("Progression reçue:", progression);
+              if (Array.isArray(progression)) {
+                console.log("Mise à jour de l'UI de progression");
+                updateProgressionUI(progression);
+              } else {
+                console.warn(
+                  "Progression reçue n'est pas un tableau:",
+                  progression
+                );
+              }
+            })
+            .catch((error) => {
+              console.error("Erreur lors du chargement:", error);
+              if (!moduleList.innerHTML) {
+                console.warn("Aucun contenu dans moduleList après erreur");
+                handleError(moduleList, error);
+              }
+            });
         };
 
+        // Modifiez uniquement la section loadContent dans votre script :
+
         window.loadContent = function (fId, mId, mName) {
+          console.log(
+            `loadContent called with fId: ${fId}, mId: ${mId}, mName: ${mName}`
+          );
+
           const contentDisplay = document.getElementById("contentDisplay");
-          if (!contentDisplay) return;
+          if (!contentDisplay) {
+            console.error("contentDisplay not found in the DOM");
+            return;
+          }
 
           showLoading(contentDisplay);
           contentDisplay.classList.remove("hidden");
@@ -500,253 +1069,157 @@
 
           currentModule = mName;
           currentModuleId = mId;
+          formationId = fId;
           updateBreadcrumb();
 
           if (navbarHidden) navbarHidden.style.display = "block";
 
-          fetch(`/formations/${fId}/modules/${mId}/content`)
-            .then((response) => {
-              if (!response.ok)
-                throw new Error("Erreur de chargement du contenu");
-              return response.json();
-            })
-            .then((data) => {
+          moduleProgress = {
+            videoProgress: 0,
+            readingTime: 0,
+            quizScore: 0,
+            conditions: {
+              videoWatched: false,
+              timeSpentReading: false,
+              quizPassed: false,
+            },
+          };
+
+          Promise.all([
+            fetch(`/formations/${fId}/modules/${mId}/content`).then((r) =>
+              r.json()
+            ),
+            fetch(`/formations/${fId}/modules/${mId}/status`).then((r) =>
+              r.json()
+            ),
+          ])
+            .then(([data, status]) => {
               currentModuleContent = data;
-              displayModuleContent(data);
-            })
-            .catch((error) => handleError(contentDisplay, error));
-        };
+              // Afficher directement la vidéo si elle existe
+              if (data.video) {
+                let videoId = "";
+                const videoUrl = data.video.trim();
 
-        function displayModuleContent(data) {
-          const contentDisplay = document.getElementById("contentDisplay");
-          if (!contentDisplay || !data) return;
+                // Gestion des différents formats d'URL YouTube
+                if (videoUrl.includes("youtube.com/watch")) {
+                  videoId = videoUrl.split("v=")[1]?.split("&")[0];
+                } else if (videoUrl.includes("youtu.be")) {
+                  videoId = videoUrl.split("youtu.be/")[1]?.split("?")[0];
+                }
 
-          contentDisplay.innerHTML = `
+                if (videoId) {
+                  contentDisplay.innerHTML = `
+            <div class="content-header fade-in">
+                <h2>Vidéo: ${currentModule}</h2>
+            </div>
+            <div class="content-body fade-in">
+                <div class="video-container">
+                    <iframe 
+                        id="player"
+                        src="https://www.youtube.com/embed/${videoId}?enablejsapi=1" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>`;
+
+                  const iframe = contentDisplay.querySelector("iframe");
+                  initializeVideoTracking(iframe);
+                } else {
+                  contentDisplay.innerHTML = `
             <div class="content-header fade-in">
                 <h2>${currentModule}</h2>
             </div>
             <div class="content-body fade-in">
-                <p class="content-description">${
-                  data.description || "Aucune description disponible"
-                }</p>
-                <div class="module-content w-full">
-                    ${data.course || ""}
+                <div class="error-message">
+                    <p>Erreur: Format de vidéo non valide</p>
                 </div>
+            </div>`;
+                }
+              } else {
+                // Afficher le contenu normal si pas de vidéo
+                contentDisplay.innerHTML = `
+          <div class="content-header fade-in">
+            <h2>${currentModule}</h2>
+          </div>
+          <div class="content-body fade-in">
+            <p class="content-description">${
+              data.description || "Aucune description disponible"
+            }</p>
+            <div class="module-content w-full">
+              ${data.course || ""}
             </div>
-        `;
+          </div>`;
+              }
 
-          // Rendre les vidéos responsives
-          const videos = contentDisplay.querySelectorAll("iframe");
-          videos.forEach((video) => {
-            video.style.width = "100%";
-            video.style.height = "600px";
-            video.style.maxWidth = "100%";
-          });
-        }
+              updateProgressUI();
+              if (!data.video) {
+                startReadingTimeTracking();
+              }
+            })
+            .catch((error) => handleError(contentDisplay, error));
+        };
 
-        // Gestionnaires d'événements pour les liens de navigation
-        if (videoLink) {
-          videoLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            if (!currentModuleContent || !currentModuleContent.video) {
-              alert("Aucune vidéo disponible pour ce module");
-              return;
-            }
-
-            const contentDisplay = document.getElementById("contentDisplay");
-            if (!contentDisplay) return;
-
-            const videoUrl = currentModuleContent.video;
-            let videoIframe = "";
-            if (videoUrl.includes("youtube.com/watch")) {
-              const videoId = videoUrl.split("v=")[1];
-              videoIframe = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            } else {
-              videoIframe = "Aucune vidéo disponible ou format non supporté.";
-            }
-
-            contentDisplay.innerHTML = `
-              <div class="content-header fade-in">
-                  <h2>Vidéo: ${currentModule}</h2>
-              </div>
-              <div class="content-body fade-in">
-                  <div class="video-container">
-                      ${videoIframe}
-                  </div>
-              </div>
-            `;
-          });
-        }
-
-        if (coursLink) {
-          coursLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            if (!currentModuleContent) return;
-
-            const contentDisplay = document.getElementById("contentDisplay");
-            if (!contentDisplay) return;
-
-            contentDisplay.innerHTML = `
-                <div class="content-header fade-in">
-                    <h2>Cours: ${currentModule}</h2>
-                </div>
-                <div class="content-body fade-in">
-                    <div class="course-container">
-                        ${
-                          currentModuleContent.cours ||
-                          currentModuleContent.description ||
-                          "Aucun cours disponible"
-                        }
-                    </div>
-                </div>
-            `;
-          });
-        }
-
-        if (quizLink) {
-          quizLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            if (!currentModuleContent || !currentModuleContent.quiz) {
-              alert("Aucun quiz disponible pour ce module");
-              return;
-            }
-
-            renderQuizModal(currentModuleContent.quiz);
-          });
-        }
-
-        if (nextLink) {
-          nextLink.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            // Vérification de la présence d'une formation sélectionnée
-            if (!formationId) {
-              alert("Veuillez sélectionner une formation");
-              return;
-            }
-
-            // Chargement de la liste complète des modules
-            const moduleList = document.getElementById("moduleList");
-            if (!moduleList) return;
-
-            showLoading(moduleList);
-            moduleList.classList.remove("hidden");
-
-            // Cacher les autres éléments
-            const contentDisplay = document.getElementById("contentDisplay");
-            if (contentDisplay) contentDisplay.classList.add("hidden");
-
-            fetch(`/formations/${formationId}/modules`)
-              .then((response) => {
-                if (!response.ok)
-                  throw new Error("Erreur de chargement des modules");
-                return response.json();
-              })
-              .then((data) => {
-                if (!Array.isArray(data))
-                  throw new Error("Format de données invalide");
-
-                moduleList.innerHTML = data
-                  .map(
-                    (module) => `
-                        <div class="module-item fade-in" onclick="loadContent('${formationId}', '${
-                      module._id
-                    }', '${module.nom}')">
-                            <div class="icon-container">
-                                <i class="fas fa-book"></i>
-                            </div>
-                            <div class="module-content">
-                                <h3>${module.nom}</h3>
-                                <p class="module-description">${
-                                  module.description ||
-                                  "Aucune description disponible"
-                                }</p>
-                            </div>
-                        </div>
-                    `
-                  )
-                  .join("");
-              })
-              .catch((error) => handleError(moduleList, error));
-          });
-        }
-
-        function renderQuizModal(quizData) {
+        window.renderQuizModal = function (quizData) {
           if (!Array.isArray(quizData)) {
             console.error("Format de quiz invalide");
             return;
           }
 
           const modalHtml = `
-            <div id="quiz-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-                    <div class="content-header">
-                        <h2>Quiz: ${currentModule}</h2>
-                    </div>
-                    <form id="quiz-form">
-                        ${quizData
-                          .map(
-                            (question, index) => `
-                            <div class="quiz-question mb-4 p-4 bg-gray-100 rounded-lg">
-                                <h3 class="font-bold mb-2">${
-                                  question.question
-                                }</h3>
-                                <div class="quiz-options">
-                                    ${question.options
-                                      .map(
-                                        (option, optionIndex) => `
-                                        <label class="block mb-2">
-                                            <input 
-                                                type="radio" 
-                                                name="question-${index}" 
-                                                value="${option}" 
-                                                data-correct="${
-                                                  question.answer === option
-                                                }"
-                                                class="mr-2 quiz-option"
-                                                required
-                                            >
-                                            ${option}
-                                        </label>
-                                    `
-                                      )
-                                      .join("")}
-                                </div>
-                            </div>
-                        `
-                          )
-                          .join("")}
-                        <div class="flex justify-between">
-                            <button 
-                                type="submit" 
-                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                            >
-                                Soumettre le Quiz
-                            </button>
-                            <button 
-                                type="button" 
-                                onclick="closeQuizModal()"
-                                class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-                            >
-                                Fermer
-                            </button>
-                        </div>
-                    </form>
-                    <div id="quiz-result" class="mt-4 text-center"></div>
+      <div id="quiz-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div class="content-header">
+            <h2>Quiz: ${currentModule}</h2>
+          </div>
+          <form id="quiz-form">
+            ${quizData
+              .map(
+                (question, index) => `
+              <div class="quiz-question mb-4 p-4 bg-gray-100 rounded-lg">
+                <h3 class="font-bold mb-2">${question.question}</h3>
+                <div class="quiz-options">
+                  ${question.options
+                    .map(
+                      (option) => `
+                    <label class="block mb-2">
+                      <input type="radio" name="question-${index}" value="${option}" 
+                        data-correct="${question.answer === option}"
+                        required
+                        class="mr-2 quiz-option">
+                      ${option}
+                    </label>
+                  `
+                    )
+                    .join("")}
                 </div>
+              </div>
+            `
+              )
+              .join("")}
+            <div class="flex justify-between">
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Soumettre le Quiz
+              </button>
+              <button type="button" onclick="closeQuizModal()" 
+                class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
+                Fermer
+              </button>
             </div>
-        `;
+          </form>
+          <div id="quiz-result" class="mt-4 text-center"></div>
+        </div>
+      </div>
+    `;
 
-          // Supprimer modal existante
           const existingModal = document.getElementById("quiz-modal");
           if (existingModal) {
             existingModal.remove();
           }
 
-          // Ajouter nouvelle modal
           document.body.insertAdjacentHTML("beforeend", modalHtml);
 
-          // Gestionnaire de soumission du quiz
           const quizForm = document.getElementById("quiz-form");
           if (quizForm) {
             quizForm.addEventListener("submit", function (e) {
@@ -772,25 +1245,224 @@
               });
 
               const score = Math.round((correctAnswers / totalQuestions) * 100);
+              moduleProgress.quizScore = score;
+              moduleProgress.conditions.quizPassed = score === 100;
+
               resultDiv.innerHTML = `
-                    <p class="font-bold text-lg">
-                        Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
-                    </p>
-                    <p class="${
-                      score >= 80 ? "text-green-600" : "text-red-600"
-                    }">
-                        ${
-                          score >= 80
-                            ? "Félicitations !"
-                            : "Vous pouvez améliorer votre score"
-                        }
-                    </p>
-                `;
+          <p class="font-bold text-lg">
+            Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
+          </p>
+          <p class="${score === 100 ? "text-green-600" : "text-red-600"}">
+            ${
+              score === 100
+                ? "Félicitations ! Quiz réussi !"
+                : "Vous devez obtenir 100% pour valider le module"
+            }
+          </p>
+        `;
+
+              updateProgressUI();
             });
           }
+        };
+
+        // Event Listeners pour la navigation
+        if (videoLink) {
+          videoLink.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Vérification que le contenu du module actuel contient une vidéo
+            if (
+              !currentModuleContent ||
+              !currentModuleContent.video ||
+              !currentModuleContent.video.trim()
+            ) {
+              alert("Aucune vidéo disponible pour ce module");
+              return;
+            }
+
+            const contentDisplay = document.getElementById("contentDisplay");
+            if (!contentDisplay) return;
+
+            // Arrêter le suivi du temps de lecture actuel
+            stopReadingTimeTracking();
+
+            const videoUrl = currentModuleContent.video.trim();
+            let videoIframe = "";
+
+            // Gestion des URL YouTube et raccourcis youtu.be
+            if (
+              videoUrl.includes("youtube.com/watch") ||
+              videoUrl.includes("youtu.be")
+            ) {
+              let videoId = "";
+
+              if (videoUrl.includes("youtube.com/watch")) {
+                videoId = videoUrl.split("v=")[1]?.split("&")[0]; // Extraction de l'ID vidéo
+              } else if (videoUrl.includes("youtu.be")) {
+                videoId = videoUrl.split("youtu.be/")[1]?.split("?")[0];
+              }
+
+              if (videoId) {
+                videoIframe = `<iframe 
+                         src="https://www.youtube.com/embed/${videoId}?enablejsapi=1" 
+                         frameborder="0" 
+                         allow="autoplay; encrypted-media; picture-in-picture" 
+                         allowfullscreen>
+                       </iframe>`;
+              } else {
+                videoIframe = "ID vidéo introuvable. Lien YouTube incorrect.";
+              }
+            } else {
+              videoIframe = "Format de vidéo non supporté.";
+            }
+
+            // Mise à jour du contenu de la div d'affichage
+            contentDisplay.innerHTML = `
+      <div class="content-header fade-in">
+        <h2>Vidéo: ${currentModule}</h2>
+      </div>
+      <div class="content-body fade-in">
+        <div class="video-container">
+          ${videoIframe}
+        </div>
+      </div>
+    `;
+
+            // Initialisation du suivi vidéo si un iframe est présent
+            const iframe = contentDisplay.querySelector("iframe");
+            if (iframe) {
+              initializeVideoTracking(iframe);
+            }
+          });
         }
 
-        // Fonction pour fermer la modal du quiz
+        if (coursLink) {
+          coursLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (!currentModuleContent) return;
+
+            const contentDisplay = document.getElementById("contentDisplay");
+            if (!contentDisplay) return;
+
+            contentDisplay.innerHTML = `
+        <div class="content-header fade-in">
+          <h2>Cours: ${currentModule}</h2>
+        </div>
+        <div class="content-body fade-in">
+          <div class="course-container">
+            ${
+              currentModuleContent.cours ||
+              currentModuleContent.description ||
+              "Aucun cours disponible"
+            }
+          </div>
+        </div>
+      `;
+
+            stopReadingTimeTracking();
+            startReadingTimeTracking();
+            updateProgressUI();
+          });
+        }
+
+        if (quizLink) {
+          quizLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (!currentModuleContent || !currentModuleContent.quiz) {
+              alert("Aucun quiz disponible pour ce module");
+              return;
+            }
+            stopReadingTimeTracking();
+            renderQuizModal(currentModuleContent.quiz);
+          });
+        }
+
+        if (nextLink) {
+          nextLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            stopReadingTimeTracking();
+
+            if (!formationId) {
+              alert("Veuillez sélectionner une formation");
+              return;
+            }
+
+            const moduleList = document.getElementById("moduleList");
+            if (!moduleList) return;
+
+            showLoading(moduleList);
+            moduleList.classList.remove("hidden");
+
+            const contentDisplay = document.getElementById("contentDisplay");
+            if (contentDisplay) contentDisplay.classList.add("hidden");
+
+            // Utilisation de Promise.all comme dans loadModules pour charger modules et progression
+            Promise.all([
+              fetch(`/formations/${formationId}/modules`).then((response) => {
+                if (!response.ok)
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+              }),
+              fetch(`/formations/${formationId}/progression`).then(
+                (response) => {
+                  if (!response.ok)
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                  return response.json();
+                }
+              ),
+            ])
+              .then(([modules, progression]) => {
+                if (!Array.isArray(modules)) {
+                  throw new Error(
+                    "Format de données invalide pour les modules"
+                  );
+                }
+
+                moduleList.innerHTML = modules
+                  .map(
+                    (module) => `
+            <div class="module-item fade-in" 
+                 data-module-id="${module._id}"
+                 onclick="loadContent('${formationId}', '${module._id}', '${
+                      module.nom
+                    }')"
+            >
+                <div class="icon-container">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="module-content">
+                    <h3>${module.nom}</h3>
+                    <p class="module-description">${
+                      module.description || "Aucune description disponible"
+                    }</p>
+                    <div class="status-icon">
+                        <i class="fas fa-circle"></i>
+                    </div>
+                    <div class="quiz-score"></div>
+                </div>
+            </div>
+          `
+                  )
+                  .join("");
+
+                // Mise à jour de l'UI avec la progression
+                if (Array.isArray(progression)) {
+                  updateProgressionUI(progression);
+                } else {
+                  console.log(
+                    "Progression reçue n'est pas un tableau:",
+                    progression
+                  );
+                }
+              })
+              .catch((error) => {
+                console.error("Erreur lors du chargement:", error);
+                handleError(moduleList, error);
+              });
+          });
+        }
+
         window.closeQuizModal = function () {
           const modal = document.getElementById("quiz-modal");
           if (modal) {
@@ -800,48 +1472,14 @@
 
         function handleError(element, error) {
           if (!element) return;
-
           console.error("Erreur:", error);
           element.innerHTML = `
-            <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>${error.message || "Une erreur est survenue"}</span>
-            </div>
-        `;
+      <div class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>${error.message || "Une erreur est survenue"}</span>
+      </div>
+    `;
         }
-
-        // Fonction utilitaire pour sécuriser les chaînes de caractères
-        function escapeHtml(str) {
-          const div = document.createElement("div");
-          div.textContent = str;
-          return div.innerHTML;
-        }
-
-        // Fonction pour valider les IDs
-        function isValidId(id) {
-          return typeof id === "string" && id.length > 0;
-        }
-
-        // Fonction pour valider les objets de données
-        function isValidData(data) {
-          return data && typeof data === "object";
-        }
-
-        // Gestion des erreurs globale
-        window.addEventListener("error", function (e) {
-          console.error("Erreur globale:", e.error);
-          alert(
-            "Une erreur inattendue est survenue. Veuillez rafraîchir la page."
-          );
-        });
-
-        // Gestion des rejets de promesses non gérés
-        window.addEventListener("unhandledrejection", function (e) {
-          console.error("Promesse rejetée non gérée:", e.reason);
-          alert(
-            "Une erreur de communication avec le serveur est survenue. Veuillez réessayer."
-          );
-        });
 
         // Chargement initial
         loadFormations();
