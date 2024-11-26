@@ -1,3 +1,4 @@
+
 const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
@@ -10,6 +11,8 @@ const { extractUserFromToken, addJwtFeatures } = require('./config/jwt.config');
 
 
 const app = express(); // Crée l'application Express
+const io = require('socket.io')();
+app.set('io', io);
 
 app.use(cookieParser());
 require('./config/passport.config');

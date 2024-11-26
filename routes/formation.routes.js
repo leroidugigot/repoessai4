@@ -91,6 +91,8 @@ router.get('/:formationId/modules/:moduleId/status', ensureAuthenticated, async 
 
 
 
+
+
 // Route de test (pas protégée)
 router.get("/test", (req, res) => {
     logColor("Route de test appelée", colors.green);

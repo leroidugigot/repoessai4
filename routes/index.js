@@ -13,9 +13,6 @@ router.use("/auth", authRoutes);
 
 // Route protégée pour accéder à la vue 'protected' et les formations
 router.use('/protected', ensureAuthenticated, async (req, res, next) => {
-    
-
-    // Vérifiez si req.user est défini avant de continuer
     if (!req.user) {
         return res.status(401).json({ message: "User not authenticated" });
     }
@@ -39,6 +36,47 @@ router.use('/protected', ensureAuthenticated, async (req, res, next) => {
         res.status(500).send("Internal server error");
     }
 });
+
+// Route du chat - Protégée par authentification
+router.get('/chat', ensureAuthenticated, (req, res) => {
+    try {
+        if (!req.user) {
+            return res.redirect('/auth/signin');
+        }
+        
+        const userData = {
+            _id: req.user._id.toString(),
+            username: req.user.username,
+            avatar: req.user.avatar || '/images/default-profile.svg'
+        };
+        
+        console.log('Rendering chat with user:', userData);
+        res.render('chat', { user: userData });
+        
+    } catch (error) {
+        console.error('Error rendering chat:', error);
+        res.status(500).send('Erreur lors du chargement du chat');
+    }
+});
+
+// API endpoint pour obtenir les informations de l'utilisateur courant
+router.get('/api/current-user', ensureAuthenticated, (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ error: 'Non authentifié' });
+        }
+
+        res.json({
+            _id: req.user._id.toString(),
+            username: req.user.username,
+            avatar: req.user.avatar || '/images/default-profile.svg'
+        });
+    } catch (error) {
+        console.error('Error getting current user:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
 // Routes protégées pour les formations
 router.use('/formations', ensureAuthenticated, formationRoutes);
 
@@ -57,10 +95,6 @@ router.get("/", (req, res) => {
 
 router.get("/enseigner", (req, res) => {
     res.json({ message: "Enseigner details" });
-});
-
-router.get("/chat", (req, res) => {
-    res.json({ message: "Chat information" });
 });
 
 router.get("/sellpage", (req, res) => {
