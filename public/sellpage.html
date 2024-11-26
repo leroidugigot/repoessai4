@@ -1,438 +1,1324 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vente de Matériel de Secourisme</title>
-  <link rel="stylesheet" href="./css/output.css" />
-  <style>
-    /* Custom Styles */
-    body {
-      font-family: Arial, sans-serif;
-    }
-    .product-card {
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
-    }
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-    .product-card img {
-      border-radius: 10px;
-      transition: transform 0.3s;
-    }
-    .product-card img:hover {
-      transform: scale(1.05);
-    }
-    #cart {
-      transition: opacity 0.3s ease;
-      opacity: 0;
-    }
-    #cart.show {
-      opacity: 1;
-    }
-    .toast {
-      position: fixed;
-      bottom: 4rem;
-      right: 2rem;
-      background-color: #4CAF50;
-      color: white;
-      padding: 1rem;
-      border-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      transition: opacity 0.5s;
-      opacity: 0;
-    }
-    .toast.show {
-      opacity: 1;
-    }
-    /* Search Bar Styles */
-    .search-bar {
-      margin: 1rem auto;
-      max-width: 600px;
-      display: flex;
-      justify-content: center;
-    }
-    .search-bar input {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 100%;
-      max-width: 400px;
-    }
-    .search-bar button {
-      padding: 0.5rem 1rem;
-      margin-left: 0.5rem;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    /* New Product Styles */
-    .new-product {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #FF5733;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    /* Timer Styles */
-    .timer {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background-color: #4CAF50;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 1.3rem;
-      font-weight: bold;
-    }
-    /* Reviews Styles */
-    .reviews {
-      margin-top: 1rem;
-    }
-    .stars {
-      color: #FFD700;
-    }
-    /*transition opacity panier*/
-    #cart {
-  transition: opacity 0.3s ease;
-  opacity: 50;
-}
-#cart.show {
-  opacity: 1;
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matériel de Secourisme Pro</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+    <link rel="stylesheet" href="./css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      /* Variables et styles de base */
+      :root {
+        --primary: #4caf50;
+        --primary-dark: #3d8b40;
+        --secondary: #2196f3;
+        --secondary-dark: #1976d2;
+        --accent: #ff5733;
+        --success: #4caf50;
+        --warning: #ff9800;
+        --danger: #f44336;
+        --gray-100: #f5f5f5;
+        --gray-200: #eeeeee;
+        --gray-300: #e0e0e0;
+        --gray-400: #bdbdbd;
+        --gray-500: #9e9e9e;
+        --gray-600: #757575;
+        --gray-700: #616161;
+        --gray-800: #424242;
+        --gray-900: #212121;
+        --transition: all 0.3s ease;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --radius: 8px;
+      }
 
-  </style>
-</head>
-<body class="bg-gray-100">
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-  <!-- Top Bar -->
-  <div class="bg-blue-700 text-white p-3 text-center">
-    <h2 class="text-xl font-bold">Votre source d'équipement de secourisme</h2>
-    <p>-10% sur votre première commande avec le code **LEROIDUGIGOT10** !</p>
-  </div>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        color: var(--gray-900);
+        background-color: var(--gray-100);
+        margin-top: 64px;
+      }
 
-  <!-- Header -->
-  <header class="bg-blue-700 text-white p-4">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">LifeAcademy.fr</h1>
-      <div>
-        <button id="cartButton" class="bg-blue-600 p-2 rounded-full flex items-center transition-transform transform hover:scale-110">
-          <span id="cartCount" class="text-sm bg-red-500 px-2 py-1 rounded-full">0</span>
-          <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.343 2H19l-1.343-2H5l1.5 9h11a2 2 0 100-4H7.5M16 16.5l2 3H6l2-3m-3-3h14M7 22a2 2 0 100-4 2 2 0 000 4z"></path>
-          </svg>
-        </button>
+      /* Header et Navigation */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: linear-gradient(to right, var(--gray-900), var(--gray-800));
+        color: white;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        height: 48px;
+        width: auto;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+      }
+
+      .nav-links a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .btn-secondary {
+        background-color: var(--secondary);
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--secondary-dark);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        border: 2px solid white;
+        color: white;
+      }
+
+      .btn-outline:hover {
+        background-color: white;
+        color: var(--gray-900);
+      }
+
+      /* Menu mobile */
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      .mobile-menu {
+        display: none;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background-color: var(--gray-900);
+        padding: 1rem;
+      }
+
+      .mobile-menu.active {
+        display: block;
+      }
+
+      /* Bannière promotionnelle */
+      .promo-banner {
+        background: linear-gradient(45deg, var(--secondary), var(--primary));
+        color: white;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .promo-banner-content {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
+      /* Filtres */
+      .filters {
+        background-color: white;
+        padding: 1rem;
+        margin: 1rem auto;
+        max-width: 1280px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .search-container {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto 1rem;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius);
+        font-size: 1rem;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-500);
+      }
+
+      .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .filter-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        background-color: var(--gray-200);
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .filter-btn.active {
+        background-color: var(--secondary);
+        color: white;
+      }
+
+      /* Grille de produits */
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        max-width: 1280px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .product-card {
+        background-color: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .product-image {
+        position: relative;
+        padding-top: 75%; /* Ratio 4:3 */
+      }
+
+      .product-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .product-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background-color: var(--accent);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .product-content {
+        padding: 1rem;
+      }
+
+      .product-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .product-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .star {
+        color: #ffd700;
+      }
+
+      .product-price {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      .current-price {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .old-price {
+        text-decoration: line-through;
+        color: var(--gray-500);
+      }
+
+      .product-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1100;
+      }
+
+      .modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background-color: white;
+        border-radius: var(--radius);
+        max-width: 900px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--gray-500);
+      }
+
+      .modal-body {
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+
+      /* Toast Notifications */
+      .toast-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 1200;
+      }
+
+      .toast {
+        background-color: white;
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin: 0.5rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: var(--transition);
+      }
+
+      .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .nav-links,
+        .nav-buttons {
+          display: none;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+
+        .modal-body {
+          grid-template-columns: 1fr;
+        }
+      }
+      .cart-button-fixed {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 1000;
+      }
+
+      .cart-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--accent);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cart-sidebar {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 400px;
+        height: 100vh;
+        background-color: white;
+        box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+        z-index: 1100;
+        transition: right 0.3s ease;
+      }
+
+      .cart-sidebar.active {
+        right: 0;
+      }
+
+      .cart-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--gray-600);
+      }
+
+      .cart-items {
+        padding: 1rem;
+        overflow-y: auto;
+        max-height: calc(100vh - 180px);
+      }
+
+      .cart-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .cart-item-image {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .cart-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .cart-item-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .cart-item-title {
+        font-weight: 500;
+      }
+
+      .cart-item-price {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .cart-item-quantity {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .cart-item-remove {
+        color: var(--danger);
+        cursor: pointer;
+      }
+
+      .cart-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        border-top: 1px solid var(--gray-200);
+        background-color: white;
+      }
+
+      .cart-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .btn-checkout {
+        width: 100%;
+        padding: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .cart-sidebar {
+          width: 100%;
+          right: -100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="fixed left-0 right-0 top-0 z-50 bg-black">
+      <nav class="flex h-16 items-center justify-between p-0">
+        <div class="m-0 flex h-full items-center p-0">
+          <a href="index.html"
+            ><img src="./images/img/logo.png" alt="Logo" class="m-0 h-24 p-0"
+          /></a>
+        </div>
+
+        <div class="hidden h-11 w-auto flex-row justify-between gap-4 md:flex">
+          <button
+            id="toggleModalBtn"
+            class="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-md hover:bg-blue-600 focus:outline-none"
+          >
+            Formations <i class="fas fa-chevron-down"></i>
+          </button>
+          <a
+            href="enseigner.html"
+            class="text-15 change-color-on-scroll underline-animation flex h-11 w-auto items-center px-1 font-bold"
+            >Devenir Formateur</a
+          >
+          <a
+            href="chat.html"
+            class="text-15 change-color-on-scroll underline-animation flex h-11 w-auto items-center px-1 font-bold"
+            >Notre Communauté</a
+          >
+          <a
+            href="sellpage.html"
+            class="text-15 change-color-on-scroll underline-animation flex h-11 w-auto items-center px-1 font-bold"
+          >
+            Mon sac de secouriste
+            <i class="fa-solid fa-heart-pulse fa-beat ml-4"></i>
+          </a>
+        </div>
+
+        <div class="hidden flex-row items-center gap-2 px-1 md:flex">
+          <a
+            href="#"
+            class="change-color-on-scroll underline-animation flex h-7 w-24 items-center justify-center rounded-2xl"
+            onclick="handleClickConnexion()"
+            >Connexion</a
+          >
+          <a
+            href="#"
+            class="z-40 flex h-7 w-28 items-center justify-center rounded-3xl bg-blue-500 px-2 text-white hover:scale-125 hover:bg-green-600"
+            onclick="handleClickCommencer()"
+            >Commencer</a
+          >
+        </div>
+
+        <!-- Menu burger -->
+        <div class="flex items-center pr-4 md:hidden">
+          <button id="burgerMenu" class="text-white focus:outline-none">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Menu déroulant -->
+      <nav
+        id="mobileMenu"
+        class="absolute left-0 top-16 z-40 flex hidden w-full flex-col items-start bg-black p-4 text-white md:hidden"
+      >
+        <a href="enseigner.html" class="w-full py-2">Enseigner</a>
+        <a href="chat.html" class="w-full py-2">Chat</a>
+        <a href="sac-secouriste.html" class="w-full py-2"
+          >Mon sac de secouriste</a
+        >
+        <a href="#" onclick="handleClickConnexion()">Connexion</a>
+        <a href="#" onclick="handleClickCommencer()" class="w-full py-2"
+          >Commencer</a
+        >
+      </nav>
+    </header>
+
+    <!-- Bannière promotionnelle -->
+    <div class="promo-banner">
+      <div class="promo-banner-content">
+        <h2>🎉 Offres Spéciales d'Été!</h2>
+        <p>-15% sur tout le site avec le code <strong>SECOURS15</strong></p>
+        <div class="countdown" id="countdown">23:59:59</div>
       </div>
     </div>
-  </header>
 
-  <!-- Search Bar -->
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Rechercher des produits..." />
-    <button id="searchButton">Chercher</button>
-  </div>
+    <!-- Filtres -->
+    <div class="filters">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Rechercher un produit..."
+        />
+      </div>
 
-  <!-- Filters Section -->
-  <section class="container mx-auto mt-8">
-    <h2 class="text-2xl font-bold text-center mb-6">Filtres</h2>
-    <div class="flex flex-wrap justify-center gap-4">
-      <button class="filter-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" data-category="all">Tous les Produits</button>
-      <button class="filter-button bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" data-category="trousse">Trousses</button>
-      <button class="filter-button bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600" data-category="sac">Sacs de Secourisme</button>
-      <button class="filter-button bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-category="defibrillateur">Défibrillateurs</button>
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-category="all">
+          Tous les produits
+        </button>
+        <button class="filter-btn" data-category="defibrillateurs">
+          Défibrillateurs
+        </button>
+        <button class="filter-btn" data-category="premiers-soins">
+          Premiers Soins
+        </button>
+        <button class="filter-btn" data-category="formation">Formation</button>
+        <button class="filter-btn" data-category="urgence">Urgence</button>
+      </div>
     </div>
-  </section>
 
-  <!-- Section des produits -->
-  <section id="products" class="container mx-auto mt-8">
-    <h2 class="text-2xl font-bold text-center mb-6">Nos Produits</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <!-- Grille de produits -->
+    <div class="products-grid" id="productsGrid">
       <!-- Produit 1 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <div class="z-30 new-product">Nouveau</div>
-        <div class="z-30 timer" id="timer">07:52</div>
-        <img src="https://loremflickr.com/1280/720" alt="Trousse de Secours Basique" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Trousse de Secours Basique</h3>
-        <p class="text-gray-700 mt-2">Trousse de secours pratique pour les petits incidents.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€19.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Trousse de Secours Basique" data-price="19.99">Ajouter au panier</button>
+      <div class="product-card" data-category="defibrillateurs">
+        <span class="product-badge">-20%</span>
+
+        <div class="product-image">
+          <img
+            src="/api/placeholder/400/300"
+            alt="Défibrillateur automatique Pro"
+          />
         </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★☆</div>
-          <p class="text-sm text-gray-600">4.2/5 - 120 avis</p>
+
+        <div class="product-content">
+          <h3 class="product-title">Défibrillateur automatique Pro</h3>
+
+          <div class="product-rating">
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star-half-alt star"></i>
+            <span>(128)</span>
+          </div>
+
+          <p>Défibrillateur automatique dernière génération avec guide vocal</p>
+
+          <div class="product-price">
+            <span class="current-price">1299€</span>
+            <span class="old-price">1599€</span>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn btn-primary" onclick="addToCart(1)">
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+            <button class="btn btn-secondary" onclick="openQuickView(1)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Produit 2 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="trousse">
-        <div class="z-30 new-product">Nouveau</div>
-        <img src="https://loremflickr.com/1280/720" alt="Trousse de Secours Avancée" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Trousse de Secours Avancée</h3>
-        <p class="text-gray-700 mt-2">Trousse complète pour les situations d'urgence plus graves.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€49.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Trousse de Secours Avancée" data-price="49.99">Ajouter au panier</button>
+      <div class="product-card" data-category="premiers-soins">
+        <span class="product-badge">-15%</span>
+
+        <div class="product-image">
+          <img
+            src="/api/placeholder/400/300"
+            alt="Kit de premiers secours Pro"
+          />
         </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★★</div>
-          <p class="text-sm text-gray-600">4.8/5 - 95 avis</p>
+
+        <div class="product-content">
+          <h3 class="product-title">Kit de premiers secours Pro</h3>
+
+          <div class="product-rating">
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <span>(89)</span>
+          </div>
+
+          <p>Kit complet avec plus de 150 éléments essentiels</p>
+
+          <div class="product-price">
+            <span class="current-price">199€</span>
+            <span class="old-price">234€</span>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn btn-primary" onclick="addToCart(2)">
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+            <button class="btn btn-secondary" onclick="openQuickView(2)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Produit 3 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="https://loremflickr.com/1280/720" alt="Sac de Secourisme Basique" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Sac de Secourisme Basique</h3>
-        <p class="text-gray-700 mt-2">Sac léger pour les besoins essentiels en secourisme.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€39.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac de Secourisme Basique" data-price="39.99">Ajouter au panier</button>
+      <div class="product-card" data-category="urgence">
+        <div class="product-image">
+          <img
+            src="/api/placeholder/400/300"
+            alt="Kit Oxygénothérapie Complet"
+          />
         </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★☆</div>
-          <p class="text-sm text-gray-600">4.3/5 - 78 avis</p>
+
+        <div class="product-content">
+          <h3 class="product-title">Kit Oxygénothérapie Complet</h3>
+
+          <div class="product-rating">
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star-half-alt star"></i>
+            <span>(34)</span>
+          </div>
+
+          <p>Kit complet avec bouteille 5L et accessoires</p>
+
+          <div class="product-price">
+            <span class="current-price">599€</span>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn btn-primary" onclick="addToCart(3)">
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+            <button class="btn btn-secondary" onclick="openQuickView(3)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Produit 4 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="https://loremflickr.com/1280/720" alt="Sac de Secourisme Avancé" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Sac de Secourisme Avancé</h3>
-        <p class="text-gray-700 mt-2">Sac complet avec plusieurs compartiments pour une organisation optimale.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€79.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac de Secourisme Avancé" data-price="79.99">Ajouter au panier</button>
-        </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★★</div>
-          <p class="text-sm text-gray-600">4.9/5 - 150 avis</p>
-        </div>
-      </div>
+      <div class="product-card" data-category="formation">
+        <span class="product-badge">-20%</span>
 
-      <!-- Produit 5 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="defibrillateur">
-        <img src="https://loremflickr.com/1280/720" alt="Défibrillateur Basique" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Défibrillateur Basique</h3>
-        <p class="text-gray-700 mt-2">Défibrillateur simple et efficace pour une utilisation facile.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€899.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Défibrillateur Basique" data-price="899.99">Ajouter au panier</button>
+        <div class="product-image">
+          <img src="/api/placeholder/400/300" alt="Pack Formation Complet" />
         </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★☆</div>
-          <p class="text-sm text-gray-600">4.5/5 - 65 avis</p>
-        </div>
-      </div>
 
-      <!-- Produit 6 -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="defibrillateur">
-        <img src="https://loremflickr.com/1280/720" alt="Défibrillateur Avancé" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Défibrillateur Avancé</h3>
-        <p class="text-gray-700 mt-2">Défibrillateur de haute technologie pour des situations critiques.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€1299.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Défibrillateur Avancé" data-price="1299.99">Ajouter au panier</button>
-        </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★★</div>
-          <p class="text-sm text-gray-600">4.9/5 - 85 avis</p>
-        </div>
-      </div>
+        <div class="product-content">
+          <h3 class="product-title">Pack Formation Complet</h3>
 
-      <!-- Nouveaux Produits -->
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="defibrillateur">
-        <img src="https://loremflickr.com/1280/720" alt="Kit de Secours" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Kit de Secours Complet</h3>
-        <p class="text-gray-700 mt-2">Un kit complet pour toutes les situations d'urgence.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€199.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Kit de Secours Complet" data-price="199.99">Ajouter au panier</button>
-        </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★☆</div>
-          <p class="text-sm text-gray-600">4.4/5 - 55 avis</p>
-        </div>
-      </div>
+          <div class="product-rating">
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <i class="fas fa-star star"></i>
+            <span>(78)</span>
+          </div>
 
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="https://loremflickr.com/1280/720" alt="Sac Professionnel" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Sac Professionnel de Secourisme</h3>
-        <p class="text-gray-700 mt-2">Sac robuste pour les secouristes professionnels.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€149.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac Professionnel de Secourisme" data-price="149.99">Ajouter au panier</button>
-        </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★★</div>
-          <p class="text-sm text-gray-600">4.7/5 - 110 avis</p>
-        </div>
-      </div>
+          <p>Pack complet avec mannequin, DEA formation et matériel</p>
 
-      <div class="product-card bg-white p-4 rounded-lg shadow-md" data-category="sac">
-        <img src="https://via.placeholder.com/300x200.png?text=Sac+Multifonction" alt="Sac Multifonction" class="w-full h-48 object-cover rounded-md mb-4" />
-        <h3 class="text-xl font-bold">Sac Multifonction de Secourisme</h3>
-        <p class="text-gray-700 mt-2">Sac avec plusieurs compartiments pour une organisation optimale.</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-semibold text-green-600">€89.99</span>
-          <button class="add-to-cart bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" data-name="Sac Multifonction de Secourisme" data-price="89.99">Ajouter au panier</button>
-        </div>
-        <div class="reviews mt-2">
-          <div class="stars">★★★★☆</div>
-          <p class="text-sm text-gray-600">4.1/5 - 75 avis</p>
+          <div class="product-price">
+            <span class="current-price">1499€</span>
+            <span class="old-price">1899€</span>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn btn-primary" onclick="addToCart(4)">
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+            <button class="btn btn-secondary" onclick="openQuickView(4)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Panier -->
-  <div id="cart" class="fixed top-0 right-0 bg-white shadow-lg p-4 w-80 h-full overflow-y-auto hidden">
-    <h2 class="text-xl font-bold mb-4">Mon Panier</h2>
-    <button id="closeCart" class="text-red-500">Fermer</button>
-    <ul id="cartItems" class="mt-2"></ul>
-    <h3 class="text-lg font-bold mt-4">Total : <span id="cartTotal">€0.00</span></h3>
-  </div>
+    <!-- Quick View Modal -->
+    <div class="modal" id="quickViewModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle"></h2>
+          <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
 
-  <script>
-    const cartData = [];
-    const cartButton = document.getElementById('cartButton');
-    const cartCount = document.getElementById('cartCount');
-    const cart = document.getElementById('cart');
-    const closeCart = document.getElementById('closeCart');
-    const cartItems = document.getElementById('cartItems');
-    const cartTotal = document.getElementById('cartTotal');
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    <!-- Bouton panier avec badge -->
+    <div class="cart-button-fixed">
+      <button class="btn btn-primary cart-btn" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-badge">0</span>
+      </button>
+    </div>
 
-    // Ajouter un article au panier
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-      button.addEventListener('click', function() {
-        const name = this.getAttribute('data-name');
-        const price = parseFloat(this.getAttribute('data-price'));
-        cartData.push({ name, price });
-        updateCart();
-        showToast(`${name} ajouté au panier !`);
-      });
-    });
+    <!-- Sidebar panier -->
+    <div class="cart-sidebar" id="cartSidebar">
+      <div class="cart-header">
+        <h2>Panier</h2>
+        <button class="btn-close" onclick="toggleCart()">&times;</button>
+      </div>
 
-    function updateCart() {
-      cartItems.innerHTML = '';
-      let total = 0;
+      <div class="cart-items" id="cartItems">
+        <!-- Les articles seront ajoutés ici dynamiquement -->
+      </div>
 
-      cartData.forEach((item, index) => {
-        total += item.price;
-        const listItem = document.createElement('li');
-        listItem.classList.add('flex', 'justify-between', 'items-center', 'py-2', 'border-b');
-        listItem.innerHTML = `
-          <span>${item.name}</span>
-          <div>
-            <span>€${item.price.toFixed(2)}</span>
-            <button class="remove-from-cart bg-red-500 text-white px-2 py-1 ml-4 rounded-lg hover:bg-red-600" data-index="${index}">Supprimer</button>
-          </div>
-        `;
-        cartItems.appendChild(listItem);
-      });
+      <div class="cart-footer">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span id="cartTotal">0€</span>
+        </div>
+        <button class="btn btn-primary btn-checkout" onclick="checkout()">
+          Passer la commande
+        </button>
+      </div>
+    </div>
 
-      cartTotal.textContent = `€${total.toFixed(2)}`;
-      cartCount.textContent = cartData.length;
-    }
+    <script>
+      // Configuration des produits
+      const products = [
+        {
+          id: 1,
+          name: "Défibrillateur automatique Pro",
+          price: 1299,
+          oldPrice: 1599,
+          description:
+            "Défibrillateur automatique dernière génération avec guide vocal",
+          category: "defibrillateurs",
+          image: "/api/placeholder/400/300",
+          rating: 4.5,
+          reviews: 128,
+          features: [
+            "Guide vocal en français",
+            "Batterie longue durée",
+            "Électrodes pré-connectées",
+            "Maintenance automatique",
+            "Garantie 8 ans",
+          ],
+        },
+        {
+          id: 2,
+          name: "Kit de premiers secours Pro",
+          price: 199,
+          oldPrice: 234,
+          description: "Kit complet avec plus de 150 éléments essentiels",
+          category: "premiers-soins",
+          image: "/api/placeholder/400/300",
+          rating: 5,
+          reviews: 89,
+          features: [
+            "150 éléments essentiels",
+            "Sac résistant et étanche",
+            "Organisation optimisée",
+            "Adapté usage professionnel",
+            "Conforme normes CE",
+          ],
+        },
+        {
+          id: 3,
+          name: "Kit Oxygénothérapie Complet",
+          price: 599,
+          oldPrice: null,
+          description: "Kit complet avec bouteille 5L et accessoires",
+          category: "urgence",
+          image: "/api/placeholder/400/300",
+          rating: 4.5,
+          reviews: 34,
+          features: [
+            "Bouteille 5L certifiée",
+            "Manomètre haute précision",
+            "Kit masques toutes tailles",
+            "Sacoche de transport",
+            "Formation incluse",
+          ],
+        },
+        {
+          id: 4,
+          name: "Pack Formation Complet",
+          price: 1499,
+          oldPrice: 1899,
+          description: "Pack complet avec mannequin, DEA formation et matériel",
+          category: "formation",
+          image: "/api/placeholder/400/300",
+          rating: 5,
+          reviews: 78,
+          features: [
+            "Mannequin adulte et enfant",
+            "DEA de formation",
+            "Matériel pédagogique",
+            "Supports de cours",
+            "Mallette de transport",
+          ],
+        },
+      ];
 
-    // Événement pour supprimer un article du panier
-    cartItems.addEventListener('click', function(event) {
-      if (event.target.classList.contains('remove-from-cart')) {
-        const index = parseInt(event.target.getAttribute('data-index'), 10);
-        cartData.splice(index, 1);
-        updateCart();
+      // Initialisation du menu mobile
+      function initializeMobileMenu() {
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+
+        mobileMenuBtn?.addEventListener("click", () => {
+          mobileMenu?.classList.toggle("active");
+        });
       }
-    });
 
-    // Ouvrir et fermer le panier
-    cartButton.addEventListener('click', function() {
-      cart.classList.toggle('hidden');
-      cart.classList.toggle('show');
-      cart.style.opacity = cart.classList.contains('show') ? '1' : '0';
-    });
+      // Gestion du compte à rebours
+      function initializeCountdown() {
+        const countdownElement = document.getElementById("countdown");
 
-    closeCart.addEventListener('click', function() {
-      cart.classList.add('hidden');
-      cart.classList.remove('show');
-    });
+        function updateCountdown() {
+          const now = new Date();
+          const endOfDay = new Date();
+          endOfDay.setHours(23, 59, 59);
 
-    // Afficher un toast pour les ajouts au panier
-    function showToast(message) {
-      const toast = document.createElement('div');
-      toast.classList.add('toast');
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.classList.add('show');
-      }, 100);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-          document.body.removeChild(toast);
-        }, 500);
-      }, 2000);
-    }
+          const diff = endOfDay - now;
+          const hours = Math.floor(diff / (1000 * 60 * 60));
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    // Filtrer les produits par catégorie
-    document.querySelectorAll('.filter-button').forEach(button => {
-      button.addEventListener('click', function() {
-        const category = this.getAttribute('data-category');
-        document.querySelectorAll('.product-card').forEach(card => {
-          if (category === 'all' || card.getAttribute('data-category') === category) {
-            card.classList.remove('hidden');
-          } else {
-            card.classList.add('hidden');
+          if (countdownElement) {
+            countdownElement.textContent = `${String(hours).padStart(
+              2,
+              "0"
+            )}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+              2,
+              "0"
+            )}`;
+          }
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      }
+
+      // Gestion des filtres
+      function initializeFilters() {
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const productCards = document.querySelectorAll(".product-card");
+
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            const category = button.dataset.category;
+
+            productCards.forEach((card) => {
+              if (category === "all" || card.dataset.category === category) {
+                card.style.display = "block";
+              } else {
+                card.style.display = "none";
+              }
+            });
+          });
+        });
+      }
+
+      // Gestion de la recherche
+      function initializeSearch() {
+        const searchInput = document.querySelector(".search-input");
+
+        searchInput?.addEventListener("input", (e) => {
+          const searchTerm = e.target.value.toLowerCase();
+          const productCards = document.querySelectorAll(".product-card");
+
+          productCards.forEach((card) => {
+            const productTitle = card
+              .querySelector(".product-title")
+              .textContent.toLowerCase();
+            const productDescription = card
+              .querySelector("p")
+              .textContent.toLowerCase();
+
+            if (
+              productTitle.includes(searchTerm) ||
+              productDescription.includes(searchTerm)
+            ) {
+              card.style.display = "block";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+      }
+
+      // Gestion du panier
+      let cart = [];
+
+      function initializeCart() {
+        cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        updateCartBadge();
+      }
+
+      function addToCart(productId) {
+        const product = products.find((p) => p.id === productId);
+        if (!product) return;
+
+        cart.push({
+          ...product,
+          quantity: 1,
+          timestamp: Date.now(),
+        });
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartBadge();
+        showToast(`${product.name} ajouté au panier`);
+      }
+
+      function updateCartBadge() {
+        const badge = document.querySelector(".cart-badge");
+        if (badge) {
+          badge.textContent = cart.length;
+          badge.style.display = cart.length > 0 ? "block" : "none";
+        }
+      }
+
+      // Gestion du modal Quick View
+      function initializeQuickView() {
+        const modal = document.getElementById("quickViewModal");
+        const closeBtn = document.getElementById("modalClose");
+
+        closeBtn?.addEventListener("click", () => {
+          modal?.classList.remove("active");
+        });
+
+        window.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.classList.remove("active");
           }
         });
-      });
-    });
+      }
 
-    // Rechercher des produits
-    document.getElementById('searchButton').addEventListener('click', function() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.product-card').forEach(card => {
-        const productName = card.querySelector('h3').textContent.toLowerCase();
-        if (productName.includes(query)) {
-          card.classList.remove('hidden');
+      function openQuickView(productId) {
+        const product = products.find((p) => p.id === productId);
+        if (!product) return;
+
+        const modal = document.getElementById("quickViewModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+
+        if (!modal || !modalTitle || !modalBody) return;
+
+        modalTitle.textContent = product.name;
+
+        modalBody.innerHTML = `
+        <div class="modal-image">
+          <img src="${product.image}" alt="${
+          product.name
+        }" style="width: 100%; border-radius: var(--radius);">
+        </div>
+        <div class="modal-info">
+          <div class="product-rating">
+            ${generateStars(product.rating)}
+            <span>(${product.reviews} avis)</span>
+          </div>
+          
+          <div class="product-price" style="margin: 1rem 0;">
+            <span class="current-price">${product.price}€</span>
+            ${
+              product.oldPrice
+                ? `<span class="old-price">${product.oldPrice}€</span>`
+                : ""
+            }
+          </div>
+          
+          <p style="margin: 1rem 0;">${product.description}</p>
+          
+          <h3>Caractéristiques:</h3>
+          <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+            ${product.features.map((feature) => `<li>${feature}</li>`).join("")}
+          </ul>
+          
+          <div class="product-actions" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="addToCart(${product.id})">
+              <i class="fas fa-shopping-cart"></i>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      `;
+
+        modal.classList.add("active");
+      }
+
+      // Génération des étoiles
+      function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+        const stars = [];
+
+        for (let i = 0; i < 5; i++) {
+          if (i < fullStars) {
+            stars.push('<i class="fas fa-star star"></i>');
+          } else if (hasHalfStar && i === fullStars) {
+            stars.push('<i class="fas fa-star-half-alt star"></i>');
+          } else {
+            stars.push('<i class="far fa-star star"></i>');
+          }
+        }
+
+        return stars.join("");
+      }
+
+      // Notifications Toast
+      function showToast(message, type = "success") {
+        const toastContainer = document.getElementById("toastContainer");
+        if (!toastContainer) return;
+
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `
+        <i class="fas fa-${
+          type === "success" ? "check-circle" : "info-circle"
+        }" style="color: var(--${
+          type === "success" ? "success" : "primary"
+        });"></i>
+        <span>${message}</span>
+      `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.add("show");
+        }, 100);
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+      function toggleCart() {
+        const sidebar = document.getElementById("cartSidebar");
+        sidebar.classList.toggle("active");
+      }
+
+      function updateCartDisplay() {
+        const cartItems = document.getElementById("cartItems");
+        const cartTotal = document.getElementById("cartTotal");
+        const badge = document.querySelector(".cart-badge");
+
+        // Mise à jour du badge
+        badge.textContent = cart.length;
+        badge.style.display = cart.length > 0 ? "flex" : "none";
+
+        // Mise à jour des articles
+        cartItems.innerHTML = cart
+          .map(
+            (item) => `
+    <div class="cart-item">
+      <div class="cart-item-image">
+        <img src="${item.image}" alt="${item.name}">
+      </div>
+      <div class="cart-item-info">
+        <span class="cart-item-title">${item.name}</span>
+        <span class="cart-item-price">${item.price}€</span>
+        <div class="cart-item-quantity">
+          <button class="btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+          <span>${item.quantity}</span>
+          <button class="btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+        </div>
+      </div>
+      <div class="cart-item-remove" onclick="removeFromCart(${item.id})">
+        <i class="fas fa-trash"></i>
+      </div>
+    </div>
+  `
+          )
+          .join("");
+
+        // Mise à jour du total
+        const total = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        cartTotal.textContent = `${total}€`;
+      }
+
+      function addToCart(productId) {
+        const product = products.find((p) => p.id === productId);
+        if (!product) return;
+
+        const existingItem = cart.find((item) => item.id === productId);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
         } else {
-          card.classList.add('hidden');
+          cart.push({
+            ...product,
+            quantity: 1,
+            timestamp: Date.now(),
+          });
         }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartDisplay();
+        showToast(`${product.name} ajouté au panier`);
+      }
+
+      function updateQuantity(productId, change) {
+        const item = cart.find((item) => item.id === productId);
+        if (!item) return;
+
+        item.quantity += change;
+
+        if (item.quantity <= 0) {
+          removeFromCart(productId);
+          return;
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartDisplay();
+      }
+
+      function removeFromCart(productId) {
+        cart = cart.filter((item) => item.id !== productId);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartDisplay();
+        showToast("Article retiré du panier");
+      }
+
+      function checkout() {
+        if (cart.length === 0) {
+          showToast("Votre panier est vide", "error");
+          return;
+        }
+
+        // Ici vous pouvez ajouter la logique de paiement
+        showToast("Redirection vers le paiement...", "info");
+      }
+
+      // Modifiez la fonction d'initialisation
+      function initializeCart() {
+        cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        updateCartDisplay();
+      }
+
+      // Initialisation
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeMobileMenu();
+        initializeCountdown();
+        initializeFilters();
+        initializeSearch();
+        initializeCart();
+        initializeQuickView();
       });
-    });
-
-    // Timer
-    function startTimer(duration, display) {
-      let timer = duration, minutes, seconds;
-      setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-          timer = duration;
-        }
-      }, 1000);
-    }
-
-    window.onload = function () {
-      let sevenMinutes = 60 * 7 + 52,
-          display = document.querySelector('#timer');
-      startTimer(sevenMinutes, display);
-    };
-  </script>
-</body>
+    </script>
+  </body>
 </html>

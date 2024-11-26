@@ -881,7 +881,7 @@ html {
 .slide-in {
   display: inline-block;
   /* Pour que l'élément soit affecté par la transformation */
-  animation: slide-in 7s ease-out;
+  animation: slide-in 2s ease-out;
 }
 
 /* changement de couleur fluide*/
@@ -894,6 +894,15 @@ html {
 
 .text-white {
   color: white;
+}
+
+.animate-fadeIn { 
+  animation: fadeIn 1s ease-in; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ---------------------------------------------------------------------------------------------------------------------Animation sautillante et grossissante footer */
