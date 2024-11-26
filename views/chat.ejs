@@ -1,103 +1,126 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat</title>
-    <link rel="stylesheet" href="/public/css/chat.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element" rel="stylesheet">
-    
+    <link rel="stylesheet" href="/public/css/chat.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/emoji-picker-element"
+      rel="stylesheet"
+    />
+
     <!-- Ajout des données utilisateur -->
     <script>
-        const userInfo = {
-            id: '<%= user._id %>',
-            username: '<%= user.username %>',
-            avatar: '<%= user.avatar || "/images/default-profile.svg" %>'
-        };
+      const userInfo = {
+        id: "<%= user._id %>",
+        username: "<%= user.username %>",
+        avatar: '<%= user.avatar || "/images/default-profile.svg" %>',
+      };
     </script>
-</head>
-<body class="light-theme">
+  </head>
+  <body class="light-theme">
     <div class="chat-container">
-        <!-- Sidebar -->
-        <div class="chat-sidebar">
-            <div class="user-info">
-                <img src="<%= user.avatar || '/images/default-profile.svg' %>" alt="Avatar" class="user-avatar">
-                <span class="username"><%= user.username %></span>
-                <span class="user-status online"></span>
-            </div>
-
-            <div class="rooms-section">
-                <h3><i class="fas fa-door-open"></i> Salles</h3>
-                <div class="room-list">
-                    <!-- Les salles seront ajoutées dynamiquement par JavaScript -->
-                </div>
-            </div>
-
-            <div class="online-users">
-                <h3><i class="fas fa-circle-user"></i> En ligne</h3>
-                <div id="users-list"></div>
-            </div>
+      <!-- Sidebar -->
+      <div class="chat-sidebar">
+        <div class="user-info">
+          <img
+            src="<%= user.avatar || '/images/default-profile.svg' %>"
+            alt="Avatar"
+            class="user-avatar"
+          />
+          <span class="username"><%= user.username %></span>
+          <span class="user-status online"></span>
         </div>
 
-        <!-- Main Chat Area -->
-        <div class="chat-main">
-            <div class="chat-header">
-                <div class="current-room">
-                    <i class="fas fa-hashtag"></i>
-                    <span id="current-room-name">Général</span>
-                </div>
-                <div class="room-info">
-                    <span id="users-count">0 utilisateurs</span>
-                    <button id="theme-toggle" title="Changer le thème">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div id="messages" class="messages">
-                <!-- Les messages seront ajoutés ici -->
-            </div>
-
-            <div class="message-input-container">
-                <div class="input-toolbar">
-                    <button id="emoji-button" class="input-action-btn" title="Emoji">
-                        <i class="far fa-smile"></i>
-                    </button>
-                    <button id="upload-btn" class="input-action-btn" title="Joindre un fichier">
-                        <i class="fas fa-paperclip"></i>
-                    </button>
-                    <div id="emoji-picker" class="emoji-picker hidden"></div>
-                </div>
-
-                <form id="message-form" class="message-form">
-                    <input type="text" id="message-input" 
-                           placeholder="Écrivez votre message..." 
-                           autocomplete="off" required>
-                    <button type="submit" class="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
-            </div>
+        <div class="rooms-section">
+          <h3><i class="fas fa-door-open"></i> Salles</h3>
+          <div class="room-list">
+            <!-- Les salles seront ajoutées dynamiquement par JavaScript -->
+          </div>
         </div>
 
-        <!-- Details Panel -->
-        <div class="chat-details">
-            <div class="room-details">
-                <h3>À propos de la salle</h3>
-                <p id="room-description"></p>
-            </div>
-            <div class="pinned-messages">
-                <h3><i class="fas fa-thumbtack"></i> Messages épinglés</h3>
-                <div id="pinned-list"></div>
-            </div>
+        <div class="online-users">
+          <h3><i class="fas fa-circle-user"></i> En ligne</h3>
+          <div id="users-list"></div>
         </div>
+      </div>
+
+      <!-- Main Chat Area -->
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="current-room">
+            <i class="fas fa-hashtag"></i>
+            <span id="current-room-name">Général</span>
+          </div>
+          <div class="room-info">
+            <span id="users-count">0 utilisateurs</span>
+            <button id="theme-toggle" title="Changer le thème">
+              <i class="fas fa-moon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="messages" class="messages">
+          <!-- Les messages seront ajoutés ici -->
+        </div>
+
+        <div class="message-input-container">
+          <div class="input-toolbar">
+            <button id="emoji-button" class="input-action-btn" title="Emoji">
+              <i class="far fa-smile"></i>
+            </button>
+            <button
+              id="upload-btn"
+              class="input-action-btn"
+              title="Joindre un fichier"
+            >
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <div id="emoji-picker" class="emoji-picker hidden"></div>
+            <button id="emoji-button" class="emoji-button">
+              <i class="far fa-smile"></i>
+            </button>
+          </div>
+
+          <form id="message-form" class="message-form">
+            <input
+              type="text"
+              id="message-input"
+              placeholder="Écrivez votre message..."
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="send-btn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Details Panel -->
+      <div class="chat-details">
+        <div class="room-details">
+          <h3>À propos de la salle</h3>
+          <p id="room-description"></p>
+        </div>
+        <div class="pinned-messages">
+          <h3><i class="fas fa-thumbtack"></i> Messages épinglés</h3>
+          <div id="pinned-list"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element" type="module"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/emoji-picker-element"
+      type="module"
+    ></script>
     <script src="/public/javascripts/chat.js"></script>
-    
-</body>
+  </body>
 </html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Communauté LifeAcademy - Chat des Secouristes</title>
+    <link
+      rel="shortcut icon"
+      href="./images/img/logo.png"
+      type="image/x-icon"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/33a775bcdb.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      /* Style de la topbar original */
+      header {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        z-index: 50;
+        background-color: black;
+      }
+
+      nav {
+        display: flex;
+        height: 4rem;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0;
+      }
+
+      .logo-container {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-container img {
+        height: 6rem;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links {
+        display: none;
+        height: 2.75rem;
+        width: auto;
+        flex-row: row;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      @media (min-width: 768px) {
+        .nav-links {
+          display: flex;
+        }
+      }
+
+      .nav-link {
+        display: flex;
+        height: 2.75rem;
+        width: auto;
+        align-items: center;
+        padding: 0 0.25rem;
+        font-weight: bold;
+        font-size: 0.9375rem;
+        color: white;
+        text-decoration: none;
+      }
+
+      .auth-buttons {
+        display: none;
+        flex-row: row;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0 0.25rem;
+      }
+
+      @media (min-width: 768px) {
+        .auth-buttons {
+          display: flex;
+        }
+      }
+
+      .login-btn {
+        display: flex;
+        height: 1.75rem;
+        width: 6rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        color: white;
+        text-decoration: none;
+      }
+
+      .signup-btn {
+        display: flex;
+        height: 1.75rem;
+        width: 7rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1.5rem;
+        background-color: #2979ff;
+        color: white;
+        text-decoration: none;
+        z-index: 40;
+        transition: all 0.3s ease;
+      }
+
+      .signup-btn:hover {
+        transform: scale(1.25);
+        background-color: #22c55e;
+      }
+
+      .burger-menu {
+        display: flex;
+        align-items: center;
+        padding-right: 1rem;
+      }
+
+      @media (min-width: 768px) {
+        .burger-menu {
+          display: none;
+        }
+      }
+
+      .burger-btn {
+        color: white;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      #mobileMenu {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 4rem;
+        z-index: 40;
+        width: 100%;
+        flex-direction: column;
+        align-items: start;
+        background-color: black;
+        padding: 1rem;
+        color: white;
+      }
+
+      /* Reste du style original de la page de présentation */
+      :root {
+        --primary: #2979ff;
+        --secondary: #1a237e;
+        --success: #00c853;
+        --danger: #ff4444;
+        --dark: #1a1a1a;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .hero-section {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        padding-top: 4rem; /* Ajout de padding pour la topbar */
+      }
+
+      :root {
+        --primary: #2979ff;
+        --secondary: #1a237e;
+        --success: #00c853;
+        --danger: #ff4444;
+        --dark: #1a1a1a;
+      }
+
+      .hero-section {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-content {
+        padding: 120px 20px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-title {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        animation: fadeInUp 1s ease;
+      }
+
+      .hero-subtitle {
+        font-size: 1.5rem;
+        color: #ccc;
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease 0.2s;
+        opacity: 0;
+        animation-fill-mode: forwards;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s ease;
+        animation: fadeIn 0.5s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .feature-title {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: white;
+      }
+
+      .feature-description {
+        color: #ccc;
+        line-height: 1.6;
+      }
+
+      .cta-section {
+        text-align: center;
+        padding: 80px 20px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 15px 40px;
+        background: white;
+        color: var(--primary);
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        padding: 60px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .stat-item {
+        animation: fadeIn 0.5s ease;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        color: #ccc;
+        font-size: 1.1rem;
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .emergency-cases {
+        padding: 80px 20px;
+        background: #2a2a2a;
+      }
+
+      .case-title {
+        text-align: center;
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 40px;
+      }
+
+      .cases-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .case-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+      }
+
+      .case-icon {
+        color: var(--danger);
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+          font-size: 1.2rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Topbar -->
+    <header>
+      <nav>
+        <div class="logo-container">
+          <a href="index.html">
+            <img src="./images/img/logo.png" alt="Logo" />
+          </a>
+        </div>
+
+        <div class="nav-links">
+          <button id="toggleModalBtn" class="nav-link">
+            Formations <i class="fas fa-chevron-down"></i>
+          </button>
+          <a href="enseigner.html" class="nav-link">Devenir Formateur</a>
+          <a href="chat.html" class="nav-link">Notre Communauté</a>
+          <a href="sellpage.html" class="nav-link">
+            Mon sac de secouriste
+            <i class="fa-solid fa-heart-pulse fa-beat ml-4"></i>
+          </a>
+        </div>
+
+        <div class="auth-buttons">
+          <a href="#" class="login-btn" onclick="handleClickConnexion()"
+            >Connexion</a
+          >
+          <a href="#" class="signup-btn" onclick="handleClickCommencer()"
+            >Commencer</a
+          >
+        </div>
+
+        <div class="burger-menu">
+          <button id="burgerMenu" class="burger-btn">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </nav>
+
+      <div id="mobileMenu">
+        <a href="enseigner.html" class="w-full py-2">Enseigner</a>
+        <a href="chat.html" class="w-full py-2">Chat</a>
+        <a href="sac-secouriste.html" class="w-full py-2"
+          >Mon sac de secouriste</a
+        >
+        <a href="#" class="w-full py-2" onclick="handleClickConnexion()"
+          >Connexion</a
+        >
+        <a href="#" class="w-full py-2" onclick="handleClickCommencer()"
+          >Commencer</a
+        >
+      </div>
+    </header>
+
+    <!-- Modal -->
+    <section
+      id="modal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900 bg-opacity-50"
+    >
+      <!-- Contenu du modal identique à l'original -->
+    </section>
+
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <i class="fas fa-comments"></i> Communauté LifeAcademy
+        </h1>
+        <p class="hero-subtitle">
+          Un espace d'échange dédié aux secouristes, pour sauver plus de vies
+          ensemble
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-users feature-icon"></i>
+          <h3 class="feature-title">Entraide Communautaire</h3>
+          <p class="feature-description">
+            Échangez avec des secouristes expérimentés, partagez vos expériences
+            et apprenez des situations réelles.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-graduation-cap feature-icon"></i>
+          <h3 class="feature-title">Formation Continue</h3>
+          <p class="feature-description">
+            Restez à jour avec les dernières techniques de secourisme et les
+            bonnes pratiques du terrain.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <i class="fas fa-shield-alt feature-icon"></i>
+          <h3 class="feature-title">Soutien Expert</h3>
+          <p class="feature-description">
+            Accédez à des formateurs certifiés pour répondre à vos questions et
+            vous guider.
+          </p>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stat-item">
+          <div class="stat-number pulse">500+</div>
+          <div class="stat-label">Membres Actifs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Disponibilité</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Sécurisé</div>
+        </div>
+      </div>
+
+      <div class="emergency-cases">
+        <h2 class="case-title">Situations Traitées</h2>
+        <div class="cases-grid">
+          <div class="case-card">
+            <i class="fas fa-heartbeat case-icon"></i>
+            <h3>Urgences Cardiaques</h3>
+            <p>
+              Discussions sur les protocoles d'intervention et retours
+              d'expérience
+            </p>
+          </div>
+          <div class="case-card">
+            <i class="fas fa-bone case-icon"></i>
+            <h3>Traumatismes</h3>
+            <p>Partage des meilleures pratiques pour les immobilisations</p>
+          </div>
+          <div class="case-card">
+            <i class="fas fa-procedures case-icon"></i>
+            <h3>Premiers Secours</h3>
+            <p>Échange sur les gestes qui sauvent au quotidien</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-section">
+        <h2>Prêt à rejoindre la communauté ?</h2>
+        <p>Ensemble, nous sommes plus forts pour sauver des vies</p>
+        <a href="#" class="cta-button">
+          <i class="fas fa-sign-in-alt"></i> Rejoindre Maintenant
+        </a>
+      </div>
+    </section>
+
+    <script>
+      // Script pour le menu burger
+      document
+        .getElementById("burgerMenu")
+        .addEventListener("click", function () {
+          const mobileMenu = document.getElementById("mobileMenu");
+          mobileMenu.style.display =
+            mobileMenu.style.display === "flex" ? "none" : "flex";
+        });
+
+      // Fonctions de la topbar
+      function handleClickConnexion() {
+        alert("Redirection vers la page de connexion");
+      }
+
+      function handleClickCommencer() {
+        alert("Redirection vers la page d'inscription");
+      }
+    </script>
+  </body>
+</html>
