@@ -555,29 +555,42 @@
           const moduleList = document.getElementById("moduleList");
           if (!moduleList) return;
 
+          // Show loading state for module list
           UI.showLoading(moduleList);
           moduleList.classList.remove("hidden");
 
+          // Hide other elements
           const formationList = document.getElementById("formationList");
-          if (formationList) formationList.classList.add("hidden");
+          const contentDisplay = document.getElementById("contentDisplay");
+          const navbarHidden = document.getElementById("navbarHidden");
 
+          if (formationList) formationList.classList.add("hidden");
+          if (contentDisplay) {
+            contentDisplay.classList.add("hidden");
+            contentDisplay.innerHTML = ""; // Clear any existing content
+          }
+          if (navbarHidden) {
+            navbarHidden.style.display = "none"; // Ensure hidden navbar is not visible
+          }
+
+          // Update state
           currentFormation = name;
           window.currentFormationId = id;
           currentModule = null;
           window.currentModuleId = null;
           updateBreadcrumb();
 
-          if (window.updateChapterInfo) {
-            window.updateChapterInfo(name, null);
-          }
+          // Reset any existing content state
+          currentModuleContent = null;
 
           try {
-            // Récupérer d'abord la formation pour vérifier qu'elle existe
+            // Verify formation exists
             const formation = await ApiClient.getFormation(id);
             if (!formation) {
               throw new Error("Formation non trouvée");
             }
 
+            // Fetch modules and progression
             const [modules, progression] = await Promise.all([
               ApiClient.getModules(id),
               ApiClient.fetchWithSecurity(`/formations/${id}/progression`),
@@ -591,6 +604,7 @@
               return;
             }
 
+            // Render module list
             moduleList.innerHTML = modules
               .map(
                 (module) => `
@@ -616,10 +630,10 @@
               )
               .join("");
 
-            // Mise à jour des visuels des modules après le chargement
+            // Update module visuals
             await ProgressTracker.updateModuleVisuals();
 
-            // Réinitialiser l'état du tracker
+            // Reset progress tracker state
             ProgressTracker.state = {
               videoProgress: 0,
               readingTime: 0,
@@ -631,9 +645,10 @@
               },
             };
 
-            // Mettre à jour l'interface de progression
-            if (window.updateChapterProgress) {
-              window.updateChapterProgress(ProgressTracker.state);
+            // Clear any existing intervals
+            if (ProgressTracker.readingInterval) {
+              clearInterval(ProgressTracker.readingInterval);
+              ProgressTracker.readingInterval = null;
             }
           } catch (error) {
             console.error("Erreur lors du chargement:", error);
@@ -891,13 +906,9 @@
               window.updateChapterProgress(this.state);
             }
 
-            // Gestion de la complétion du module
+            // Mise à jour des visuels des modules sans redirection
             if (allConditionsMet) {
               await this.updateModuleVisuals();
-              // Navigation vers la liste des modules après un délai
-              setTimeout(() => {
-                loadModules(window.currentFormationId, currentFormation);
-              }, 1000);
             }
 
             return response;
@@ -1066,31 +1077,30 @@
                 await ProgressTracker.saveProgress("quiz", score);
 
                 resultDiv.innerHTML = `
-                        <p class="font-bold text-lg">
-                            Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
-                        </p>
-                        <p class="${
-                          score === 100 ? "text-green-600" : "text-red-600"
-                        }">
-                            ${
-                              score === 100
-                                ? "Félicitations ! Quiz réussi !"
-                                : "Vous devez obtenir 100% pour valider le module"
-                            }
-                        </p>`;
+                    <p class="font-bold text-lg">
+                        Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
+                    </p>
+                    <p class="${
+                      score === 100 ? "text-green-600" : "text-red-600"
+                    }">
+                        ${
+                          score === 100
+                            ? "Félicitations ! Quiz réussi ! Vous pouvez maintenant utiliser le bouton 'next' pour continuer."
+                            : "Vous devez obtenir 100% pour valider le module"
+                        }
+                    </p>`;
 
                 if (score === 100) {
-                  setTimeout(() => {
-                    closeQuizModal();
-                    loadModules(window.currentFormationId, currentFormation);
-                  }, 2000);
+                  // Suppression de la redirection automatique
+                  // Mise à jour uniquement de l'état du bouton "next"
+                  UI.updateProgressUI(ProgressTracker.state);
                 }
               } catch (error) {
                 console.error("Erreur lors de la sauvegarde du score:", error);
                 resultDiv.innerHTML = `
-                        <p class="text-red-600">
-                            Erreur lors de la sauvegarde du score. Veuillez réessayer.
-                        </p>`;
+                    <p class="text-red-600">
+                        Erreur lors de la sauvegarde du score. Veuillez réessayer.
+                    </p>`;
               }
             });
           }
