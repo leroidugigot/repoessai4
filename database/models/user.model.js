@@ -6,15 +6,14 @@ const bcrypt = require('bcrypt');
 const userSchema = schema({
   username: { type: String, required: true, unique: true },
   local: {
-    email: { type: String, required: true, unique: true },
-    password: { type: String }, // Le mot de passe est facultatif pour Google OAuth
-    googleId: { type: String },
     formations: [{
       formation: { type: mongoose.Schema.Types.ObjectId, ref: 'Formation' },
       progression: [{
         module: { type: mongoose.Schema.Types.ObjectId, ref: 'Module' },
         completed: { type: Boolean, default: false },
         completedAt: { type: Date },
+        videoWatched: { type: Boolean, default: false }, // Ajout
+        timeSpentReading: { type: Boolean, default: false }, // Ajout
         quiz: {
           passed: { type: Boolean, default: false },
           score: { type: Number },

@@ -12,7 +12,8 @@ const {
   getNextModule, 
   completeModule, 
   getProgression, 
-  getModuleStatus 
+  getModuleStatus,
+  saveProgress
 } = require("../controllers/formation.controller");
 
 // Fonctions pour colorer les logs
@@ -89,7 +90,7 @@ router.get('/:formationId/modules/:moduleId/status', ensureAuthenticated, async 
     next();
 }, getModuleStatus);
 
-
+router.post('/:formationId/modules/:moduleId/progress', ensureAuthenticated, saveProgress);
 
 
 
