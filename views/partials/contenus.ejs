@@ -397,65 +397,32 @@
         },
 
         updateProgressUI(state) {
-          const progressHtml = `
-                  <div class="progress-status mb-4 p-4 bg-gray-100 rounded-lg">
-                      <h3 class="font-bold mb-2">Progression du module</h3>
-                      <div class="grid gap-2">
-                          <div class="flex items-center gap-2">
-                              <i class="fas ${
-                                state.conditions.videoWatched
-                                  ? "fa-check-circle text-green-500"
-                                  : "fa-circle text-gray-300"
-                              }"></i>
-                              <span>Vidéo (${Math.round(
-                                state.videoProgress
-                              )}% / 70% requis)</span>
-                          </div>
-                          <div class="flex items-center gap-2">
-                              <i class="fas ${
-                                state.conditions.timeSpentReading
-                                  ? "fa-check-circle text-green-500"
-                                  : "fa-circle text-gray-300"
-                              }"></i>
-                              <span>Lecture (${Math.floor(
-                                state.readingTime / 60
-                              )}:${String(state.readingTime % 60).padStart(
-            2,
-            "0"
-          )} / 3:00)</span>
-                          </div>
-                          <div class="flex items-center gap-2">
-                              <i class="fas ${
-                                state.conditions.quizPassed
-                                  ? "fa-check-circle text-green-500"
-                                  : "fa-circle text-gray-300"
-                              }"></i>
-                              <span>Quiz (${
-                                state.quizScore
-                              }% / 100% requis)</span>
-                          </div>
-                      </div>
-                  </div>`;
-
-          const contentHeader = document.querySelector(".content-header");
-          if (contentHeader) {
-            let progressStatus = document.querySelector(".progress-status");
-            if (progressStatus) {
-              progressStatus.remove();
-            }
-            contentHeader.insertAdjacentHTML("afterend", progressHtml);
-          }
-
-          // Vérifier si toutes les conditions sont remplies
+          // Vérification de la complétion de toutes les conditions
           const allConditionsMet = Object.values(state.conditions).every(
             (condition) => condition
           );
+
+          // Mise à jour du bouton "Module Suivant"
           const nextButton = document.querySelector(".next-module-btn");
           if (nextButton) {
             nextButton.disabled = !allConditionsMet;
+
+            // Mise à jour visuelle du bouton selon son état
+            if (allConditionsMet) {
+              nextButton.classList.remove("opacity-50", "cursor-not-allowed");
+              nextButton.classList.add(
+                "hover:bg-blue-600",
+                "transition-colors"
+              );
+            } else {
+              nextButton.classList.add("opacity-50", "cursor-not-allowed");
+              nextButton.classList.remove(
+                "hover:bg-blue-600",
+                "transition-colors"
+              );
+            }
           }
         },
-
         handleError(element, error) {
           if (!element) return;
           console.error("Error:", error);
