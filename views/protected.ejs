@@ -1,101 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Page Principale</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="/public/css/style_protected.css">
-
- 
-</head>
-<body class="bg-gray-100 text-gray-900">
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/public/css/style_protected.css" />
+  </head>
+  <body class="bg-gray-100 text-gray-900">
     <div class="parent h-screen">
-        <!-- Div1 - Logo -->
-        <div class="div1 bg-gray-800 flex justify-center border border-gray-700 h-full">
-            <%- include('partials/logoSite') %>
+      <!-- Div1 - Logo -->
+      <div
+        class="div1 bg-gray-800 flex justify-center border border-gray-700 h-full"
+      >
+        <%- include('partials/logoSite') %>
+      </div>
+
+      <!-- Div2 - Navbar -->
+      <div class="div2 bg-gray-800 border border-gray-700 h-full">
+        <%- include('partials/navbar') %>
+      </div>
+
+      <!-- Div3 - Logbar -->
+      <div
+        class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full"
+      >
+        <%- include('partials/logbar', { user }) %>
+      </div>
+
+      <!-- Div4 - Navbar Hidden -->
+      <div id="navbarHidden" class="div4 z-50 border border-gray-700 h-full">
+        <%- include('partials/navbarHidden') %>
+      </div>
+
+      <!-- Div5, Div6, Div7 encapsulés dans une div parent avec l'image de fond -->
+      <div
+        id="div-parent-left"
+        class="div-parent-left bg-cover bg-center border border-gray-700 h-full"
+        style="grid-area: 2 / 1 / 13 / 3"
+      >
+        <!-- Div5 - Lesson Online -->
+        <div id="div5" class="h-20 bg-transparent">
+          <%- include('partials/lessonOnLine', { currentFormation }) %>
         </div>
 
-        <!-- Div2 - Navbar -->
-        <div class="div2 bg-gray-800 border border-gray-700 h-full">
-            <%- include('partials/navbar') %>
+        <!-- Div6 - Chapter List -->
+        <div id="div6" class="h-96 bg-transparent">
+          <%- include('partials/chapterList', { currentFormation:
+          currentFormation?.formation?.nom || null, currentModule: null }) %>
         </div>
 
-        <!-- Div3 - Logbar -->
-        <div class="div3 bg-gray-800 text-white flex items-center justify-center border border-gray-700 h-full">
-            <%- include('partials/logbar', { user }) %>
+        <!-- Div7 - Dashboard -->
+        <div id="div7" class="h-20 bg-transparent">
+          <%- include('partials/dashboarddiv') %>
+        </div>
+      </div>
+
+      <!-- Div8, Div9, Div10 encapsulés dans une div parent avec l'image de fond -->
+      <div
+        id="div-parent-right"
+        class="div-parent-right bg-cover bg-center border border-gray-700 h-full"
+        style="grid-area: 2 / 11 / 13 / 13"
+      >
+        <!-- Div8 - Connected Users -->
+        <div id="div8" class="h-96 bg-transparent">
+          <%- include('partials/connectedList') %>
         </div>
 
-        <!-- Div4 - Navbar Hidden -->
-        <div id="navbarHidden" class="div4 z-50 border border-gray-700 h-full">
-            <%- include('partials/navbarHidden') %>
-        </div>
-  
-
-
-
-        <!-- Div5, Div6, Div7 encapsulés dans une div parent avec l'image de fond -->
-        <div id="div-parent-left" class="div-parent-left bg-cover bg-center border border-gray-700 h-full" style="grid-area: 2 / 1 / 13 / 3;">
-            <!-- Div5 - Lesson Online -->
-            <div id="div5" class="h-20 bg-transparent">
-                <%- include('partials/lessonOnLine', { currentFormation }) %>
-            </div>
-
-            <!-- Div6 - Chapter List -->
-            <div id="div6" class="h-96 bg-transparent">
-                <%- include('partials/chapterList') %>
-            </div>
-
-            <!-- Div7 - Dashboard -->
-            <div id="div7" class="h-20 bg-transparent">
-                <%- include('partials/dashboarddiv') %>
-            </div>
+        <!-- Div9 - Referentials -->
+        <div id="div9" class="h-20 bg-transparent">
+          <%- include('partials/referentiels') %>
         </div>
 
-        <!-- Div8, Div9, Div10 encapsulés dans une div parent avec l'image de fond -->
-        <div id="div-parent-right" class="div-parent-right bg-cover bg-center border border-gray-700 h-full" style="grid-area: 2 / 11 / 13 / 13;">
-            <!-- Div8 - Connected Users -->
-            <div id="div8" class="h-96 bg-transparent">
-                <%- include('partials/connectedList') %>
-            </div>
-
-            <!-- Div9 - Referentials -->
-            <div id="div9" class="h-20 bg-transparent">
-                <%- include('partials/referentiels') %>
-            </div>
-
-            <!-- Div10 - Contact -->
-            <div id="div10" class="h-20 bg-transparent relative">
-                <%- include('partials/contact') %>
-            </div>
+        <!-- Div10 - Contact -->
+        <div id="div10" class="h-20 bg-transparent relative">
+          <%- include('partials/contact') %>
         </div>
+      </div>
 
-        <!-- Div11 - Input GPT -->
-        <div id="gptInput" class="div12 hidden overflow-auto h-full">
-            <%- include('partials/inputgpt') %> <!-- Contenu GPT ici -->
-        </div>
+      <!-- Div11 - Input GPT -->
+      <div id="gptInput" class="div12 hidden overflow-auto h-full">
+        <%- include('partials/inputgpt') %>
+        <!-- Contenu GPT ici -->
+      </div>
 
-        <!-- Div12 - Main Content -->
-        <div id="mainContent" class="div12  border border-gray-700 overflow-y-auto h-full">
-            <%- include('partials/contenus') %>
-        </div>  
+      <!-- Div12 - Main Content -->
+      <div
+        id="mainContent"
+        class="div12 border border-gray-700 overflow-y-auto h-full"
+      >
+        <%- include('partials/contenus') %>
+      </div>
     </div>
 
     <button id="gptButton" class="absolute bottom-10 right-10 visible">
-        <i id="gptIconInactive" class="fas fa-comment-dots"></i>
-        <i id="gptIconActive" class="fas fa-comment-slash hidden"></i>
+      <i id="gptIconInactive" class="fas fa-comment-dots"></i>
+      <i id="gptIconActive" class="fas fa-comment-slash hidden"></i>
     </button>
 
-    <button id="toggleButton" class="absolute top-10 right-10">
-    
-    </button>
+    <button id="toggleButton" class="absolute top-10 right-10"></button>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="/public/javascripts/scripts_protected.js"></script>
-
-
-</body>
+  </body>
 </html>

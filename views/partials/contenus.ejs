@@ -212,6 +212,10 @@
             // Mise à jour de l'interface
             UI.updateProgressUI(this.state);
 
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(this.state);
+            }
+
             if (allConditionsMet) {
               await this.updateModuleVisuals();
               // Rediriger vers la liste des modules si toutes les conditions sont remplies
@@ -229,8 +233,6 @@
             throw error;
           }
         },
-
-
 
         updateState(progress) {
           if (progress.videoWatched) this.state.conditions.videoWatched = true;
@@ -347,6 +349,10 @@
                         }
 
                         UI.updateProgressUI(this.state);
+
+                        if (window.updateChapterProgress) {
+                          window.updateChapterProgress(this.state);
+                        }
                       }
                     } catch (error) {
                       console.error("Erreur lors du suivi vidéo:", error);
@@ -523,6 +529,10 @@
           window.currentFormationId = id;
           updateBreadcrumb();
 
+          if (window.updateChapterInfo) {
+            window.updateChapterInfo(name, null);
+          }
+
           try {
             const formation = await ApiClient.getFormation(id);
             formationList.innerHTML = `
@@ -590,39 +600,74 @@
           window.currentModuleId = null;
           updateBreadcrumb();
 
+          if (window.updateChapterInfo) {
+            window.updateChapterInfo(name, null);
+          }
+
           try {
+            // Récupérer d'abord la formation pour vérifier qu'elle existe
+            const formation = await ApiClient.getFormation(id);
+            if (!formation) {
+              throw new Error("Formation non trouvée");
+            }
+
             const [modules, progression] = await Promise.all([
               ApiClient.getModules(id),
               ApiClient.fetchWithSecurity(`/formations/${id}/progression`),
             ]);
 
+            if (!modules || modules.length === 0) {
+              moduleList.innerHTML = `
+                <div class="module-message fade-in">
+                    <p>Aucun module disponible pour cette formation.</p>
+                </div>`;
+              return;
+            }
+
             moduleList.innerHTML = modules
               .map(
                 (module) => `
-                      <div class="module-item fade-in" 
-                           data-module-id="${module._id}"
-                           onclick="loadContent('${id}', '${module._id}', '${
+                <div class="module-item fade-in" 
+                     data-module-id="${module._id}"
+                     onclick="loadContent('${id}', '${module._id}', '${
                   module.nom
                 }')">
-                          <div class="icon-container">
-                              <i class="fas fa-book"></i>
-                          </div>
-                          <div class="module-content">
-                              <h3>${module.nom}</h3>
-                              <p class="module-description">${
-                                module.description ||
-                                "Aucune description disponible"
-                              }</p>
-                              <div class="status-icon">
-                                  <i class="fas fa-circle"></i>
-                              </div>
-                              <div class="quiz-score"></div>
-                          </div>
-                      </div>`
+                    <div class="icon-container">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="module-content">
+                        <h3>${module.nom}</h3>
+                        <p class="module-description">${
+                          module.description || "Aucune description disponible"
+                        }</p>
+                        <div class="status-icon">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="quiz-score"></div>
+                    </div>
+                </div>`
               )
               .join("");
 
+            // Mise à jour des visuels des modules après le chargement
             await ProgressTracker.updateModuleVisuals();
+
+            // Réinitialiser l'état du tracker
+            ProgressTracker.state = {
+              videoProgress: 0,
+              readingTime: 0,
+              quizScore: 0,
+              conditions: {
+                videoWatched: false,
+                timeSpentReading: false,
+                quizPassed: false,
+              },
+            };
+
+            // Mettre à jour l'interface de progression
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(ProgressTracker.state);
+            }
           } catch (error) {
             console.error("Erreur lors du chargement:", error);
             UI.handleError(moduleList, error);
@@ -630,55 +675,33 @@
         };
 
         window.loadContent = async function (fId, mId, mName) {
-
-          ProgressTracker.currentFormationName = currentFormation;
-
-          console.log(
-            `loadContent called with fId: ${fId}, mId: ${mId}, mName: ${mName}`
-          );
-          const contentDisplay = document.getElementById("contentDisplay");
-          if (!contentDisplay) return;
-
-          UI.showLoading(contentDisplay);
-          contentDisplay.classList.remove("hidden");
-
-          const moduleList = document.getElementById("moduleList");
-          if (moduleList) moduleList.classList.add("hidden");
-
-          currentModule = mName;
-          window.currentModuleId = mId;
-          window.currentFormationId = fId;
-          window.currentFormation = currentFormation; // Ajouter cette ligne
-          updateBreadcrumb();
-
-          if (UI.elements.navbarHidden)
-            UI.elements.navbarHidden.style.display = "block";
-
-          if (status.completed) {
-            ProgressTracker.state = {
-              videoProgress: 100,
-              readingTime: 30,
-              quizScore: 100,
-              conditions: {
-                videoWatched: true,
-                timeSpentReading: true,
-                quizPassed: true,
-              },
-            };
-          } else {
-            ProgressTracker.state = {
-              videoProgress: status.videoProgress || 0,
-              readingTime: status.readingTime || 0,
-              quizScore: status.quizStatus?.score || 0,
-              conditions: {
-                videoWatched: status.videoWatched || false,
-                timeSpentReading: status.timeSpentReading || false,
-                quizPassed: status.quizStatus?.passed || false,
-              },
-            };
-          }
-
           try {
+            console.log(
+              `loadContent called with fId: ${fId}, mId: ${mId}, mName: ${mName}`
+            );
+
+            const contentDisplay = document.getElementById("contentDisplay");
+            if (!contentDisplay) return;
+
+            UI.showLoading(contentDisplay);
+            contentDisplay.classList.remove("hidden");
+
+            const moduleList = document.getElementById("moduleList");
+            if (moduleList) moduleList.classList.add("hidden");
+
+            // Mise à jour des états
+            currentModule = mName;
+            window.currentModuleId = mId;
+            window.currentFormationId = fId;
+            window.currentFormation = currentFormation;
+
+            // Mise à jour du breadcrumb et de la navigation
+            updateBreadcrumb();
+            if (UI.elements.navbarHidden) {
+              UI.elements.navbarHidden.style.display = "block";
+            }
+
+            // Récupération du contenu et du statut
             const [content, status] = await Promise.all([
               ApiClient.fetchWithSecurity(
                 `/formations/${fId}/modules/${mId}/content`
@@ -688,112 +711,298 @@
               ),
             ]);
 
+            // Mise à jour des informations dans la div6
+            if (window.updateChapterInfo) {
+              window.updateChapterInfo(currentFormation, mName);
+            }
+
             currentModuleContent = content;
 
-            // Si le module est verrouillé, afficher un message et empêcher l'accès
+            // Gestion du module verrouillé
             if (status.isLocked) {
               contentDisplay.innerHTML = `
-                    <div class="content-header fade-in">
-                        <h2>${currentModule}</h2>
+                <div class="content-header fade-in">
+                    <h2>${currentModule}</h2>
+                </div>
+                <div class="content-body fade-in">
+                    <div class="locked-message">
+                        <i class="fas fa-lock text-red-500 text-4xl mb-4"></i>
+                        <p>Ce module est verrouillé. Veuillez compléter les modules précédents.</p>
                     </div>
-                    <div class="content-body fade-in">
-                        <div class="locked-message">
-                            <i class="fas fa-lock text-red-500 text-4xl mb-4"></i>
-                            <p>Ce module est verrouillé. Veuillez compléter les modules précédents.</p>
-                        </div>
-                    </div>`;
+                </div>`;
               return;
             }
 
-            // Reprendre la progression sauvegardée si elle existe
-            if (status.completed) {
-              ProgressTracker.state.conditions = {
-                videoWatched: true,
-                timeSpentReading: true,
-                quizPassed: true,
-              };
-            } else {
-              ProgressTracker.state.conditions = {
-                videoWatched: status.videoWatched || false,
-                timeSpentReading: status.timeSpentReading || false,
-                quizPassed: status.quizStatus?.success || false,
-              };
+            // Initialisation de l'état de progression
+            ProgressTracker.state = {
+              videoProgress: status.completed ? 100 : status.videoProgress || 0,
+              readingTime: status.completed ? 180 : status.readingTime || 0,
+              quizScore: status.completed ? 100 : status.quizStatus?.score || 0,
+              conditions: {
+                videoWatched: status.completed || status.videoWatched || false,
+                timeSpentReading:
+                  status.completed || status.timeSpentReading || false,
+                quizPassed:
+                  status.completed || status.quizStatus?.passed || false,
+              },
+            };
+
+            // Mise à jour de la progression dans la div6
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(ProgressTracker.state);
             }
 
-            // Afficher la vidéo si elle existe
+            // Affichage du contenu en fonction du type
             if (content.video) {
-              let videoId = "";
-              const videoUrl = content.video.trim();
-
-              if (videoUrl.includes("youtube.com/watch")) {
-                videoId = videoUrl.split("v=")[1]?.split("&")[0];
-              } else if (videoUrl.includes("youtu.be")) {
-                videoId = videoUrl.split("youtu.be/")[1]?.split("?")[0];
-              }
-
-              if (videoId) {
-                contentDisplay.innerHTML = `
-                        <div class="content-header fade-in">
-                            <h2>Vidéo: ${currentModule}</h2>
-                        </div>
-                        <div class="content-body fade-in">
-                            <div class="video-container">
-                                <iframe 
-                                    id="player"
-                                    src="https://www.youtube.com/embed/${videoId}?enablejsapi=1" 
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
-                            <button class="next-module-btn mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                                    ${
-                                      !ProgressTracker.state.conditions
-                                        .videoWatched
-                                        ? "disabled"
-                                        : ""
-                                    }
-                                    onclick="loadModules('${fId}', '${currentFormation}')">
-                                Module Suivant
-                            </button>
-                        </div>`;
-
-                const iframe = contentDisplay.querySelector("iframe");
-                ProgressTracker.initializeVideoTracking(iframe);
-              }
+              await renderVideoContent(content, currentModule, fId);
             } else {
-              // Afficher le contenu normal
-              contentDisplay.innerHTML = `
-                    <div class="content-header fade-in">
-                        <h2>${currentModule}</h2>
-                    </div>
-                    <div class="content-body fade-in">
-                        <p class="content-description">${
-                          content.description || ""
-                        }</p>
-                        <div class="module-content w-full">
-                            ${content.course || ""}
-                        </div>
-                        <button class="next-module-btn mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                                ${
-                                  !Object.values(
-                                    ProgressTracker.state.conditions
-                                  ).every(Boolean)
-                                    ? "disabled"
-                                    : ""
-                                }
-                                onclick="loadModules('${fId}', '${currentFormation}')">
-                            Module Suivant
-                        </button>
-                    </div>`;
-
-              ProgressTracker.startReadingTracking();
+              await renderTextContent(content, currentModule, fId);
             }
 
+            // Mise à jour de l'interface de progression
             UI.updateProgressUI(ProgressTracker.state);
           } catch (error) {
+            console.error("Erreur dans loadContent:", error);
             UI.handleError(contentDisplay, error);
           }
+        };
+
+        // Fonction auxiliaire pour le rendu du contenu vidéo
+        async function renderVideoContent(content, currentModule, fId) {
+          const contentDisplay = document.getElementById("contentDisplay");
+          let videoId = "";
+          const videoUrl = content.video.trim();
+
+          if (videoUrl.includes("youtube.com/watch")) {
+            videoId = videoUrl.split("v=")[1]?.split("&")[0];
+          } else if (videoUrl.includes("youtu.be")) {
+            videoId = videoUrl.split("youtu.be/")[1]?.split("?")[0];
+          }
+
+          if (videoId) {
+            contentDisplay.innerHTML = `
+            <div class="content-header fade-in">
+                <h2>Vidéo: ${currentModule}</h2>
+            </div>
+            <div class="content-body fade-in">
+                <div class="video-container">
+                    <iframe 
+                        id="player"
+                        src="https://www.youtube.com/embed/${videoId}?enablejsapi=1" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <button class="next-module-btn mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                        ${
+                          !ProgressTracker.state.conditions.videoWatched
+                            ? "disabled"
+                            : ""
+                        }
+                        onclick="loadModules('${fId}', '${currentFormation}')">
+                    Module Suivant
+                </button>
+            </div>`;
+
+            const iframe = contentDisplay.querySelector("iframe");
+            ProgressTracker.initializeVideoTracking(iframe);
+          }
+        }
+
+        // Fonction auxiliaire pour le rendu du contenu textuel
+        async function renderTextContent(content, currentModule, fId) {
+          const contentDisplay = document.getElementById("contentDisplay");
+          contentDisplay.innerHTML = `
+        <div class="content-header fade-in">
+            <h2>${currentModule}</h2>
+        </div>
+        <div class="content-body fade-in">
+            <p class="content-description">${content.description || ""}</p>
+            <div class="module-content w-full">
+                ${content.course || ""}
+            </div>
+            <button class="next-module-btn mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                    ${
+                      !Object.values(ProgressTracker.state.conditions).every(
+                        Boolean
+                      )
+                        ? "disabled"
+                        : ""
+                    }
+                    onclick="loadModules('${fId}', '${currentFormation}')">
+                Module Suivant
+            </button>
+        </div>`;
+
+          ProgressTracker.startReadingTracking();
+        } // Mise à jour de la fonction startReadingTracking dans ProgressTracker
+        ProgressTracker.startReadingTracking = function () {
+          this.stopReadingTracking();
+
+          const startTime = Date.now() - this.state.readingTime * 1000;
+          this.readingInterval = setInterval(async () => {
+            // Calcul du temps de lecture
+            this.state.readingTime = Math.floor(
+              (Date.now() - startTime) / 1000
+            );
+
+            // Vérification du seuil de lecture (3 minutes = 180 secondes)
+            if (this.state.readingTime >= 180) {
+              this.state.conditions.timeSpentReading = true;
+              try {
+                await this.saveProgress("reading", this.state.readingTime);
+              } catch (error) {
+                console.error(
+                  "Erreur lors de la sauvegarde du temps de lecture:",
+                  error
+                );
+              }
+            }
+
+            // Mise à jour des interfaces
+            UI.updateProgressUI(this.state);
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(this.state);
+            }
+          }, 1000);
+        };
+
+        // Mise à jour de la fonction saveProgress dans ProgressTracker
+        ProgressTracker.saveProgress = async function (type, value) {
+          try {
+            // Validation des types et valeurs
+            const validTypes = ["video", "quiz", "reading"];
+            if (!validTypes.includes(type)) {
+              throw new Error("Type de progression invalide");
+            }
+
+            if (typeof value !== "number" || value < 0) {
+              throw new Error("Valeur de progression invalide");
+            }
+
+            // Limitation des valeurs pour vidéo et quiz
+            if ((type === "video" || type === "quiz") && value > 100) {
+              value = 100;
+            }
+
+            // Mise à jour de l'état local
+            this.state[`${type}Progress`] = value;
+
+            // Mise à jour des conditions selon le type
+            switch (type) {
+              case "video":
+                this.state.conditions.videoWatched = value >= 70;
+                break;
+              case "reading":
+                this.state.conditions.timeSpentReading = value >= 180;
+                break;
+              case "quiz":
+                this.state.conditions.quizPassed = value === 100;
+                break;
+            }
+
+            // Vérification de la complétion totale
+            const allConditionsMet = Object.values(this.state.conditions).every(
+              (condition) => condition
+            );
+
+            // Sauvegarde côté serveur
+            const response = await ApiClient.saveProgress(
+              window.currentFormationId,
+              window.currentModuleId,
+              {
+                type,
+                value,
+                completed: allConditionsMet,
+              }
+            );
+
+            // Mise à jour des interfaces
+            UI.updateProgressUI(this.state);
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(this.state);
+            }
+
+            // Gestion de la complétion du module
+            if (allConditionsMet) {
+              await this.updateModuleVisuals();
+              // Navigation vers la liste des modules après un délai
+              setTimeout(() => {
+                loadModules(window.currentFormationId, currentFormation);
+              }, 1000);
+            }
+
+            return response;
+          } catch (error) {
+            console.error(
+              "Erreur lors de la sauvegarde de la progression:",
+              error
+            );
+            throw error;
+          }
+        };
+
+        // Mise à jour de la fonction pour le suivi vidéo
+        ProgressTracker.initializeVideoTracking = function (videoElement) {
+          if (!videoElement?.src.includes("youtube")) return;
+
+          let progressInterval = null;
+          let player = null;
+
+          return new YT.Player(videoElement, {
+            events: {
+              onReady: (event) => {
+                player = event.target;
+              },
+              onStateChange: (event) => {
+                if (event.data === YT.PlayerState.PLAYING && player) {
+                  if (progressInterval) clearInterval(progressInterval);
+
+                  progressInterval = setInterval(async () => {
+                    try {
+                      const duration = player.getDuration();
+                      const currentTime = player.getCurrentTime();
+
+                      if (duration && duration > 0) {
+                        const progress = Math.min(
+                          Math.round((currentTime / duration) * 100),
+                          100
+                        );
+
+                        this.state.videoProgress = progress;
+
+                        // Vérification du seuil de visionnage (70%)
+                        if (
+                          progress >= 70 &&
+                          !this.state.conditions.videoWatched
+                        ) {
+                          this.state.conditions.videoWatched = true;
+                          await this.saveProgress("video", progress);
+                        }
+
+                        // Mise à jour des interfaces
+                        UI.updateProgressUI(this.state);
+                        if (window.updateChapterProgress) {
+                          window.updateChapterProgress(this.state);
+                        }
+                      }
+                    } catch (error) {
+                      console.error("Erreur lors du suivi vidéo:", error);
+                      if (progressInterval) clearInterval(progressInterval);
+                    }
+                  }, 1000);
+                } else if (
+                  progressInterval &&
+                  (event.data === YT.PlayerState.PAUSED ||
+                    event.data === YT.PlayerState.ENDED)
+                ) {
+                  clearInterval(progressInterval);
+                  progressInterval = null;
+                }
+              },
+            },
+          });
         };
 
         window.renderQuizModal = function (quizData) {
