@@ -1,9 +1,13 @@
-// socket/socket-handler.js
 const Message = require("../database/models/message.model");
 const Room = require("../database/models/room.model");
 const User = require("../database/models/user.model");
+const { UserSimulator } = require('../public/javascripts/userSimulation');
 
 module.exports = (io) => {
+  // Créer et démarrer le simulateur
+  const userSimulator = new UserSimulator(io);
+  userSimulator.startSimulation();
+
   // État global
   const connectedUsers = new Map();
   const userTypingStatus = new Map();
@@ -68,6 +72,7 @@ module.exports = (io) => {
       return [];
     }
   };
+
   // Gestionnaire principal de connexion
   io.on("connection", async (socket) => {
     console.log("Nouvelle connexion socket:", socket.id);
@@ -174,20 +179,16 @@ module.exports = (io) => {
         const message = await Message.findById(messageId);
         if (!message) return;
 
-        // Initialiser les réactions si nécessaire
         if (!message.reactions) {
           message.reactions = new Map();
         }
 
-        // Gérer la réaction
         let reactions = message.reactions.get(reaction) || [];
         const userIndex = reactions.indexOf(currentUser.id);
 
         if (userIndex === -1) {
-          // Ajouter la réaction
           reactions.push(currentUser.id);
         } else {
-          // Retirer la réaction
           reactions = reactions.filter(id => id !== currentUser.id);
         }
 
@@ -199,7 +200,6 @@ module.exports = (io) => {
 
         await message.save();
 
-        // Convertir la Map en objet pour l'émission
         const reactionsObject = {};
         message.reactions.forEach((users, emoji) => {
           reactionsObject[emoji] = users;
@@ -223,7 +223,6 @@ module.exports = (io) => {
         const message = await Message.findById(messageId);
         if (!message) return;
 
-        // Vérifier que l'utilisateur est l'auteur du message
         if (message.user.toString() === currentUser.id) {
           await Message.deleteOne({ _id: messageId });
           io.to(currentRoom).emit("message-deleted", { messageId });
@@ -233,178 +232,172 @@ module.exports = (io) => {
         socket.emit("error", { message: "Erreur lors de la suppression" });
       }
     });
-// Gestion des changements de salle
-socket.on("join-room", async ({ room }) => {
-    if (!currentUser || room === currentRoom) return;
 
-    try {
-      // Quitter la salle actuelle
-      socket.leave(currentRoom);
-      connectedUsers.get(currentRoom)?.delete(socket.id);
-      io.to(currentRoom).emit("users-update", getUsersInRoom(currentRoom));
+    // Gestion des changements de salle
+    socket.on("join-room", async ({ room }) => {
+      if (!currentUser || room === currentRoom) return;
 
-      // Rejoindre la nouvelle salle
-      socket.join(room);
-      currentRoom = room;
+      try {
+        socket.leave(currentRoom);
+        connectedUsers.get(currentRoom)?.delete(socket.id);
+        io.to(currentRoom).emit("users-update", getUsersInRoom(currentRoom));
 
-      if (!connectedUsers.has(room)) {
-        connectedUsers.set(room, new Map());
-      }
+        socket.join(room);
+        currentRoom = room;
 
-      currentUser.room = room;
-      connectedUsers.get(room).set(socket.id, currentUser);
+        if (!connectedUsers.has(room)) {
+          connectedUsers.set(room, new Map());
+        }
 
-      // Charger l'historique et mettre à jour les utilisateurs
-      const messages = await loadMessageHistory(room);
-      socket.emit("message-history", messages);
-      io.to(room).emit("users-update", getUsersInRoom(room));
+        currentUser.room = room;
+        connectedUsers.get(room).set(socket.id, currentUser);
 
-      // Mettre à jour les informations de la salle
-      socket.emit("room-info", {
-        name: defaultRooms[room]?.name || room,
-        description: defaultRooms[room]?.description || "",
-        icon: defaultRooms[room]?.icon || "hashtag"
-      });
+        const messages = await loadMessageHistory(room);
+        socket.emit("message-history", messages);
+        io.to(room).emit("users-update", getUsersInRoom(room));
 
-      console.log(`${currentUser.username} a changé de salle: ${room}`);
-    } catch (error) {
-      console.error("Erreur de changement de salle:", error);
-      socket.emit("error", { message: "Erreur de changement de salle" });
-    }
-  });
-
-  // Gestion des messages épinglés
-  socket.on("pin-message", async ({ messageId }) => {
-    if (!currentUser) return;
-
-    try {
-      const message = await Message.findById(messageId);
-      if (!message) return;
-
-      message.pinned = !message.pinned;
-      await message.save();
-
-      io.to(currentRoom).emit("message-pinned", {
-        messageId,
-        pinned: message.pinned,
-        pinnedBy: currentUser.username
-      });
-    } catch (error) {
-      console.error("Erreur d'épinglage:", error);
-      socket.emit("error", { message: "Erreur lors de l'épinglage du message" });
-    }
-  });
-
-  // Gestion du typing
-  socket.on("typing", () => {
-    if (!currentUser) return;
-
-    userTypingStatus.set(socket.id, true);
-    socket.to(currentRoom).emit("user-typing", {
-      username: currentUser.username,
-      room: currentRoom
-    });
-
-    // Supprimer automatiquement le statut après 3 secondes
-    setTimeout(() => {
-      if (userTypingStatus.get(socket.id)) {
-        userTypingStatus.delete(socket.id);
-        socket.to(currentRoom).emit("user-stop-typing", {
-          username: currentUser.username,
-          room: currentRoom
+        socket.emit("room-info", {
+          name: defaultRooms[room]?.name || room,
+          description: defaultRooms[room]?.description || "",
+          icon: defaultRooms[room]?.icon || "hashtag"
         });
+
+        console.log(`${currentUser.username} a changé de salle: ${room}`);
+      } catch (error) {
+        console.error("Erreur de changement de salle:", error);
+        socket.emit("error", { message: "Erreur de changement de salle" });
       }
-    }, 3000);
-  });
-
-  socket.on("stop-typing", () => {
-    if (!currentUser) return;
-
-    userTypingStatus.delete(socket.id);
-    socket.to(currentRoom).emit("user-stop-typing", {
-      username: currentUser.username,
-      room: currentRoom
     });
-  });
 
-  // Gestion des notifications
-  socket.on("notification", ({ type, message }) => {
-    if (!currentUser) return;
-    
-    io.to(currentRoom).emit("notification", {
-      type,
-      message,
-      username: currentUser.username,
-      timestamp: new Date()
+    // Gestion des messages épinglés
+    socket.on("pin-message", async ({ messageId }) => {
+      if (!currentUser) return;
+
+      try {
+        const message = await Message.findById(messageId);
+        if (!message) return;
+
+        message.pinned = !message.pinned;
+        await message.save();
+
+        io.to(currentRoom).emit("message-pinned", {
+          messageId,
+          pinned: message.pinned,
+          pinnedBy: currentUser.username
+        });
+      } catch (error) {
+        console.error("Erreur d'épinglage:", error);
+        socket.emit("error", { message: "Erreur lors de l'épinglage du message" });
+      }
     });
-  });
 
-  // Gestion des déconnexions
-  socket.on("disconnect", () => {
-    if (currentUser && currentRoom) {
-      // Retirer l'utilisateur de la salle
-      connectedUsers.get(currentRoom)?.delete(socket.id);
+    // Gestion du typing
+    socket.on("typing", () => {
+      if (!currentUser) return;
 
-      // Notifier les autres utilisateurs
-      io.to(currentRoom).emit("user-disconnected", {
+      userTypingStatus.set(socket.id, true);
+      socket.to(currentRoom).emit("user-typing", {
         username: currentUser.username,
-        room: currentRoom,
-        users: getUsersInRoom(currentRoom)
+        room: currentRoom
       });
 
-      // Nettoyer le statut de frappe
+      setTimeout(() => {
+        if (userTypingStatus.get(socket.id)) {
+          userTypingStatus.delete(socket.id);
+          socket.to(currentRoom).emit("user-stop-typing", {
+            username: currentUser.username,
+            room: currentRoom
+          });
+        }
+      }, 3000);
+    });
+
+    socket.on("stop-typing", () => {
+      if (!currentUser) return;
+
       userTypingStatus.delete(socket.id);
+      socket.to(currentRoom).emit("user-stop-typing", {
+        username: currentUser.username,
+        room: currentRoom
+      });
+    });
 
-      console.log(`${currentUser.username} s'est déconnecté`);
-    }
-  });
+    // Gestion des notifications
+    socket.on("notification", ({ type, message }) => {
+      if (!currentUser) return;
+      
+      io.to(currentRoom).emit("notification", {
+        type,
+        message,
+        username: currentUser.username,
+        timestamp: new Date()
+      });
+    });
 
-  // Gestion des erreurs de socket
-  socket.on("error", (error) => {
-    console.error("Socket error:", error);
-    socket.emit("error", {
-      message: "Une erreur est survenue",
-      details: process.env.NODE_ENV === "development" ? error.message : null
+    // Gestion des déconnexions
+    socket.on("disconnect", () => {
+      if (currentUser && currentRoom) {
+        connectedUsers.get(currentRoom)?.delete(socket.id);
+
+        io.to(currentRoom).emit("user-disconnected", {
+          username: currentUser.username,
+          room: currentRoom,
+          users: getUsersInRoom(currentRoom)
+        });
+
+        userTypingStatus.delete(socket.id);
+
+        console.log(`${currentUser.username} s'est déconnecté`);
+      }
+    });
+
+    // Gestion des erreurs de socket
+    socket.on("error", (error) => {
+      console.error("Socket error:", error);
+      socket.emit("error", {
+        message: "Une erreur est survenue",
+        details: process.env.NODE_ENV === "development" ? error.message : null
+      });
     });
   });
-});
 
-// Nettoyage périodique des utilisateurs déconnectés
-setInterval(() => {
-  for (const [room, users] of connectedUsers.entries()) {
-    const activeUsers = new Map();
-    for (const [socketId, user] of users.entries()) {
-      if (io.sockets.sockets.has(socketId)) {
-        activeUsers.set(socketId, user);
+  // Nettoyage périodique des utilisateurs déconnectés
+  setInterval(() => {
+    for (const [room, users] of connectedUsers.entries()) {
+      const activeUsers = new Map();
+      for (const [socketId, user] of users.entries()) {
+        if (io.sockets.sockets.has(socketId)) {
+          activeUsers.set(socketId, user);
+        }
       }
+      connectedUsers.set(room, activeUsers);
     }
-    connectedUsers.set(room, activeUsers);
-  }
-}, 30000); // Toutes les 30 secondes
+  }, 30000);
 
-// API publique du gestionnaire de socket
-return {
-  getUsersInRoom,
-  getTotalConnectedUsers: () => {
-    const uniqueUsers = new Set();
-    for (const users of connectedUsers.values()) {
-      for (const user of users.values()) {
-        uniqueUsers.add(user.id);
+  // API publique du gestionnaire de socket
+  return {
+    getUsersInRoom,
+    getTotalConnectedUsers: () => {
+      const uniqueUsers = new Set();
+      for (const users of connectedUsers.values()) {
+        for (const user of users.values()) {
+          uniqueUsers.add(user.id);
+        }
       }
-    }
-    return uniqueUsers.size;
-  },
-  isUserConnected: (userId) => {
-    for (const users of connectedUsers.values()) {
-      for (const user of users.values()) {
-        if (user.id === userId) return true;
+      return uniqueUsers.size;
+    },
+    isUserConnected: (userId) => {
+      for (const users of connectedUsers.values()) {
+        for (const user of users.values()) {
+          if (user.id === userId) return true;
+        }
       }
-    }
-    return false;
-  },
-  getRoomUsers: (room) => getUsersInRoom(room),
-  broadcastToRoom: (room, event, data) => {
-    io.to(room).emit(event, data);
-  }
-};
+      return false;
+    },
+    getRoomUsers: (room) => getUsersInRoom(room),
+    broadcastToRoom: (room, event, data) => {
+      io.to(room).emit(event, data);
+    },
+    userSimulator
+  };
 };
