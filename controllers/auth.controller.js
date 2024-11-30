@@ -14,7 +14,8 @@ exports.signin = async (req, res, next) => {
       const match = await user.comparePassword(password);
       if (match) {
         req.login(user);
-        res.redirect('protected');
+        // Modifiez cette ligne
+        res.redirect('/protected'); // au lieu de 'protected'
       } else {
         res.render('signin', { error: 'Wrong password' });
       }
@@ -53,5 +54,7 @@ exports.googleAuthCb = (req, res, next) => {
 
 exports.signout = (req, res, next) => {
   req.logout();
+  res.clearCookie('jwt');  // Assurez-vous de supprimer le cookie
+  req.user = null;         // Nettoyez l'utilisateur de la requête
   res.redirect('/');
-}
+};

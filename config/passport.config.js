@@ -15,23 +15,29 @@ passport.use(new GoogleStrategy({
     const email = profile.emails[0].value;
     let user = await findUserPerEmail(email);
 
-    if (!user) {
-      // Si l'utilisateur n'existe pas, création d'un nouvel utilisateur avec les données Google
+    if (user) {
+      // Si l'utilisateur existe déjà, vérifiez si c'est un utilisateur Google
+      if (!user.local.googleId) {
+        // Mettre à jour l'utilisateur avec les infos Google
+        user.local.googleId = profile.id;
+        user.avatar = profile.photos[0].value;
+        await user.save();
+      }
+    } else {
+      // Créer un nouvel utilisateur
       user = await createUser({
         username: profile.displayName,
-        email: email,
-        googleId: profile.id,  // Stocke l'ID Google
-        avatar: profile.photos[0].value  // Stocke l'avatar Google
+        local: {
+          email: email,
+          googleId: profile.id
+        },
+        avatar: profile.photos[0].value
       });
     }
 
-    // Générer un token JWT pour l'utilisateur
-    const token = createJwtToken({ user });
-
-    // Passe uniquement l'utilisateur à Passport (et non l'objet { user, token })
-    return done(null, user);  // Appel correct de la fonction done
+    return done(null, user);
   } catch (error) {
-    return done(error);  // Passe l'erreur à Passport
+    return done(error);
   }
 }));
 
