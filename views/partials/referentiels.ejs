@@ -1,14 +1,33 @@
-<div class="w-full h-full border border-gray-700  bg-opacity-30 shadow-md p-3 bg-gray-800 text-white flex flex-col justify-between ">
-    <!-- Titre -->
-    <h1 class="text-sm font-semibold leading-tight opacity-100">Référentiels Nationaux</h1>
-
-    <!-- Contenu et bouton de téléchargement -->
-    <div class="flex items-center justify-center mt-2 opacity-100 ">
-        <a href="https://mobile.interieur.gouv.fr/content/download/111134/888083/file/2024%20PSE.pdf" 
-           target="_blank"
-           class="bg-blue-600 opacity-100 hover:bg-blue-700 text-xs font-bold text-white py-1 px-3 rounded transition duration-300 ease-in-out transform hover:scale-105">
-            Télécharger
+<!-- views/partials/referentiels.ejs -->
+<div class="h-20 w-full bg-gray-800 bg-opacity-30 border border-gray-700">
+    <div class="h-full flex flex-col justify-center px-3">
+      <!-- Title -->
+      <div class="flex items-center space-x-2 mb-1.5">
+        <i class="fas fa-book-open text-blue-400 text-sm"></i>
+        <span class="text-xs text-white">Référentiels 2024</span>
+      </div>
+  
+      <!-- Download buttons -->
+      <div class="flex items-center space-x-2">
+        <!-- PSE -->
+        <a 
+          href="https://mobile.interieur.gouv.fr/content/download/111134/888083/file/2024%20PSE.pdf"
+          target="_blank" 
+          class="flex items-center bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded transition-colors duration-200"
+        >
+          <i class="fas fa-download text-white text-xs mr-1"></i>
+          <span class="text-xs text-white">PSE</span>
         </a>
+  
+        <!-- PSC -->
+        <a 
+          href="chemin/vers/psc.pdf"
+          target="_blank" 
+          class="flex items-center bg-green-600 hover:bg-green-700 px-2 py-1 rounded transition-colors duration-200"
+        >
+          <i class="fas fa-download text-white text-xs mr-1"></i>
+          <span class="text-xs text-white">PSC</span>
+        </a>
+      </div>
     </div>
-</div>
- 
+  </div>

@@ -1,13 +1,10 @@
 <!-- views/partials/connectedList.ejs -->
-<div class="bg-gray-800 bg-opacity-50 rounded-lg h-full flex flex-col">
-  <div class="p-4 border-b border-gray-700">
-    <h2 class="text-xl font-semibold text-white flex items-center">
-      <i class="fas fa-users mr-2"></i>
-      Utilisateurs connectés
-    </h2>
-  </div>
-
-  <div id="connectedUsersList" class="flex-1 overflow-y-auto p-2 space-y-2">
+<div class="bg-gray-800 bg-opacity-50 p-4 rounded-lg h-full">
+  <h2 class="text-xl font-semibold text-white mb-4 flex items-center">
+    <i class="fas fa-users mr-2"></i>
+    Utilisateurs connectés
+  </h2>
+  <div id="connectedUsersList" class="space-y-3 overflow-y-auto max-h-[calc(100%-4rem)]">
     <!-- Users will be dynamically inserted here -->
   </div>
 </div>
@@ -17,94 +14,111 @@
 document.addEventListener('DOMContentLoaded', () => {
   const socket = io();
   const connectedUsersList = document.getElementById('connectedUsersList');
-  let allUsers = new Map();
+  let allUsers = new Map(); // Store all users with their unique IDs
   
   const currentUser = {
     userId: '<%= user._id %>',
-    username: '<%= user.username %>',
-    avatar: '<%= user.avatar || "/images/default-profile.svg" %>'
+    username: '<%= user.username %>'
   };
 
+  // Connect to socket with user information
   socket.emit('user-connect', {
     userId: currentUser.userId,
     username: currentUser.username,
     room: 'general'
   });
 
-  socket.on('users-update', (users) => mergeUsers(users));
-  socket.on('user-connected', (data) => data.users && mergeUsers(data.users));
-  socket.on('user-disconnected', (data) => data.users && mergeUsers(data.users));
+  // Update users list when receiving updates
+  socket.on('users-update', (users) => {
+    mergeUsers(users);
+  });
 
+  socket.on('user-connected', (data) => {
+    if (data.users) {
+      mergeUsers(data.users);
+    }
+  });
+
+  socket.on('user-disconnected', (data) => {
+    if (data.users) {
+      mergeUsers(data.users);
+    }
+  });
+
+  // Function to merge and maintain user list
   function mergeUsers(users) {
     if (!Array.isArray(users)) return;
-    
+
+    // Clear disconnected users
     allUsers = new Map();
+
+    // Add or update users
     users.forEach(user => {
-      if (user && user.id && user.id !== currentUser.userId) {
+      if (user && user.id) {
         allUsers.set(user.id, user);
       }
     });
 
+    // Add current user if not present
+    if (!allUsers.has(currentUser.userId)) {
+      allUsers.set(currentUser.userId, {
+        id: currentUser.userId,
+        username: currentUser.username,
+        avatar: '/images/default-profile.svg'
+      });
+    }
+
     renderUsersList();
   }
 
+  // Function to render the users list
   function renderUsersList() {
     try {
       const usersArray = Array.from(allUsers.values());
-      
-      // Créer l'élément de l'utilisateur actuel
-      const currentUserElement = `
-        <div class="flex items-center p-3 rounded-lg bg-blue-600 bg-opacity-50 border-l-4 border-blue-500">
-          <div class="relative flex-shrink-0">
+      connectedUsersList.innerHTML = usersArray.map(user => `
+        <div class="flex items-center space-x-3 p-2 rounded-lg bg-gray-700 bg-opacity-50 ${
+          user.id === currentUser.userId ? 'border-l-4 border-blue-500' : ''
+        }">
+          <div class="relative">
             <img 
-              src="${currentUser.avatar}"
-              alt="${currentUser.username}"
-              class="w-10 h-10 rounded-full border-2 border-blue-400"
-              onerror="this.src='/images/default-profile.svg'"
-            >
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full"></span>
-          </div>
-          <div class="ml-3 flex-1 min-w-0">
-            <p class="text-white font-medium truncate">${currentUser.username} (vous)</p>
-            <p class="text-blue-200 text-sm">En ligne</p>
-          </div>
-        </div>
-      `;
-
-      // Créer les éléments des autres utilisateurs
-      const otherUsersElements = usersArray.map(user => `
-        <div class="flex items-center p-3 rounded-lg bg-gray-700 bg-opacity-50 hover:bg-opacity-70 transition-all">
-          <div class="relative flex-shrink-0">
-            <img 
-              src="${user.avatar || '/images/default-profile.svg'}"
-              alt="${user.username}"
+              src="${user.avatar || '/images/default-profile.svg'}" 
+              alt="${user.username}" 
               class="w-10 h-10 rounded-full"
               onerror="this.src='/images/default-profile.svg'"
             >
             <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full"></span>
           </div>
-          <div class="ml-3 flex-1 min-w-0">
-            <p class="text-white font-medium truncate">${user.username}</p>
+          <div>
+            <p class="text-white font-medium">
+              ${user.id === currentUser.userId ? `${user.username} (vous)` : user.username}
+            </p>
             <p class="text-gray-300 text-sm">En ligne</p>
           </div>
         </div>
       `).join('');
-
-      // Combiner l'utilisateur actuel avec les autres utilisateurs
-      connectedUsersList.innerHTML = currentUserElement + otherUsersElements;
     } catch (error) {
       console.error('Error rendering users list:', error);
     }
   }
 
-  // Gestion des connexions
-  socket.on('connect', () => console.log('Connected to server'));
-  socket.on('connect_error', (error) => console.error('Connection error:', error));
-  socket.on('error', (error) => console.error('Socket error:', error));
+  // Gestion des erreurs et maintenance de la connexion
+  socket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+  });
 
-  // Heartbeat
+  socket.on('error', (error) => {
+    console.error('Socket error:', error);
+  });
+
+  socket.on('connect', () => {
+    console.log('Connected to server');
+  });
+
+  // Heartbeat pour maintenir la connexion
   setInterval(() => {
-    if (socket.connected) socket.emit('heartbeat');
+    if (socket.connected) {
+      socket.emit('heartbeat');
+    }
   }, 30000);
 });
 </script>
