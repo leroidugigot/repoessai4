@@ -1,60 +1,91 @@
 <!-- chapterList.ejs -->
-<div class="chapter-list-container bg-white/10 backdrop-blur-sm rounded-lg p-1  text-white">
-    <!-- En-tête avec le nom de la formation -->
-    <div id="formationHeader" class="formation-header border-b border-gray-600 pb-2 mb-4">
-        <h2 class="text-xl font-bold" id="formationName">Sélectionnez une formation</h2>
+<div class="chapter-list-container bg-white/10 backdrop-blur-sm h-full w-full flex flex-col">
+    <!-- En-tête avec le nom de la formation - taille fixe -->
+    <div id="formationHeader" class="formation-header border-b border-gray-600 p-2 flex-none">
+        <h2 class="text-sm font-bold" id="formationName">Sélectionnez une formation</h2>
     </div>
 
-    <!-- Module actuel -->
-    <div id="moduleSection" class="hidden">
-        <div class="current-module border-b border-gray-600 pb-2 mb-4">
-            <h3 class="text-lg font-semibold mb-2">Module en cours:</h3>
-            <p id="currentModule" class="text-gray-300">Aucun module sélectionné</p>
-        </div>
+    <!-- Contenu défilable -->
+    <div class="flex-1 overflow-y-auto p-2">
+        <!-- Module actuel -->
+        <div id="moduleSection" class="hidden space-y-2">
+            <div class="current-module border-b border-gray-600 pb-2">
+                <h3 class="text-xs font-semibold mb-1">Module en cours:</h3>
+                <p id="currentModule" class="text-gray-300 text-xs">Aucun module sélectionné</p>
+            </div>
 
-        <!-- Progression - uniquement visible si un module est sélectionné -->
-        <div class="progress-section">
-            <h3 class="text-lg font-semibold mb-2">Progression:</h3>
-            <div class="progress-items space-y-2">
-                <div class="progress-item flex items-center gap-2 bg-white/5 p-2 rounded">
-                    <i id="videoIcon" class="fas fa-circle text-gray-300"></i>
-                    <span>Vidéo</span>
-                    <span id="videoProgress" class="ml-auto">0%</span>
-                </div>
-                
-                <div class="progress-item flex items-center gap-2 bg-white/5 p-2 rounded">
-                    <i id="readingIcon" class="fas fa-circle text-gray-300"></i>
-                    <span>Lecture</span>
-                    <span id="readingProgress" class="ml-auto">0:00</span>
-                </div>
-                
-                <div class="progress-item flex items-center gap-2 bg-white/5 p-2 rounded">
-                    <i id="quizIcon" class="fas fa-circle text-gray-300"></i>
-                    <span>Quiz</span>
-                    <span id="quizProgress" class="ml-auto">0%</span>
+            <!-- Progression -->
+            <div class="progress-section">
+                <h3 class="text-xs font-semibold mb-1">Progression:</h3>
+                <div class="progress-items space-y-1">
+                    <div class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
+                        <i id="videoIcon" class="fas fa-circle text-gray-300 text-xs"></i>
+                        <span class="text-xs">Vidéo</span>
+                        <span id="videoProgress" class="ml-auto text-xs">0%</span>
+                    </div>
+                    
+                    <div class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
+                        <i id="readingIcon" class="fas fa-circle text-gray-300 text-xs"></i>
+                        <span class="text-xs">Lecture</span>
+                        <span id="readingProgress" class="ml-auto text-xs">0:00</span>
+                    </div>
+                    
+                    <div class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
+                        <i id="quizIcon" class="fas fa-circle text-gray-300 text-xs"></i>
+                        <span class="text-xs">Quiz</span>
+                        <span id="quizProgress" class="ml-auto text-xs">0%</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+.chapter-list-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.chapter-list-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chapter-list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chapter-list-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.progress-item {
+    transition: all 0.2s ease;
+}
+
+.progress-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.hidden {
+    display: none;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation des éléments
     const formationElement = document.getElementById('formationName');
     const moduleSection = document.getElementById('moduleSection');
     const moduleElement = document.getElementById('currentModule');
     
-    // Fonction de mise à jour des informations du chapitre
     window.updateChapterInfo = function(formationName, moduleName) {
         console.log('updateChapterInfo called:', { formationName, moduleName });
         
-        // Mise à jour du nom de la formation
         if (formationElement) {
             formationElement.textContent = formationName || 'Sélectionnez une formation';
         }
         
-        // Gestion de l'affichage du module
         if (moduleSection && moduleElement) {
             if (moduleName) {
                 moduleElement.textContent = moduleName;
@@ -66,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Fonction de mise à jour de la progression
     window.updateChapterProgress = function(state) {
         if (!state || !moduleSection) return;
         
@@ -85,42 +115,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
 
-        // Mise à jour de la vidéo
         if (elements.video.icon && elements.video.progress) {
             if (state.conditions.videoWatched) {
-                elements.video.icon.className = 'fas fa-check-circle text-green-500';
+                elements.video.icon.className = 'fas fa-check-circle text-green-500 text-xs';
                 elements.video.progress.textContent = '100%';
             } else {
-                elements.video.icon.className = 'fas fa-circle text-gray-300';
+                elements.video.icon.className = 'fas fa-circle text-gray-300 text-xs';
                 elements.video.progress.textContent = `${Math.round(state.videoProgress)}%`;
             }
         }
 
-        // Mise à jour de la lecture
         if (elements.reading.icon && elements.reading.progress) {
             if (state.conditions.timeSpentReading) {
-                elements.reading.icon.className = 'fas fa-check-circle text-green-500';
+                elements.reading.icon.className = 'fas fa-check-circle text-green-500 text-xs';
             } else {
-                elements.reading.icon.className = 'fas fa-circle text-gray-300';
+                elements.reading.icon.className = 'fas fa-circle text-gray-300 text-xs';
             }
             const minutes = Math.floor(state.readingTime / 60);
             const seconds = state.readingTime % 60;
             elements.reading.progress.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
         }
 
-        // Mise à jour du quiz
         if (elements.quiz.icon && elements.quiz.progress) {
             if (state.conditions.quizPassed) {
-                elements.quiz.icon.className = 'fas fa-check-circle text-green-500';
+                elements.quiz.icon.className = 'fas fa-check-circle text-green-500 text-xs';
                 elements.quiz.progress.textContent = '100%';
             } else {
-                elements.quiz.icon.className = 'fas fa-circle text-gray-300';
+                elements.quiz.icon.className = 'fas fa-circle text-gray-300 text-xs';
                 elements.quiz.progress.textContent = `${state.quizScore}%`;
             }
         }
     };
 
-    // Fonction de réinitialisation de la progression
     window.resetChapterProgress = function() {
         if (!moduleSection) return;
         
@@ -139,37 +165,3 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 </script>
-
-<style>
-.chapter-list-container {
-    height: 100%;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-.chapter-list-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.chapter-list-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.chapter-list-container::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-}
-
-.progress-item {
-    transition: all 0.3s ease;
-}
-
-.progress-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.hidden {
-    display: none;
-}
-</style>

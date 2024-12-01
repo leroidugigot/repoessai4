@@ -1,56 +1,49 @@
 <!-- views/partials/contact.ejs -->
-<div class="h-full w-full bg-gray-800 bg-opacity-30 border border-gray-700 flex flex-col">
-    <!-- En-tête -->
-    <div class="p-3 border-b border-gray-700">
+<div class="h-full w-full bg-gray-800 bg-opacity-30 border border-gray-700 flex flex-col overflow-hidden">
+  <!-- En-tête avec padding réduit -->
+  <div class="px-2 py-1 border-b border-gray-700 flex-none">
       <div class="flex items-center space-x-2">
-        <i class="fas fa-headset text-purple-400 text-sm"></i>
-        <span class="text-sm text-white font-medium">Support & Contact</span>
+          <i class="fas fa-headset text-purple-400 text-xs"></i>
+          <span class="text-xs text-white font-medium">Support & Contact</span>
       </div>
-    </div>
-  
-    <!-- Contenu principal -->
-    <div class="flex-1 p-3 flex flex-col justify-between">
-      <!-- Section des boutons de contact -->
-      <div class="space-y-2">
-        <!-- Email -->
-        <a href="mailto:support@votresite.com" 
-           class="flex items-center w-full bg-purple-600 hover:bg-purple-700 p-2 rounded transition-colors duration-200">
-          <i class="fas fa-envelope text-white text-sm w-6"></i>
-          <span class="text-sm text-white">support@votresite.com</span>
-        </a>
-  
-        <!-- Discord -->
-        <a href="https://discord.gg/votre-serveur" 
-           target="_blank"
-           class="flex items-center w-full bg-indigo-600 hover:bg-indigo-700 p-2 rounded transition-colors duration-200">
-          <i class="fab fa-discord text-white text-sm w-6"></i>
-          <span class="text-sm text-white">Rejoindre Discord</span>
-        </a>
-  
-        
-      </div>
-  
-
-    </div>
-  
-    
-    
   </div>
-  
-  <script>
-  function toggleFAQ() {
-    const modal = document.getElementById('faqModal');
-    modal.classList.toggle('hidden');
-  }
-  
-  document.addEventListener('click', (e) => {
-    const modal = document.getElementById('faqModal');
-    if (e.target === modal) {
+
+  <!-- Contenu principal avec padding réduit -->
+  <div class="flex-1 p-2 overflow-y-auto">
+      <!-- Section des boutons de contact avec espacement réduit -->
+      <div class="space-y-1">
+          <!-- Email avec padding réduit -->
+          <a href="mailto:support@votresite.com" 
+             class="flex items-center w-full bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded transition-colors duration-200">
+              <i class="fas fa-envelope text-white text-xs w-4"></i>
+              <span class="text-xs text-white">support@votresite.com</span>
+          </a>
+
+          <!-- Discord avec padding réduit -->
+          <a href="https://discord.gg/votre-serveur" 
+             target="_blank"
+             class="flex items-center w-full bg-indigo-600 hover:bg-indigo-700 px-2 py-1 rounded transition-colors duration-200">
+              <i class="fab fa-discord text-white text-xs w-4"></i>
+              <span class="text-xs text-white">Rejoindre Discord</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+<script>
+function toggleFAQ() {
+  const modal = document.getElementById('faqModal');
+  modal.classList.toggle('hidden');
+}
+
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('faqModal');
+  if (e.target === modal) {
       modal.classList.add('hidden');
-    }
-  });
-  
-  document.querySelector('#faqModal > div').addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
-  </script>
+  }
+});
+
+document.querySelector('#faqModal > div')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+</script>
