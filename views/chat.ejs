@@ -13,7 +13,34 @@
       href="https://cdn.jsdelivr.net/npm/emoji-picker-element"
       rel="stylesheet"
     />
+<style>
 
+  /* Style uniforme pour tous les types d'avatars */
+.user-avatar,
+.message-avatar,
+.user-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Style spécifique pour l'avatar dans l'en-tête utilisateur */
+.user-info .user-avatar {
+    border: 2px solid var(--primary-color);
+    margin-right: 10px;
+}
+
+/* Style spécifique pour l'avatar dans les messages */
+.message .message-avatar {
+    margin-right: 8px;
+}
+
+/* Style spécifique pour les petits avatars dans la liste des utilisateurs */
+.user-item .user-avatar-small {
+    margin-right: 8px;
+}
+</style>
     <!-- Ajout des données utilisateur -->
     <script>
       const userInfo = {

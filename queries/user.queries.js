@@ -6,11 +6,11 @@ exports.createUser = async (body) => {
     const user = new User({ 
       username: body.username,
       local: {
-        email: body.email,
-        password: hashedPassword,  // Ce champ peut être null pour Google OAuth
-        googleId: body.googleId    // Assurez-vous de stocker l'ID Google si l'utilisateur vient de Google
+        email: body.local?.email || body.email,
+        password: hashedPassword,
+        googleId: body.local?.googleId || body.googleId
       },
-      avatar: body.avatar  // Vous pouvez aussi stocker l'avatar de Google
+      avatar: body.avatar
     });
     const savedUser = await user.save();
     return savedUser;
@@ -22,12 +22,7 @@ exports.createUser = async (body) => {
 
 
 exports.findUserPerEmail = (email) => {
-  return User.findOne({
-    $or: [
-      { 'local.email': email },
-      { email: email }  // Pour les utilisateurs Google
-    ]
-  }).exec();
+  return User.findOne({ 'local.email': email }).exec();
 };
 
 exports.findUserPerId = (id) => {
