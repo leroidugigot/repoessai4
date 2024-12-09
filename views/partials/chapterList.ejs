@@ -1,5 +1,5 @@
 <!-- chapterList.ejs -->
-<div class="chapter-list-container bg-white/10 backdrop-blur-sm h-full w-full flex flex-col">
+<div class="chapter-list-container text-white bg-gray-800 bg-opacity-50 h-full w-full flex flex-col">
     <!-- En-tête avec le nom de la formation - taille fixe -->
     <div id="formationHeader" class="formation-header border-b border-gray-600 p-2 flex-none">
         <h2 class="text-sm font-bold" id="formationName">Sélectionnez une formation</h2>
@@ -44,19 +44,17 @@
 <style>
 .chapter-list-container {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
 }
 
 .chapter-list-container::-webkit-scrollbar {
     width: 4px;
 }
 
-.chapter-list-container::-webkit-scrollbar-track {
-    background: transparent;
-}
+
 
 .chapter-list-container::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+
     border-radius: 2px;
 }
 

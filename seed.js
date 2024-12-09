@@ -43,7 +43,8 @@ const seedData = async () => {
                     ordre: 1, // Ajout du champ ordre
                     contenu: {
                         video: "https://youtu.be/orbkg5JH9C8?si=PQSdmLfxbkEBRUZG",
-                        cours: "Ce cours introduit les concepts fondamentaux de la structure HTML.",
+                        cours: " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                
                         quiz: [
                             {
                                 _id: new ObjectId(),
@@ -53,9 +54,9 @@ const seedData = async () => {
                             },
                             {
                                 _id: new ObjectId(),
-                                question: "Quelle balise est utilisée pour les paragraphes ?",
-                                options: ["<p>", "<h1>", "<div>", "<span>"],
-                                answer: "<p>",
+                                question: "Qu'est-ce qu'une balise HTML ?",
+                                options: ["Une balise", "Un attribut", "Un style", "Un script"],
+                                answer: "Une balise",
                             },
                         ],
                     },

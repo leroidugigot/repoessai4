@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('./models/module.model');
 
 // Assurez-vous que NODE_ENV est défini, sinon utilisez une valeur par défaut
 const env = process.env.NODE_ENV ? require(`../environment/${process.env.NODE_ENV}`) : require('../environment/development');
