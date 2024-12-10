@@ -42,6 +42,7 @@ exports.getFormationById = async (req, res) => {
 exports.inscrireAFormation = async (req, res) => {
   const { formationId } = req.params;
   const userId = req.user?._id;
+
   try {
     if (!userId) {
       return res.status(401).json({ message: "Utilisateur non authentifié." });
@@ -57,35 +58,41 @@ exports.inscrireAFormation = async (req, res) => {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
 
-    const existingFormation = user.local.formations.find(
+    // Check if the formation already exists in user's formations
+    const existingFormationIndex = user.local.formations.findIndex(
       (f) => f.formation && f.formation.toString() === formationId
     );
 
-    if (existingFormation) {
-      return res
-        .status(200)
-        .json({ message: "Vous êtes déjà inscrit à cette formation." });
+    if (existingFormationIndex !== -1) {
+      return res.status(200).json({
+        message: "Vous êtes déjà inscrit à cette formation.",
+        formation: user.local.formations[existingFormationIndex],
+      });
     }
 
+    // Add new formation only if it doesn't exist
     user.local.formations.push({
       formation: formationId,
       progression: [],
     });
 
+    // Add user to formation participants if not already included
     if (!formation.participants.includes(userId)) {
       formation.participants.push(userId);
       await formation.save();
     }
 
     await user.save();
-    return res
-      .status(200)
-      .json({ message: "Inscription réussie à la formation." });
+    return res.status(200).json({
+      message: "Inscription réussie à la formation.",
+      formation: user.local.formations[user.local.formations.length - 1],
+    });
   } catch (error) {
     console.error("Erreur lors de l'inscription:", error);
-    return res
-      .status(500)
-      .json({ message: "Erreur serveur lors de l'inscription." });
+    return res.status(500).json({
+      message: "Erreur serveur lors de l'inscription.",
+      error: error.message,
+    });
   }
 };
 
@@ -485,116 +492,118 @@ exports.getModuleStatus = async (req, res) => {
 
   // Logs initiaux améliorés
   console.log("[getModuleStatus] Requête reçue avec params:", {
-      params: req.params,
-      formationId,
-      moduleId,
-      isModuleIdNull: moduleId === null,
-      isModuleIdUndefined: moduleId === undefined
+    params: req.params,
+    formationId,
+    moduleId,
+    isModuleIdNull: moduleId === null,
+    isModuleIdUndefined: moduleId === undefined,
   });
   console.log("[getModuleStatus] ID utilisateur:", userId);
 
   // Validation précoce
-  if (!moduleId || moduleId === 'null') {
-      console.error("[getModuleStatus] ModuleId invalide détecté", { moduleId });
-      return res.status(400).json({ message: "ID de module invalide" });
+  if (!moduleId || moduleId === "null") {
+    console.error("[getModuleStatus] ModuleId invalide détecté", { moduleId });
+    return res.status(400).json({ message: "ID de module invalide" });
   }
 
   try {
-      const user = await User.findById(userId);
-      console.log("[getModuleStatus] Utilisateur trouvé:", {
-          found: !!user,
-          userId,
-          hasFormations: user?.local?.formations?.length > 0
+    const user = await User.findById(userId);
+    console.log("[getModuleStatus] Utilisateur trouvé:", {
+      found: !!user,
+      userId,
+      hasFormations: user?.local?.formations?.length > 0,
+    });
+
+    const formation = await Formation.findById(formationId);
+    console.log("[getModuleStatus] Formation trouvée:", {
+      found: !!formation,
+      formationId,
+      moduleCount: formation?.modules?.length,
+    });
+
+    if (!formation) {
+      console.error("[getModuleStatus] Formation non trouvée", { formationId });
+      return res.status(404).json({ message: "Formation non trouvée" });
+    }
+
+    const formationProgress = user.local.formations.find(
+      (f) => f.formation && f.formation.toString() === formationId
+    );
+    console.log("[getModuleStatus] Progression de la formation:", {
+      found: !!formationProgress,
+      formationId,
+      progressionCount: formationProgress?.progression?.length,
+    });
+
+    if (!formationProgress) {
+      console.log("[getModuleStatus] Formation non trouvée ou verrouillée.");
+      return res.json({ isLocked: true });
+    }
+
+    const currentModuleIndex = formation.modules.findIndex(
+      (m) => m._id.toString() === moduleId
+    );
+    console.log("[getModuleStatus] Index du module actuel:", {
+      moduleId,
+      currentModuleIndex,
+      isFound: currentModuleIndex !== -1,
+    });
+
+    if (currentModuleIndex === -1) {
+      console.error("[getModuleStatus] Module non trouvé dans la formation", {
+        moduleId,
+      });
+      return res.status(404).json({ message: "Module non trouvé" });
+    }
+
+    let isLocked = true;
+    if (currentModuleIndex === 0) {
+      console.log("[getModuleStatus] Premier module, pas verrouillé.");
+      isLocked = false;
+    } else {
+      const previousModule = formation.modules[currentModuleIndex - 1];
+      console.log("[getModuleStatus] Module précédent:", {
+        moduleId: previousModule._id,
+        index: currentModuleIndex - 1,
       });
 
-      const formation = await Formation.findById(formationId);
-      console.log("[getModuleStatus] Formation trouvée:", {
-          found: !!formation,
-          formationId,
-          moduleCount: formation?.modules?.length
-      });
-
-      if (!formation) {
-          console.error("[getModuleStatus] Formation non trouvée", { formationId });
-          return res.status(404).json({ message: "Formation non trouvée" });
-      }
-
-      const formationProgress = user.local.formations.find(f => 
-          f.formation && f.formation.toString() === formationId
+      const previousModuleProgress = formationProgress.progression.find(
+        (p) => p.module && p.module.toString() === previousModule._id.toString()
       );
-      console.log("[getModuleStatus] Progression de la formation:", {
-          found: !!formationProgress,
-          formationId,
-          progressionCount: formationProgress?.progression?.length
+      console.log("[getModuleStatus] Progression du module précédent:", {
+        found: !!previousModuleProgress,
+        completed: previousModuleProgress?.completed,
       });
+      isLocked = !previousModuleProgress?.completed;
+    }
 
-      if (!formationProgress) {
-          console.log("[getModuleStatus] Formation non trouvée ou verrouillée.");
-          return res.json({ isLocked: true });
-      }
+    const moduleProgress = formationProgress.progression.find(
+      (p) => p.module && p.module.toString() === moduleId
+    );
+    console.log("[getModuleStatus] Progression du module actuel:", {
+      found: !!moduleProgress,
+      moduleId,
+      progress: {
+        completed: moduleProgress?.completed || false,
+        videoWatched: moduleProgress?.videoWatched || false,
+        timeSpentReading: moduleProgress?.timeSpentReading || false,
+        quizStatus: moduleProgress?.quiz || null,
+      },
+    });
 
-      const currentModuleIndex = formation.modules.findIndex(m => 
-          m._id.toString() === moduleId
-      );
-      console.log("[getModuleStatus] Index du module actuel:", {
-          moduleId,
-          currentModuleIndex,
-          isFound: currentModuleIndex !== -1
-      });
-
-      if (currentModuleIndex === -1) {
-          console.error("[getModuleStatus] Module non trouvé dans la formation", { moduleId });
-          return res.status(404).json({ message: "Module non trouvé" });
-      }
-
-      let isLocked = true;
-      if (currentModuleIndex === 0) {
-          console.log("[getModuleStatus] Premier module, pas verrouillé.");
-          isLocked = false;
-      } else {
-          const previousModule = formation.modules[currentModuleIndex - 1];
-          console.log("[getModuleStatus] Module précédent:", {
-              moduleId: previousModule._id,
-              index: currentModuleIndex - 1
-          });
-
-          const previousModuleProgress = formationProgress.progression.find(p => 
-              p.module && p.module.toString() === previousModule._id.toString()
-          );
-          console.log("[getModuleStatus] Progression du module précédent:", {
-              found: !!previousModuleProgress,
-              completed: previousModuleProgress?.completed
-          });
-          isLocked = !previousModuleProgress?.completed;
-      }
-
-      const moduleProgress = formationProgress.progression.find(p => 
-          p.module && p.module.toString() === moduleId
-      );
-      console.log("[getModuleStatus] Progression du module actuel:", {
-          found: !!moduleProgress,
-          moduleId,
-          progress: {
-              completed: moduleProgress?.completed || false,
-              videoWatched: moduleProgress?.videoWatched || false,
-              timeSpentReading: moduleProgress?.timeSpentReading || false,
-              quizStatus: moduleProgress?.quiz || null
-          }
-      });
-
-      res.json({
-          isLocked,
-          completed: moduleProgress?.completed || false,
-          videoWatched: moduleProgress?.videoWatched || false,
-          timeSpentReading: moduleProgress?.timeSpentReading || false,
-          quizStatus: moduleProgress?.quiz || null
-      });
+    res.json({
+      isLocked,
+      completed: moduleProgress?.completed || false,
+      videoWatched: moduleProgress?.videoWatched || false,
+      timeSpentReading: moduleProgress?.timeSpentReading || false,
+      quizStatus: moduleProgress?.quiz || null,
+    });
   } catch (error) {
-      console.error("[getModuleStatus] Erreur détaillée:", {
-          message: error.message,
-          stack: error.stack,
-          params: { formationId, moduleId, userId }
-      });
-      res.status(500).json({ message: "Erreur serveur" });
+    console.error("[getModuleStatus] Erreur détaillée:", {
+      message: error.message,
+      stack: error.stack,
+      params: { formationId, moduleId, userId },
+    });
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
