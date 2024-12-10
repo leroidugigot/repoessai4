@@ -33,138 +33,151 @@ const seedData = async () => {
       _id: new ObjectId(),
       formationId: "formation1",
       nom: "Formation Secourisme PSE1",
+      typeStyle: "formation-title",
       description: `
-              Cette formation vous permettra d'acquérir les compétences nécessaires pour devenir secouriste PSE1 (Prévention et Secours Civiques de niveau 1). Vous apprendrez à protéger, alerter et secourir efficacement face à des situations d'urgence. À travers des mises en situation pratiques, vous serez capable de prendre en charge des victimes en attendant l'arrivée des secours.
-          
-              Les modules abordés dans cette formation sont :
-              
-              I. Introduction au secourisme PSE1
-                - Importance des premiers secours et du rôle du secouriste
-                - Cadre juridique et responsabilités du secouriste
-                
-              II. Protection et sécurité  
-                - Reconnaissance et prévention des dangers
-                - Protection de soi-même et des victimes
-                
-              III. Bilan et alerte
-                - Évaluation de la situation et des victimes
-                - Transmission de l'alerte et interaction avec les secours
-                
-              IV. Prise en charge des détresses vitales
-                - Gestion d'une victime inconsciente
-                - Réanimation cardio-pulmonaire et défibrillation
-                - Prise en charge d'hémorragies externes
-            `,
+        <div class="space-y-6">
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Formation PSE1 (Prévention et Secours Civiques de niveau 1)</h2>
+            <p class="text-gray-600 leading-relaxed mb-4">
+              Cette formation vous permettra d'acquérir les compétences nécessaires pour devenir secouriste PSE1. 
+              Vous apprendrez à protéger, alerter et secourir efficacement face à des situations d'urgence.
+            </p>
+            
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+              <p class="font-semibold text-blue-700">Points clés de la formation :</p>
+              <ul class="list-disc list-inside text-gray-700 mt-2 space-y-2">
+                <li>Formation certifiante reconnue</li>
+                <li>Apprentissage pratique avec mises en situation</li>
+                <li>Encadrement par des formateurs expérimentés</li>
+              </ul>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-xl font-semibold text-gray-700">Modules de formation :</h3>
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="p-4 border rounded-lg bg-gray-50">
+                  <h4 class="font-medium text-gray-800">I. Introduction au secourisme PSE1</h4>
+                  <ul class="mt-2 space-y-1 text-gray-600">
+                    <li>• Importance des premiers secours</li>
+                    <li>• Cadre juridique et responsabilités</li>
+                  </ul>
+                </div>
+                <div class="p-4 border rounded-lg bg-gray-50">
+                  <h4 class="font-medium text-gray-800">II. Protection et sécurité</h4>
+                  <ul class="mt-2 space-y-1 text-gray-600">
+                    <li>• Prévention des dangers</li>
+                    <li>• Protection des victimes</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
       modules: [
         {
           _id: new ObjectId(),
           moduleId: "moduleA1",
           nom: "Introduction au secourisme PSE1",
-          description:
-            "Ce module couvre les bases du secourisme PSE1, en présentant l'importance des premiers secours, le rôle du secouriste et le cadre juridique associé.",
+          description: "Ce module couvre les bases du secourisme PSE1.",
           ordre: 1,
           contenu: {
             video: "https://youtu.be/orbkg5JH9C8?si=PQSdmLfxbkEBRUZG",
             cours: `
-Formation Secourisme PSE1
-Introduction
-La formation PSE1 (Prévention et Secours Civiques de niveau 1) est une qualification essentielle pour devenir secouriste. Ce cours vous permettra d'acquérir les compétences nécessaires pour intervenir efficacement dans des situations d'urgence.
-Module 1 : Introduction au Secourisme PSE1
-1.1 L'importance des Premiers Secours
-1.1.1 Définition des Premiers Secours
-Les premiers secours représentent l'ensemble des gestes et actions immédiates réalisés par une personne auprès d'une victime, avant l'arrivée des services de secours professionnels. Ces interventions peuvent être déterminantes pour la survie ou l'état de santé ultérieur de la victime.
-1.1.2 Objectifs des Premiers Secours
+            <div class="max-w-5xl mx-auto">
+  <div class="bg-white shadow-lg rounded-lg px-8 py-12 mb-8">
+    <h1 class="text-4xl font-bold mb-6 text-center">Formation aux Premiers Secours Civiques de niveau 1 (PSC1)</h1>
+    <h2 class="text-3xl font-semibold mb-4">Module 1 : Introduction aux premiers secours</h2>
+Copy<div class="mb-8">
+  <h3 class="text-2xl font-semibold mb-2">1.1 Définition et objectifs des premiers secours</h3>
+  <p class="text-lg mb-4">Les premiers secours désignent l'ensemble des gestes et mesures d'urgence à mettre en œuvre en cas d'accident, de sinistre ou de malaise. Ils visent à préserver la vie de la victime, prévenir l'aggravation de son état et favoriser son rétablissement, dans l'attente de sa prise en charge par les secours médicalisés.</p>
+  <p class="text-lg">La formation PSC1 a pour objectifs de permettre à chaque citoyen :</p>
+  <ul class="list-disc list-inside mb-4 text-lg">
+    <li>D'acquérir les réflexes et les bons comportements face à une situation d'urgence</li>
+    <li>D'apprendre les gestes techniques de premiers secours pour faire face aux détresses vitales</li>
+    <li>De savoir protéger et alerter les secours en transmettant les informations nécessaires</li>
+    <li>D'être en mesure de secourir une victime en attendant l'arrivée des services de secours</li>
+  </ul>
+</div>
 
-Préserver la vie
-Empêcher l'aggravation de l'état de la victime
-Favoriser la récupération de la victime
-Contribuer à la chaîne de survie
+<div class="mb-8">
+  <h3 class="text-2xl font-semibold mb-2">1.2 Cadre juridique de l'intervention du citoyen sauveteur</h3>
+  
+  <p class="text-lg mb-4">En France, l'article 223-6 du Code pénal impose à chacun une obligation d'assistance à personne en péril. Concrètement, tout citoyen se doit de porter secours à une personne en danger, dans la mesure de ses capacités et sans risque pour lui ou les tiers.</p>
+  
+  <p class="text-lg mb-4">La non-assistance à personne en danger constitue un délit pénal passible de 5 ans d'emprisonnement et de 75 000 euros d'amende. Il s'agit toutefois d'une obligation de moyens et non de résultat : l'important est d'avoir fait son possible compte tenu des circonstances.</p>
+  
+  <p class="text-lg mb-4">Pour encourager les citoyens à intervenir, la loi prévoit une immunité pénale et civile au bénéfice du sauveteur :</p>
+  
+  <ul class="list-disc list-inside mb-4 text-lg">
+    <li>Son action bénévole et gratuite ne peut engager sa responsabilité, sauf en cas de faute lourde ou intentionnelle</li>
+    <li>Les dommages qu'il pourrait causer sont généralement pris en charge par son assurance responsabilité civile</li>
+    <li>Les frais éventuellement engagés à l'occasion du sauvetage (ex : vêtements abîmés) peuvent être remboursés par l'État</li>  
+  </ul>
+  
+  <p class="text-lg">En résumé, n'ayez pas peur d'agir, de "mal faire" et d'être poursuivi. Ce qui compte, c'est d'intervenir de bonne foi, avec les moyens dont on dispose sur le moment.</p>
+</div>
 
-1.1.3 Le Secouriste comme Maillon Essentiel
-Le secouriste joue un rôle crucial dans la chaîne des secours en tant que premier intervenant. Sa rapidité d'action et la pertinence de ses gestes peuvent faire la différence dans les premières minutes critiques d'une urgence.
-1.2 Cadre Juridique et Responsabilités
-1.2.1 Droits et Devoirs du Secouriste
+<div class="mb-8">
+  <h3 class="text-2xl font-semibold mb-2">1.3 La chaîne des secours : conduite à tenir pour le sauveteur</h3>
+  
+  <p class="text-lg mb-4">Face à un accident, un malaise ou une situation périlleuse, il est essentiel de respecter la chronologie des étapes de l'action de secours, appelée "chaîne des secours". Elle comporte 4 maillons indissociables à réaliser dans l'ordre :</p>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-blue-50 rounded p-4">
+      <p class="text-lg font-semibold mb-2">1. Protéger</p>
+      <p class="text-lg">Avant toute intervention, assurez votre propre sécurité et celle de la victime. Balisez la zone, supprimez les dangers ou soustraire la victime à ceux-ci.</p>
+    </div>
+    
+    <div class="bg-blue-50 rounded p-4">  
+      <p class="text-lg font-semibold mb-2">2. Examiner</p>
+      <p class="text-lg">Vérifiez l'état de la victime. Recherchez une détresse vitale apparente (inconscience, arrêt respiratoire, saignement abondant...). Ces informations seront précieuses pour les secours.</p>  
+    </div>
+    
+    <div class="bg-blue-50 rounded p-4">
+      <p class="text-lg font-semibold mb-2">3. Alerter (ou Faire Alerter)</p>  
+      <p class="text-lg">Contactez ou faites contacter rapidement les secours appropriés (15, 18 ou 112). Transmettez un bilan précis de la situation et suivez leurs conseils en attendant leur arrivée.</p>
+    </div>
+    
+    <div class="bg-blue-50 rounded p-4">
+      <p class="text-lg font-semibold mb-2">4. Secourir</p>
+      <p class="text-lg">Prodiguez à la victime les gestes de premiers secours appropriés à son état. Assistez-la et surveillez l'évolution de son état jusqu'à la prise en charge par les services de secours.</p>  
+    </div>
+  </div>
+  
+  <p class="text-lg mt-4">N'hésitez pas à vous faire aider et à répartir les tâches si d'autres témoins sont présents. Mais respectez toujours l'ordre des 4 étapes. Chaque minute gagnée améliore les chances de survie de la victime.</p>  
+</div>
 
-Obligation d'assistance à personne en danger
-Limites de l'intervention
-Respect du cadre légal d'intervention
+<div class="mb-8">
+  <h3 class="text-2xl font-semibold mb-2">1.4 Prévenir les risques et agir en toute sécurité</h3>
+  
+  <p class="text-lg mb-4">Avant d'aborder les gestes techniques de secourisme, il est primordial de rappeler quelques principes généraux pour intervenir efficacement et sans danger :</p>
+  
+  <ul class="list-disc list-inside text-lg">
+    <li class="mb-2">Évaluez la situation dans son ensemble. Assurez-vous de pouvoir agir sans vous mettre en péril ni aggraver le sort de la victime.</li>
+    <li class="mb-2">Si la zone reste dangereuse (incendie, accident de la route...), mettez-vous et la victime à l'abri ou attendez en sécurité les secours spécialisés.</li>  
+    <li class="mb-2">Méfiez-vous des sur-accidents (chute d'un objet instable, explosion...). Balisez et sécurisez les lieux si nécessaire.</li>
+    <li class="mb-2">En présence d'un danger vital immédiat (noyade, électrocution, ensevelissement...), agissez immédiatement mais toujours sans prendre de risques inconsidérés.</li>
+    <li class="mb-6">Portez des gants jetables (risque infectieux) et respectez les règles d'hygiène de base (lavage des mains, matériel à usage unique...)</li>
+  </ul>
+  
+  <p class="text-lg">Gardez votre calme, inspirez la confiance à la victime par vos paroles et votre attitude. Restez à son écoute et prodiguez-lui un soutien moral jusqu'à l'arrivée des secours.</p>
+</div>
 
-1.2.2 Protection juridique
+<div class="mb-8">
+  <h3 class="text-2xl font-semibold mb-2">1.5 Conclusion du module</h3>
+  
+  <p class="text-lg">Ce premier module nous a permis de poser les fondements de l'action du citoyen sauveteur :</p>
+  
+  <ul class="list-disc list-inside text-lg">    
+    <li class="mb-2">Les gestes de premiers secours visent à préserver la vie, prévenir l'aggravation et favoriser le rétablissement d'une victime.</li>
+    <li class="mb-2">Tout citoyen a le devoir légal de porter assistance, sans risque pour lui. Son action désintéressée est protégée juridiquement.</li>
+    <li class="mb-2">Face à un accident, respecter la chaîne des secours : Protéger, Examiner, Alerter, Secourir.</li> 
+    <li>Intervenir en toute sécurité est le préalable indispensable à toute action de secours.</li>
+  </ul>
+  
 
-Couverture légale des actes de secourisme
-Responsabilité civile et pénale
-Cas de force majeure et état de nécessité
-
-1.2.3 Confidentialité
-
-Respect du secret professionnel
-Protection des informations personnelles
-Communication appropriée avec les services de secours
-
-Module 2 : Protection et Sécurité
-2.1 Reconnaissance et Prévention des Dangers
-2.1.1 Identification des risques
-
-Dangers immédiats
-Risques potentiels
-Évaluation de l'environnement
-
-2.1.2 Sécurisation de la Zone
-
-Périmètre de sécurité
-Balisage
-Élimination des dangers si possible
-
-2.2 Protection des Intervenants et des Victimes
-2.2.1 Équipements de protection
-
-Équipements de protection individuelle (EPI)
-Utilisation appropriée du matériel
-Maintenance et vérification des équipements
-
-2.2.2 Techniques de protection
-
-Positionnement de sécurité
-Distances d'intervention
-Gestes et postures adaptés
-
-Module 3 : Bilan et Alerte
-3.1 Réalisation du Bilan
-3.1.1 Bilan Circonstanciel
-
-Analyse de la situation
-Recherche des causes
-Évaluation des risques persistants
-
-3.1.2 Bilan d'Urgence Vitale
-
-Conscience
-Respiration
-Circulation
-
-3.1.3 Bilan complémentaire
-
-Signes et symptômes
-Antécédents médicaux
-Traitements en cours
-
-3.2 Transmission de l'alerte
-3.2.1 Procédure d'alerte
-
-Numéros d'urgence (15, 18, 112)
-Message d'alerte structuré
-Informations essentielles à transmettre
-
-3.2.2 Suivi de l'intervention
-
-Communication avec les services de secours
-Surveillance de la victime
-Transmission des évolutions
-
-Conclusion
-La formation PSE1 vous donne les bases essentielles pour intervenir efficacement en tant que secouriste. 
-La maîtrise de ces compétences nécessite une pratique régulière et une mise à jour continue des connaissances. 
-                  `,
+            `,
             quiz: [
               {
                 _id: new ObjectId(),
@@ -173,12 +186,6 @@ La maîtrise de ces compétences nécessite une pratique régulière et une mise
                 options: ["Alerter", "Protéger", "Secourir", "Transporter"],
                 answer: "Protéger",
               },
-              {
-                _id: new ObjectId(),
-                question: "Le secouriste est soumis au secret professionnel.",
-                options: ["Vrai", "Faux"],
-                answer: "Vrai",
-              },
             ],
           },
         },
@@ -186,22 +193,62 @@ La maîtrise de ces compétences nécessite une pratique régulière et une mise
           _id: new ObjectId(),
           moduleId: "moduleA2",
           nom: "Protection et sécurité",
-          description:
-            "Ce module aborde la protection des intervenants et des victimes, ainsi que la sécurisation de la zone d'intervention.",
+          description: "Ce module aborde la protection et la sécurité.",
           ordre: 2,
           contenu: {
             video: "https://youtu.be/ZkK5IpAn_m8",
             cours: `
-                    I. Reconnaissance et prévention des dangers
-                      A. Identification des différents types de dangers
-                      B. Évaluation des risques pour soi-même et les victimes
-                      C. Sécurisation de la zone d'intervention
-                        
-                    II. Protection de soi-même et d'autrui
-                      A. Utilisation des équipements de protection individuelle  
-                      B. Consignes de sécurité et distances de sécurité
-                      C. Dégagement d'urgence et mise en sécurité des victimes    
-                  `,
+              <div class="max-w-4xl mx-auto space-y-6">
+                <div class="bg-white shadow-lg rounded-xl p-6">
+                  <h2 class="text-2xl font-bold text-gray-800 mb-6">Protection et Sécurité</h2>
+                  
+                  <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                      <h3 class="text-lg font-semibold text-gray-800 mb-3">
+                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">1</span>
+                        Reconnaissance des dangers
+                      </h3>
+                      <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                          <span class="text-blue-500 mr-2">•</span>
+                          Identification des risques
+                        </li>
+                        <li class="flex items-start">
+                          <span class="text-blue-500 mr-2">•</span>
+                          Évaluation de la situation
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                      <h3 class="text-lg font-semibold text-gray-800 mb-3">
+                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">2</span>
+                        Protection et intervention
+                      </h3>
+                      <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                          <span class="text-blue-500 mr-2">•</span>
+                          Équipements de protection
+                        </li>
+                        <li class="flex items-start">
+                          <span class="text-blue-500 mr-2">•</span>
+                          Sécurisation de zone
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <p class="text-yellow-800 font-medium">Points importants :</p>
+                    <ul class="mt-2 space-y-1 text-yellow-700">
+                      <li>✓ Toujours évaluer la situation avant d'intervenir</li>
+                      <li>✓ Protéger avant d'agir</li>
+                      <li>✓ Utiliser les équipements adaptés</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            `,
             quiz: [
               {
                 _id: new ObjectId(),
@@ -218,50 +265,8 @@ La maîtrise de ces compétences nécessite une pratique régulière et une mise
             ],
           },
         },
-        {
-          _id: new ObjectId(),
-          moduleId: "moduleA3",
-          nom: "Bilan et alerte",
-          description:
-            "Ce module présente la réalisation du bilan de la situation et des victimes, ainsi que la transmission de l'alerte aux services de secours.",
-          ordre: 3,
-          contenu: {
-            video: "https://youtu.be/ZL99iCmfAsk",
-            cours: `
-                    I. Bilan de la situation et des victimes
-                      A. Bilan circonstanciel et évaluation du contexte
-                      B. Bilan d'urgence vitale et bilan complémentaire
-                      C. Reconnaissance des signes de détresse et de gravité
-                      
-                    II. Alerte et transmission aux services de secours  
-                      A. Numéros d'urgence et modalités d'alerte
-                      B. Message d'alerte et informations essentielles
-                      C. Interaction et suivi des consignes des secours
-                  `,
-            quiz: [
-              {
-                _id: new ObjectId(),
-                question: "Quel est le numéro d'urgence européen unique ?",
-                options: ["15", "17", "18", "112"],
-                answer: "112",
-              },
-              {
-                _id: new ObjectId(),
-                question: "Dans quel ordre réalise-t-on le bilan ?",
-                options: [
-                  "Bilan circonstanciel, bilan d'urgence vitale, bilan complémentaire",
-                  "Bilan d'urgence vitale, bilan complémentaire, bilan circonstanciel",
-                  "Bilan complémentaire, bilan circonstanciel, bilan d'urgence vitale",
-                ],
-                answer:
-                  "Bilan circonstanciel, bilan d'urgence vitale, bilan complémentaire",
-              },
-            ],
-          },
-        },
       ],
     });
-
     const formation2 = new Formation({
       _id: new ObjectId(),
       formationId: "formation2",
