@@ -9,6 +9,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="stylesheet" href="/public/css/contenus.css" />
+    <meta name="csrf-token" content="<%- locals.csrfToken %>" />
   </head>
   <body>
     <nav class="navigation">
@@ -94,6 +95,7 @@
                 ...SecurityUtils.getHeaders(),
                 ...options.headers,
               },
+              credentials: "include", // Important pour les cookies d'authentification
             });
 
             if (!response.ok) {
@@ -123,16 +125,53 @@
           return this.fetchWithSecurity(`/formations/${formationId}/modules`);
         },
 
-        async saveProgress(formationId, moduleId, progressData) {
+        async getModuleContent(formationId, moduleId) {
           if (
             !SecurityUtils.validateId(formationId) ||
             !SecurityUtils.validateId(moduleId)
           ) {
             throw new Error("ID invalide");
           }
+          return this.fetchWithSecurity(
+            `/formations/${formationId}/modules/${moduleId}/content`
+          );
+        },
 
-          if (!RateLimiter.canPerformAction(`progress-${moduleId}`)) {
-            return;
+        async getModuleStatus(formationId, moduleId) {
+          if (
+            !SecurityUtils.validateId(formationId) ||
+            !SecurityUtils.validateId(moduleId)
+          ) {
+            throw new Error("ID invalide");
+          }
+          return this.fetchWithSecurity(
+            `/formations/${formationId}/modules/${moduleId}/status`
+          );
+        },
+
+        async saveProgress(formationId, moduleId, progressData) {
+          if (!formationId || !moduleId || !progressData) {
+            throw new Error(
+              "Paramètres manquants pour la sauvegarde de la progression"
+            );
+          }
+
+          if (
+            !SecurityUtils.validateId(formationId) ||
+            !SecurityUtils.validateId(moduleId)
+          ) {
+            throw new Error("ID de formation ou de module invalide");
+          }
+
+          if (
+            !progressData.type ||
+            !["video", "reading", "quiz"].includes(progressData.type)
+          ) {
+            throw new Error("Type de progression invalide");
+          }
+
+          if (typeof progressData.value !== "number") {
+            throw new Error("Valeur de progression invalide");
           }
 
           return this.fetchWithSecurity(
@@ -146,82 +185,99 @@
             }
           );
         },
+
+        async inscrireFormation(formationId) {
+          if (!SecurityUtils.validateId(formationId)) {
+            throw new Error("ID invalide");
+          }
+
+          return this.fetchWithSecurity(
+            `/formations/${formationId}/inscription`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        },
+
+        async getProgression(formationId) {
+          if (!SecurityUtils.validateId(formationId)) {
+            throw new Error("ID invalide");
+          }
+          return this.fetchWithSecurity(
+            `/formations/${formationId}/progression`
+          );
+        },
+
+        async getNextModule(formationId, currentModuleId) {
+          if (
+            !SecurityUtils.validateId(formationId) ||
+            !SecurityUtils.validateId(currentModuleId)
+          ) {
+            throw new Error("ID invalide");
+          }
+          return this.fetchWithSecurity(
+            `/formations/${formationId}/modules/${currentModuleId}/next`
+          );
+        },
       };
 
       // Progress Tracker
       const ProgressTracker = {
-        currentFormationName: null,
-        state: {
-          videoProgress: 0,
-          readingTime: 0,
-          quizScore: 0,
-          conditions: {
-            videoWatched: false,
-            timeSpentReading: false,
-            quizPassed: false,
-          },
-        },
-
+        state: null,
+        videoInterval: null,
         readingInterval: null,
+
+        async initializeState(formationId, moduleId) {
+          try {
+            const response = await ApiClient.fetchWithSecurity(
+              `/api/content/${formationId}/modules/${moduleId}/state`
+            );
+            this.state = response.state;
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(this.state);
+            }
+          } catch (error) {
+            console.error("Erreur lors de l'initialisation de l'état:", error);
+          }
+        },
 
         async saveProgress(type, value) {
           try {
-            const validTypes = ["video", "quiz", "reading"];
-            if (!validTypes.includes(type)) {
-              throw new Error("Type de progression invalide");
+            if (!window.currentFormationId || !window.currentModuleId) {
+              console.error("Formation ID ou Module ID manquant");
+              throw new Error(
+                "Impossible de sauvegarder la progression : Formation ou Module non sélectionné"
+              );
             }
 
-            if (typeof value !== "number" || value < 0) {
-              throw new Error("Valeur de progression invalide");
-            }
+            const progressData = { type, value };
+            const response = await ApiClient.saveProgress(
+              window.currentFormationId,
+              window.currentModuleId,
+              progressData
+            );
 
-            if ((type === "video" || type === "quiz") && value > 100) {
-              value = 100;
-            }
-
-            this.state[`${type}Progress`] = value;
-
-            // Mise à jour des conditions selon le type
+            // Mise à jour de l'état local en fonction du type
             switch (type) {
               case "video":
+                this.state.videoProgress = value;
                 this.state.conditions.videoWatched = value >= 70;
                 break;
               case "reading":
-                this.state.conditions.timeSpentReading = value >= 30;
+                this.state.readingTime = value;
+                this.state.conditions.timeSpentReading = value >= 180;
                 break;
               case "quiz":
+                this.state.quizScore = value;
                 this.state.conditions.quizPassed = value === 100;
                 break;
             }
 
-            const allConditionsMet = Object.values(this.state.conditions).every(
-              (condition) => condition
-            );
-
-            // Sauvegarde côté serveur
-            const response = await ApiClient.saveProgress(
-              window.currentFormationId,
-              window.currentModuleId,
-              {
-                type,
-                value,
-                completed: allConditionsMet,
-              }
-            );
-
-            // Mise à jour de l'interface
-            UI.updateProgressUI(this.state);
-
             if (window.updateChapterProgress) {
               window.updateChapterProgress(this.state);
-            }
-
-            if (allConditionsMet) {
-              await this.updateModuleVisuals();
-              // Rediriger vers la liste des modules si toutes les conditions sont remplies
-              setTimeout(() => {
-                loadModules(window.currentFormationId, currentFormation);
-              }, 1000);
             }
 
             return response;
@@ -234,148 +290,178 @@
           }
         },
 
-        updateState(progress) {
-          if (progress.videoWatched) this.state.conditions.videoWatched = true;
-          if (progress.timeSpentReading)
-            this.state.conditions.timeSpentReading = true;
-          if (progress.quiz?.success) this.state.conditions.quizPassed = true;
-        },
+        initializeVideoTracking(iframe) {
+          if (this.videoInterval) {
+            clearInterval(this.videoInterval);
+            this.videoInterval = null;
+          }
 
-        async updateModuleVisuals() {
-          const moduleItems = document.querySelectorAll(".module-item");
+          let player;
+          let lastProgress = 0;
 
-          for (const item of moduleItems) {
-            const moduleId = item.dataset.moduleId;
-            const statusIcon = item.querySelector(".status-icon i");
+          window.onYouTubeIframeAPIReady = () => {
+            player = new YT.Player(iframe, {
+              events: {
+                onStateChange: async (event) => {
+                  if (event.data === YT.PlayerState.PLAYING) {
+                    if (!this.videoInterval) {
+                      this.videoInterval = setInterval(async () => {
+                        try {
+                          const duration = player.getDuration();
+                          const currentTime = player.getCurrentTime();
 
-            try {
-              const status = await ApiClient.fetchWithSecurity(
-                `/formations/${window.currentFormationId}/modules/${moduleId}/status`
-              );
+                          if (duration && duration > 0) {
+                            const progress = Math.min(
+                              Math.round((currentTime / duration) * 100),
+                              100
+                            );
 
-              if (status.completed) {
-                statusIcon.className = "fas fa-check-circle text-green-500";
-                item.classList.add("completed");
-              } else if (status.isLocked) {
-                statusIcon.className = "fas fa-lock text-red-500";
-                item.classList.add("locked");
-                item.style.pointerEvents = "none";
-                item.style.opacity = "0.6";
-              } else {
-                statusIcon.className = "fas fa-circle text-gray-300";
-                item.classList.remove("completed", "locked");
-                item.style.pointerEvents = "auto";
-                item.style.opacity = "1";
-              }
-            } catch (error) {
-              console.error("Erreur lors de la mise à jour du statut:", error);
+                            if (Math.abs(progress - lastProgress) >= 5) {
+                              lastProgress = progress;
+                              await this.saveProgress("video", progress);
+                            }
+                          }
+                        } catch (error) {
+                          console.error("Erreur lors du suivi vidéo:", error);
+                          if (this.videoInterval) {
+                            clearInterval(this.videoInterval);
+                            this.videoInterval = null;
+                          }
+                        }
+                      }, 2000);
+                    }
+                  } else if (
+                    this.videoInterval &&
+                    (event.data === YT.PlayerState.PAUSED ||
+                      event.data === YT.PlayerState.ENDED)
+                  ) {
+                    clearInterval(this.videoInterval);
+                    this.videoInterval = null;
+                  }
+                },
+              },
+            });
+          };
+
+          if (!window.YT) {
+            const tag = document.createElement("script");
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName("script")[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+          } else if (window.YT.Player) {
+            window.onYouTubeIframeAPIReady();
+          }
+
+          const cleanup = () => {
+            if (this.videoInterval) {
+              clearInterval(this.videoInterval);
+              this.videoInterval = null;
             }
+          };
+
+          window.addEventListener("beforeunload", cleanup);
+          const contentDisplay = document.getElementById("contentDisplay");
+          if (contentDisplay) {
+            contentDisplay.addEventListener("DOMNodeRemoved", cleanup, {
+              once: true,
+            });
           }
         },
 
         startReadingTracking() {
-          this.stopReadingTracking();
-
-          const startTime = Date.now() - this.state.readingTime * 1000;
-          this.readingInterval = setInterval(async () => {
-            this.state.readingTime = Math.floor(
-              (Date.now() - startTime) / 1000
-            );
-            if (this.state.readingTime >= 180) {
-              this.state.conditions.timeSpentReading = true;
-              await this.saveProgress("reading", this.state.readingTime);
-            }
-            UI.updateProgressUI(this.state);
-          }, 1000);
-        },
-
-        stopReadingTracking() {
           if (this.readingInterval) {
             clearInterval(this.readingInterval);
             this.readingInterval = null;
           }
-        },
-        initializeVideoTracking(videoElement) {
-          if (!videoElement?.src.includes("youtube")) return;
 
-          let progressInterval = null;
-          let player = null;
+          const contentBody = document.querySelector(".content-body");
+          if (!contentBody) return;
 
-          return new YT.Player(videoElement, {
-            events: {
-              onReady: (event) => {
-                player = event.target;
-              },
-              onStateChange: (event) => {
-                // Démarrer le suivi lorsque la vidéo commence à jouer
-                if (event.data === YT.PlayerState.PLAYING && player) {
-                  // Nettoyer l'ancien interval s'il existe
-                  if (progressInterval) {
-                    clearInterval(progressInterval);
-                  }
+          const startTime = Date.now() - (this.state?.readingTime || 0) * 1000;
+          this.readingInterval = setInterval(async () => {
+            const currentTime = Math.floor((Date.now() - startTime) / 1000);
+            await this.saveProgress("reading", currentTime);
+          }, 1000);
 
-                  progressInterval = setInterval(async () => {
-                    try {
-                      const duration = player.getDuration();
-                      const currentTime = player.getCurrentTime();
+          contentBody.addEventListener("scroll", async () => {
+            const scrollPercentage =
+              (contentBody.scrollTop /
+                (contentBody.scrollHeight - contentBody.clientHeight)) *
+              100;
+            if (scrollPercentage > 70) {
+              this.state.conditions.timeSpentReading = true;
+              if (window.updateChapterProgress) {
+                window.updateChapterProgress(this.state);
+              }
+            }
+          });
 
-                      // Vérifier que la durée est valide
-                      if (duration && duration > 0) {
-                        const progress = Math.min(
-                          Math.round((currentTime / duration) * 100),
-                          100
-                        );
+          const cleanup = () => {
+            if (this.readingInterval) {
+              clearInterval(this.readingInterval);
+              this.readingInterval = null;
+            }
+          };
 
-                        this.state.videoProgress = progress;
-
-                        // Sauvegarder la progression si le seuil est atteint
-                        if (
-                          progress >= 70 &&
-                          !this.state.conditions.videoWatched
-                        ) {
-                          this.state.conditions.videoWatched = true;
-                          try {
-                            await this.saveProgress("video", progress);
-                            console.log(
-                              "Progression vidéo sauvegardée:",
-                              progress
-                            );
-                          } catch (error) {
-                            console.error(
-                              "Erreur lors de la sauvegarde de la progression vidéo:",
-                              error
-                            );
-                          }
-                        }
-
-                        UI.updateProgressUI(this.state);
-
-                        if (window.updateChapterProgress) {
-                          window.updateChapterProgress(this.state);
-                        }
-                      }
-                    } catch (error) {
-                      console.error("Erreur lors du suivi vidéo:", error);
-                      if (progressInterval) {
-                        clearInterval(progressInterval);
-                      }
-                    }
-                  }, 1000);
-                }
-                // Arrêter le suivi lorsque la vidéo est en pause ou terminée
-                else if (
-                  progressInterval &&
-                  (event.data === YT.PlayerState.PAUSED ||
-                    event.data === YT.PlayerState.ENDED)
-                ) {
-                  clearInterval(progressInterval);
-                  progressInterval = null;
-                }
-              },
-            },
+          window.addEventListener("beforeunload", cleanup);
+          contentBody.addEventListener("DOMNodeRemoved", cleanup, {
+            once: true,
           });
         },
+
+        async updateModuleVisuals() {
+          try {
+            const moduleItems = document.querySelectorAll(".module-item");
+            for (const item of moduleItems) {
+              const moduleId = item.dataset.moduleId;
+              const statusIcon = item.querySelector(".status-icon i");
+
+              if (!moduleId || !statusIcon) continue;
+
+              const [state, lockStatus] = await Promise.all([
+                ApiClient.fetchWithSecurity(
+                  `/api/content/${window.currentFormationId}/modules/${moduleId}/state`
+                ),
+                ApiClient.fetchWithSecurity(
+                  `/api/content/${window.currentFormationId}/modules/${moduleId}/lock-status`
+                ),
+              ]);
+
+              if (lockStatus.isLocked) {
+                statusIcon.className = "fas fa-lock text-red-500";
+                item.classList.add("locked");
+                item.style.pointerEvents = "none";
+                item.style.opacity = "0.6";
+                item.title = lockStatus.message || "Module verrouillé";
+              } else {
+                const isCompleted =
+                  state.conditions.videoWatched &&
+                  state.conditions.timeSpentReading &&
+                  state.conditions.quizPassed;
+
+                if (isCompleted) {
+                  statusIcon.className = "fas fa-check-circle text-green-500";
+                  item.classList.add("completed");
+                  item.classList.remove("locked");
+                  item.style.pointerEvents = "auto";
+                  item.style.opacity = "1";
+                } else {
+                  statusIcon.className = "fas fa-circle text-gray-300";
+                  item.classList.remove("completed", "locked");
+                  item.style.pointerEvents = "auto";
+                  item.style.opacity = "1";
+                }
+                item.title = "";
+              }
+            }
+          } catch (error) {
+            console.error("Erreur lors de la mise à jour des visuels:", error);
+          }
+        },
       };
+
+      // Rendre ProgressTracker disponible globalement
+      window.ProgressTracker = ProgressTracker;
 
       // UI Manager
       const UI = {
@@ -384,7 +470,6 @@
           moduleList: document.getElementById("moduleList"),
           formationList: document.getElementById("formationList"),
           breadcrumb: document.querySelector(".breadcrumb"),
-          navbarHidden: document.getElementById("navbarHidden"),
         },
 
         showLoading(element) {
@@ -392,22 +477,18 @@
           element.innerHTML = `
                   <div class="loading-animation">
                       <div class="spinner"></div>
-                  </div>
-              `;
+            </div>`;
         },
 
         updateProgressUI(state) {
-          // Vérification de la complétion de toutes les conditions
           const allConditionsMet = Object.values(state.conditions).every(
             (condition) => condition
           );
 
-          // Mise à jour du bouton "Module Suivant"
           const nextButton = document.querySelector(".next-module-btn");
           if (nextButton) {
             nextButton.disabled = !allConditionsMet;
 
-            // Mise à jour visuelle du bouton selon son état
             if (allConditionsMet) {
               nextButton.classList.remove("opacity-50", "cursor-not-allowed");
               nextButton.classList.add(
@@ -423,6 +504,7 @@
             }
           }
         },
+
         handleError(element, error) {
           if (!element) return;
           console.error("Error:", error);
@@ -432,19 +514,39 @@
                       <span>${SecurityUtils.escapeHtml(
                         error.message || "Une erreur est survenue"
                       )}</span>
-                  </div>
-              `;
+            </div>`;
         },
       };
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // State management
+      // Rendre UI disponible globalement
+      window.UI = UI;
+
+      // Initialisation
+      document.addEventListener("DOMContentLoaded", async function () {
+        // S'assurer que ProgressTracker est initialisé
+        if (!window.ProgressTracker) {
+          window.ProgressTracker = ProgressTracker;
+        }
+
+        // Réinitialiser l'état si nécessaire
+        window.ProgressTracker.state = {
+          videoProgress: 0,
+          readingTime: 0,
+          quizScore: 0,
+          conditions: {
+            videoWatched: false,
+            timeSpentReading: false,
+            quizPassed: false,
+          },
+        };
+
         let currentFormation = null;
         let currentModule = null;
         let currentModuleContent = null;
         window.currentFormationId = null;
         window.currentModuleId = null;
 
+        // Fonction pour charger les formations
         window.loadFormations = async function () {
           const formationList = document.getElementById("formationList");
           if (!formationList) return;
@@ -457,8 +559,6 @@
 
           if (moduleList) moduleList.classList.add("hidden");
           if (contentDisplay) contentDisplay.classList.add("hidden");
-          if (UI.elements.navbarHidden)
-            UI.elements.navbarHidden.style.display = "none";
 
           currentFormation = null;
           currentModule = null;
@@ -476,10 +576,11 @@
               <i class="fas fa-graduation-cap"></i>
           </div>
           <div class="formation-content">
-              <h3 class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-4 text-3xl font-bold text-white text-center tracking-wide">${formation.nom}</h3>
+                          <h3 class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-4 text-3xl font-bold text-white text-center tracking-wide">
+                              ${formation.nom}
+                          </h3>
           </div>
-      </div>
-                  `
+                  </div>`
               )
               .join("");
           } catch (error) {
@@ -487,6 +588,7 @@
           }
         };
 
+        // Fonction pour charger la description d'une formation
         window.loadFormationDescription = async function (id, name) {
           const formationList = document.getElementById("formationList");
           if (!formationList) return;
@@ -495,10 +597,6 @@
           currentFormation = name;
           window.currentFormationId = id;
           updateBreadcrumb();
-
-          if (window.updateChapterInfo) {
-            window.updateChapterInfo(name, null);
-          }
 
           try {
             const formation = await ApiClient.getFormation(id);
@@ -509,40 +607,29 @@
                           </div>
                           <div class="formation-content">
                               <h3>${formation.nom}</h3>
-                              <p class="formation-description">${
-                                formation.description ||
-                                "Aucune description disponible"
-                              }</p>
-                              <button class="btn-inscription " onclick="inscrireAFormation('${
-                                formation._id
-                              }', '${formation.nom}')">
+                      <p class="formation-description">
+                          ${
+                            formation.description ||
+                            "Aucune description disponible"
+                          }
+                      </p>
+                      <button class="btn-inscription" onclick="inscrireAFormation('${
+                        formation._id
+                      }', '${formation.nom}')">
                                   S'inscrire à la formation
                               </button>
                           </div>
-                      </div>
-                  `;
+              </div>`;
           } catch (error) {
             UI.handleError(formationList, error);
           }
         };
 
+        // Fonction pour s'inscrire à une formation
         window.inscrireAFormation = async function (id, name) {
           try {
-            const response = await fetch(`/formations/${id}/inscription`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({}),
-            });
-
-            if (!response.ok) {
-              const error = await response.json();
-              throw new Error(error.message);
-            }
-
-            const data = await response.json();
-            alert(data.message);
+            const response = await ApiClient.inscrireFormation(id);
+            alert(response.message);
             loadModules(id, name);
           } catch (error) {
             console.error("Erreur lors de l'inscription:", error);
@@ -550,50 +637,35 @@
           }
         };
 
+        // Fonction pour charger les modules
         window.loadModules = async function (id, name) {
-          console.log(`loadModules called with id: ${id}, name: ${name}`);
           const moduleList = document.getElementById("moduleList");
           if (!moduleList) return;
 
-          // Show loading state for module list
           UI.showLoading(moduleList);
           moduleList.classList.remove("hidden");
 
-          // Hide other elements
           const formationList = document.getElementById("formationList");
           const contentDisplay = document.getElementById("contentDisplay");
-          const navbarHidden = document.getElementById("navbarHidden");
 
           if (formationList) formationList.classList.add("hidden");
           if (contentDisplay) {
             contentDisplay.classList.add("hidden");
-            contentDisplay.innerHTML = ""; // Clear any existing content
-          }
-          if (navbarHidden) {
-            navbarHidden.style.display = "none"; // Ensure hidden navbar is not visible
+            contentDisplay.innerHTML = "";
           }
 
-          // Update state
           currentFormation = name;
           window.currentFormationId = id;
           currentModule = null;
           window.currentModuleId = null;
           updateBreadcrumb();
 
-          // Reset any existing content state
           currentModuleContent = null;
 
           try {
-            // Verify formation exists
-            const formation = await ApiClient.getFormation(id);
-            if (!formation) {
-              throw new Error("Formation non trouvée");
-            }
-
-            // Fetch modules and progression
             const [modules, progression] = await Promise.all([
               ApiClient.getModules(id),
-              ApiClient.fetchWithSecurity(`/formations/${id}/progression`),
+              ApiClient.getProgression(id),
             ]);
 
             if (!modules || modules.length === 0) {
@@ -604,36 +676,201 @@
               return;
             }
 
-            // Render module list
-            moduleList.innerHTML = modules
-              .map(
-                (module) => `
-                <div class="module-item fade-in" 
-                     data-module-id="${module._id}"
-                     onclick="loadContent('${id}', '${module._id}', '${
-                  module.nom
-                }')">
-                    <div class="icon-container">
-                        <i class="fas fa-book"></i>
+            moduleList.innerHTML = `
+              <div class="modules-container">
+                <div class="modules-header">
+                  <h2 class="text-2xl font-bold text-white mb-6">${currentFormation}</h2>
+                  <p class="text-gray-300 mb-8">Sélectionnez un module pour commencer votre apprentissage</p>
                     </div>
-                    <div class="module-content">
-                        <h3>${module.nom}</h3>
-                        <p class="module-description">${
-                          module.description || "Aucune description disponible"
-                        }</p>
-                        <div class="status-icon">
-                            <i class="fas fa-circle"></i>
-                        </div>
-                        <div class="quiz-score"></div>
-                    </div>
-                </div>`
-              )
-              .join("");
+                <div class="modules-grid">
+                  ${modules
+                    .map((module, index) => {
+                      const moduleStatus = progression.find(
+                        (p) =>
+                          p.module &&
+                          p.module.toString() === module._id.toString()
+                      ) || {
+                        isLocked: index > 0, // Premier module déverrouillé, les autres verrouillés par défaut
+                        completed: false,
+                        message:
+                          index === 0
+                            ? "Premier module - Accès autorisé"
+                            : "Complétez d'abord le module précédent",
+                      };
 
-            // Update module visuals
+                      return `
+                        <div class="module-card ${
+                          moduleStatus.isLocked ? "locked" : ""
+                        }" 
+                             data-module-id="${module._id}"
+                             onclick="${
+                               !moduleStatus.isLocked
+                                 ? `loadContent('${id}', '${module._id}', '${module.nom}')`
+                                 : "void(0)"
+                             }">
+                          <div class="module-number">Module ${index + 1}</div>
+                          ${
+                            moduleStatus.isLocked
+                              ? '<div class="lock-icon"><i class="fas fa-lock"></i></div>'
+                              : ""
+                          }
+                          <div class="module-content">
+                            <h3 class="module-title">${module.nom}</h3>
+                            <p class="module-description">${
+                              module.description ||
+                              "Aucune description disponible"
+                            }</p>
+                            <div class="module-status">
+                              <div class="status-indicator">
+                                <i class="fas ${
+                                  moduleStatus.isLocked
+                                    ? "fa-lock text-red-500"
+                                    : moduleStatus.completed
+                                    ? "fa-check-circle text-green-500"
+                                    : "fa-circle text-gray-400"
+                                }"></i>
+                                <span>${
+                                  moduleStatus.isLocked
+                                    ? "Module verrouillé"
+                                    : moduleStatus.completed
+                                    ? "Complété"
+                                    : "À compléter"
+                                }</span>
+                              </div>
+                              ${
+                                moduleStatus.isLocked
+                                  ? `<div class="lock-message">${moduleStatus.message}</div>`
+                                  : ""
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      `;
+                    })
+                    .join("")}
+                </div>
+              </div>
+            `;
+
+            // Ajouter les styles CSS
+            const style = document.createElement("style");
+            style.textContent = `
+              .modules-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 2rem;
+              }
+
+              .modules-header {
+                text-align: center;
+                margin-bottom: 2rem;
+              }
+
+              .modules-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 2rem;
+              }
+
+              .module-card {
+                position: relative;
+                background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+                border-radius: 1.5rem;
+                padding: 2rem;
+                transition: all 0.4s ease;
+                cursor: pointer;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                overflow: hidden;
+              }
+
+              .module-card:not(.locked):hover {
+                transform: translateY(-8px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+                background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+              }
+
+              .module-card.locked {
+                cursor: not-allowed;
+                opacity: 0.7;
+                filter: grayscale(0.5);
+              }
+
+              .module-card.locked:hover {
+                animation: shake 0.5s ease-in-out;
+              }
+
+              .module-number {
+                position: absolute;
+                top: 1.5rem;
+                left: 1.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 0.25rem 0.75rem;
+                border-radius: 1rem;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.8);
+              }
+
+              .lock-icon {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                font-size: 1.75rem;
+                color: #ff4444;
+                text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+              }
+
+              .module-content {
+                margin-top: 2rem;
+              }
+
+              .module-title {
+                font-size: 1.5rem;
+                color: white;
+                margin-bottom: 1rem;
+                font-weight: 600;
+              }
+
+              .module-description {
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 1rem;
+                line-height: 1.6;
+                margin-bottom: 1.5rem;
+                min-height: 3rem;
+              }
+
+              .module-status {
+                margin-top: 1.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+              }
+
+              .status-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.7);
+              }
+
+              .lock-message {
+                margin-top: 0.5rem;
+                font-size: 0.85rem;
+                color: #ff4444;
+              }
+
+              @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-8px); }
+                75% { transform: translateX(8px); }
+              }
+            `;
+            document.head.appendChild(style);
+
+            // Mettre à jour les visuels des modules
             await ProgressTracker.updateModuleVisuals();
 
-            // Reset progress tracker state
+            // Réinitialisation de l'état
             ProgressTracker.state = {
               videoProgress: 0,
               readingTime: 0,
@@ -645,7 +882,13 @@
               },
             };
 
-            // Clear any existing intervals
+            if (window.resetChapterProgress) {
+              window.resetChapterProgress();
+            }
+            if (window.updateChapterInfo) {
+              window.updateChapterInfo(name, null);
+            }
+
             if (ProgressTracker.readingInterval) {
               clearInterval(ProgressTracker.readingInterval);
               ProgressTracker.readingInterval = null;
@@ -656,12 +899,9 @@
           }
         };
 
+        // Fonction pour charger le contenu d'un module
         window.loadContent = async function (fId, mId, mName) {
           try {
-            console.log(
-              `loadContent called with fId: ${fId}, mId: ${mId}, mName: ${mName}`
-            );
-
             const contentDisplay = document.getElementById("contentDisplay");
             if (!contentDisplay) return;
 
@@ -671,77 +911,29 @@
             const moduleList = document.getElementById("moduleList");
             if (moduleList) moduleList.classList.add("hidden");
 
-            // Mise à jour des états
             currentModule = mName;
             window.currentModuleId = mId;
             window.currentFormationId = fId;
             window.currentFormation = currentFormation;
 
-            // Mise à jour du breadcrumb et de la navigation
-            updateBreadcrumb();
-            if (UI.elements.navbarHidden) {
-              UI.elements.navbarHidden.style.display = "block";
-            }
+            // Initialiser l'état depuis le backend
+            await ProgressTracker.initializeState(fId, mId);
 
-            // Récupération du contenu et du statut
-            const [content, status] = await Promise.all([
-              ApiClient.fetchWithSecurity(
-                `/formations/${fId}/modules/${mId}/content`
-              ),
-              ApiClient.fetchWithSecurity(
-                `/formations/${fId}/modules/${mId}/status`
-              ),
-            ]);
-
-            // Mise à jour des informations dans la div6
             if (window.updateChapterInfo) {
               window.updateChapterInfo(currentFormation, mName);
             }
 
+            updateBreadcrumb();
+
+            const content = await ApiClient.getModuleContent(fId, mId);
             currentModuleContent = content;
 
-            // Gestion du module verrouillé
-            if (status.isLocked) {
-              contentDisplay.innerHTML = `
-                <div class="content-header fade-in">
-                    <h2>${currentModule}</h2>
-                </div>
-                <div class="content-body fade-in">
-                    <div class="locked-message">
-                        <i class="fas fa-lock text-red-500 text-4xl mb-4"></i>
-                        <p>Ce module est verrouillé. Veuillez compléter les modules précédents.</p>
-                    </div>
-                </div>`;
-              return;
-            }
-
-            // Initialisation de l'état de progression
-            ProgressTracker.state = {
-              videoProgress: status.completed ? 100 : status.videoProgress || 0,
-              readingTime: status.completed ? 180 : status.readingTime || 0,
-              quizScore: status.completed ? 100 : status.quizStatus?.score || 0,
-              conditions: {
-                videoWatched: status.completed || status.videoWatched || false,
-                timeSpentReading:
-                  status.completed || status.timeSpentReading || false,
-                quizPassed:
-                  status.completed || status.quizStatus?.passed || false,
-              },
-            };
-
-            // Mise à jour de la progression dans la div6
-            if (window.updateChapterProgress) {
-              window.updateChapterProgress(ProgressTracker.state);
-            }
-
-            // Affichage du contenu en fonction du type
             if (content.video) {
-              await renderVideoContent(content, currentModule, fId);
+              await renderVideoContent(content, currentModule);
             } else {
-              await renderTextContent(content, currentModule, fId);
+              await renderTextContent(content, currentModule);
             }
 
-            // Mise à jour de l'interface de progression
             UI.updateProgressUI(ProgressTracker.state);
           } catch (error) {
             console.error("Erreur dans loadContent:", error);
@@ -749,8 +941,8 @@
           }
         };
 
-        // Fonction auxiliaire pour le rendu du contenu vidéo
-        async function renderVideoContent(content, currentModule, fId) {
+        // Fonction pour le rendu du contenu vidéo
+        async function renderVideoContent(content, currentModule) {
           const contentDisplay = document.getElementById("contentDisplay");
           let videoId = "";
           const videoUrl = content.video.trim();
@@ -776,7 +968,6 @@
                         allowfullscreen>
                     </iframe>
                 </div>
-  
             </div>`;
 
             const iframe = contentDisplay.querySelector("iframe");
@@ -784,8 +975,8 @@
           }
         }
 
-        // Fonction auxiliaire pour le rendu du contenu textuel
-        async function renderTextContent(content, currentModule, fId) {
+        // Fonction pour le rendu du contenu textuel
+        async function renderTextContent(content, currentModule) {
           const contentDisplay = document.getElementById("contentDisplay");
           contentDisplay.innerHTML = `
         <div class="content-header fade-in">
@@ -804,307 +995,17 @@
                         ? "disabled"
                         : ""
                     }
-                    onclick="loadModules('${fId}', '${currentFormation}')">
+                        onclick="loadModules('${
+                          window.currentFormationId
+                        }', '${currentFormation}')">
                 Module Suivant
             </button>
         </div>`;
 
           ProgressTracker.startReadingTracking();
-        } // Mise à jour de la fonction startReadingTracking dans ProgressTracker
-        ProgressTracker.startReadingTracking = function () {
-          this.stopReadingTracking();
+        }
 
-          const startTime = Date.now() - this.state.readingTime * 1000;
-          this.readingInterval = setInterval(async () => {
-            // Calcul du temps de lecture
-            this.state.readingTime = Math.floor(
-              (Date.now() - startTime) / 1000
-            );
-
-            // Vérification du seuil de lecture (3 minutes = 180 secondes)
-            if (this.state.readingTime >= 180) {
-              this.state.conditions.timeSpentReading = true;
-              try {
-                await this.saveProgress("reading", this.state.readingTime);
-              } catch (error) {
-                console.error(
-                  "Erreur lors de la sauvegarde du temps de lecture:",
-                  error
-                );
-              }
-            }
-
-            // Mise à jour des interfaces
-            UI.updateProgressUI(this.state);
-            if (window.updateChapterProgress) {
-              window.updateChapterProgress(this.state);
-            }
-          }, 1000);
-        };
-
-        // Mise à jour de la fonction saveProgress dans ProgressTracker
-        ProgressTracker.saveProgress = async function (type, value) {
-          try {
-            // Validation des types et valeurs
-            const validTypes = ["video", "quiz", "reading"];
-            if (!validTypes.includes(type)) {
-              throw new Error("Type de progression invalide");
-            }
-
-            if (typeof value !== "number" || value < 0) {
-              throw new Error("Valeur de progression invalide");
-            }
-
-            // Limitation des valeurs pour vidéo et quiz
-            if ((type === "video" || type === "quiz") && value > 100) {
-              value = 100;
-            }
-
-            // Mise à jour de l'état local
-            this.state[`${type}Progress`] = value;
-
-            // Mise à jour des conditions selon le type
-            switch (type) {
-              case "video":
-                this.state.conditions.videoWatched = value >= 70;
-                break;
-              case "reading":
-                this.state.conditions.timeSpentReading = value >= 180;
-                break;
-              case "quiz":
-                this.state.conditions.quizPassed = value === 100;
-                break;
-            }
-
-            // Vérification de la complétion totale
-            const allConditionsMet = Object.values(this.state.conditions).every(
-              (condition) => condition
-            );
-
-            // Sauvegarde côté serveur
-            const response = await ApiClient.saveProgress(
-              window.currentFormationId,
-              window.currentModuleId,
-              {
-                type,
-                value,
-                completed: allConditionsMet,
-              }
-            );
-
-            // Mise à jour des interfaces
-            UI.updateProgressUI(this.state);
-            if (window.updateChapterProgress) {
-              window.updateChapterProgress(this.state);
-            }
-
-            // Mise à jour des visuels des modules sans redirection
-            if (allConditionsMet) {
-              await this.updateModuleVisuals();
-            }
-
-            return response;
-          } catch (error) {
-            console.error(
-              "Erreur lors de la sauvegarde de la progression:",
-              error
-            );
-            throw error;
-          }
-        };
-
-        // Mise à jour de la fonction pour le suivi vidéo
-        ProgressTracker.initializeVideoTracking = function (videoElement) {
-          if (!videoElement?.src.includes("youtube")) return;
-
-          let progressInterval = null;
-          let player = null;
-
-          return new YT.Player(videoElement, {
-            events: {
-              onReady: (event) => {
-                player = event.target;
-              },
-              onStateChange: (event) => {
-                if (event.data === YT.PlayerState.PLAYING && player) {
-                  if (progressInterval) clearInterval(progressInterval);
-
-                  progressInterval = setInterval(async () => {
-                    try {
-                      const duration = player.getDuration();
-                      const currentTime = player.getCurrentTime();
-
-                      if (duration && duration > 0) {
-                        const progress = Math.min(
-                          Math.round((currentTime / duration) * 100),
-                          100
-                        );
-
-                        this.state.videoProgress = progress;
-
-                        // Vérification du seuil de visionnage (70%)
-                        if (
-                          progress >= 70 &&
-                          !this.state.conditions.videoWatched
-                        ) {
-                          this.state.conditions.videoWatched = true;
-                          await this.saveProgress("video", progress);
-                        }
-
-                        // Mise à jour des interfaces
-                        UI.updateProgressUI(this.state);
-                        if (window.updateChapterProgress) {
-                          window.updateChapterProgress(this.state);
-                        }
-                      }
-                    } catch (error) {
-                      console.error("Erreur lors du suivi vidéo:", error);
-                      if (progressInterval) clearInterval(progressInterval);
-                    }
-                  }, 1000);
-                } else if (
-                  progressInterval &&
-                  (event.data === YT.PlayerState.PAUSED ||
-                    event.data === YT.PlayerState.ENDED)
-                ) {
-                  clearInterval(progressInterval);
-                  progressInterval = null;
-                }
-              },
-            },
-          });
-        };
-
-        window.renderQuizModal = function (quizData) {
-          if (!Array.isArray(quizData)) {
-            console.error("Format de quiz invalide");
-            return;
-          }
-
-          const modalHtml = `
-            <div id="quiz-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-                    <div class="content-header">
-                        <h2>Quiz: ${currentModule}</h2>
-                    </div>
-                    <form id="quiz-form">
-                        ${quizData
-                          .map(
-                            (question, index) => `
-                            <div class="quiz-question mb-4 p-4 bg-gray-100 rounded-lg">
-                                <h3 class="font-bold mb-2">${
-                                  question.question
-                                }</h3>
-                                <div class="quiz-options">
-                                    ${question.options
-                                      .map(
-                                        (option) => `
-                                        <label class="block mb-2">
-                                            <input type="radio" 
-                                                   name="question-${index}" 
-                                                   value="${option}" 
-                                                   data-correct="${
-                                                     question.answer === option
-                                                   }"
-                                                   required
-                                                   class="mr-2 quiz-option">
-                                            ${option}
-                                        </label>
-                                    `
-                                      )
-                                      .join("")}
-                                </div>
-                            </div>
-                        `
-                          )
-                          .join("")}
-                        <div class="flex justify-between">
-                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                                Soumettre le Quiz
-                            </button>
-                            <button type="button" onclick="closeQuizModal()" 
-                                    class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
-                                Fermer
-                            </button>
-                        </div>
-                    </form>
-                    <div id="quiz-result" class="mt-4 text-center"></div>
-                </div>
-            </div>`;
-
-          const existingModal = document.getElementById("quiz-modal");
-          if (existingModal) {
-            existingModal.remove();
-          }
-
-          document.body.insertAdjacentHTML("beforeend", modalHtml);
-
-          const quizForm = document.getElementById("quiz-form");
-          if (quizForm) {
-            quizForm.addEventListener("submit", async function (e) {
-              e.preventDefault();
-              const resultDiv = document.getElementById("quiz-result");
-              if (!resultDiv) return;
-
-              let correctAnswers = 0;
-              const totalQuestions = quizData.length;
-
-              const radioGroups = document.querySelectorAll(
-                'input[type="radio"]:checked'
-              );
-              if (radioGroups.length !== totalQuestions) {
-                alert("Veuillez répondre à toutes les questions");
-                return;
-              }
-
-              radioGroups.forEach((radio) => {
-                if (radio.getAttribute("data-correct") === "true") {
-                  correctAnswers++;
-                }
-              });
-
-              const score = Math.round((correctAnswers / totalQuestions) * 100);
-
-              try {
-                await ProgressTracker.saveProgress("quiz", score);
-
-                resultDiv.innerHTML = `
-                    <p class="font-bold text-lg">
-                        Votre score : ${correctAnswers}/${totalQuestions} (${score}%)
-                    </p>
-                    <p class="${
-                      score === 100 ? "text-green-600" : "text-red-600"
-                    }">
-                        ${
-                          score === 100
-                            ? "Félicitations ! Quiz réussi ! Vous pouvez maintenant utiliser le bouton 'next' pour continuer."
-                            : "Vous devez obtenir 100% pour valider le module"
-                        }
-                    </p>`;
-
-                if (score === 100) {
-                  // Suppression de la redirection automatique
-                  // Mise à jour uniquement de l'état du bouton "next"
-                  UI.updateProgressUI(ProgressTracker.state);
-                }
-              } catch (error) {
-                console.error("Erreur lors de la sauvegarde du score:", error);
-                resultDiv.innerHTML = `
-                    <p class="text-red-600">
-                        Erreur lors de la sauvegarde du score. Veuillez réessayer.
-                    </p>`;
-              }
-            });
-          }
-        };
-
-        window.closeQuizModal = function () {
-          const modal = document.getElementById("quiz-modal");
-          if (modal) {
-            modal.remove();
-          }
-        };
-
+        // Fonction pour mettre à jour le fil d'Ariane
         function updateBreadcrumb() {
           const breadcrumb = document.querySelector(".breadcrumb");
           if (!breadcrumb) return;
@@ -1127,81 +1028,6 @@
             }
           }
           breadcrumb.innerHTML = html;
-        }
-
-        // Event Listeners pour la navigation
-        const videoLink = document.querySelector('a[href="/videos"]');
-        const coursLink = document.querySelector('a[href="/cours"]');
-        const quizLink = document.querySelector('a[href="/quiz"]');
-        const nextLink = document.querySelector('a[href="/next"]');
-
-        if (videoLink) {
-          videoLink.addEventListener("click", async function (e) {
-            e.preventDefault();
-            if (!currentModuleContent?.video) {
-              alert("Aucune vidéo disponible pour ce module");
-              return;
-            }
-
-            ProgressTracker.stopReadingTracking();
-            await loadContent(
-              window.currentFormationId,
-              window.currentModuleId,
-              currentModule
-            );
-          });
-        }
-
-        if (coursLink) {
-          coursLink.addEventListener("click", async function (e) {
-            e.preventDefault();
-            if (!currentModuleContent) return;
-
-            const contentDisplay = document.getElementById("contentDisplay");
-            if (!contentDisplay) return;
-
-            contentDisplay.innerHTML = `
-                <div class="content-header fade-in">
-                    <h2>Cours: ${currentModule}</h2>
-                </div>
-                <div class="content-body fade-in">
-                    <div class="course-container">
-                        ${
-                          currentModuleContent.cours ||
-                          currentModuleContent.description ||
-                          "Aucun cours disponible"
-                        }
-                    </div>
-                </div>`;
-
-            ProgressTracker.stopReadingTracking();
-            ProgressTracker.startReadingTracking();
-          });
-        }
-
-        if (quizLink) {
-          quizLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            if (!currentModuleContent?.quiz) {
-              alert("Aucun quiz disponible pour ce module");
-              return;
-            }
-            ProgressTracker.stopReadingTracking();
-            renderQuizModal(currentModuleContent.quiz);
-          });
-        }
-
-        if (nextLink) {
-          nextLink.addEventListener("click", async function (e) {
-            e.preventDefault();
-            if (!window.currentFormationId) {
-              alert("Veuillez sélectionner une formation");
-              return;
-            }
-
-            ProgressTracker.stopReadingTracking();
-            await loadModules(window.currentFormationId, currentFormation);
-          });
         }
 
         // Chargement initial

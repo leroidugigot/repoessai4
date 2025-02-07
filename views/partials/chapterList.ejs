@@ -1,165 +1,194 @@
 <!-- chapterList.ejs -->
-<div class="chapter-list-container text-white bg-gray-800 bg-opacity-50 h-full w-full flex flex-col">
-    <!-- En-tête avec le nom de la formation - taille fixe -->
-    <div id="formationHeader" class="formation-header border-b border-gray-600 p-2 flex-none">
-        <h2 class="text-sm font-bold" id="formationName">Sélectionnez une formation</h2>
-    </div>
+<div
+  class="chapter-list-container text-white bg-gray-800 bg-opacity-50 h-full w-full flex flex-col"
+>
+  <!-- En-tête avec le nom de la formation - taille fixe -->
+  <div
+    id="formationHeader"
+    class="formation-header border-b border-gray-600 p-2 flex-none"
+  >
+    <h2 class="text-sm font-bold" id="formationName">
+      Sélectionnez une formation
+    </h2>
+  </div>
 
-    <!-- Contenu défilable -->
-    <div class="flex-1 overflow-y-auto p-2">
-        <!-- Module actuel -->
-        <div id="moduleSection" class="hidden space-y-2">
-            <div class="current-module border-b border-gray-600 pb-2">
-                <h3 class="text-xs font-semibold mb-1">Module en cours:</h3>
-                <p id="currentModule" class="text-gray-300 text-xs">Aucun module sélectionné</p>
-            </div>
+  <!-- Contenu défilable -->
+  <div class="flex-1 overflow-y-auto p-2">
+    <!-- Module actuel -->
+    <div id="moduleSection" class="hidden space-y-2">
+      <div class="current-module border-b border-gray-600 pb-2">
+        <h3 class="text-xs font-semibold mb-1">Module en cours:</h3>
+        <p id="currentModule" class="text-gray-300 text-xs">
+          Aucun module sélectionné
+        </p>
+      </div>
 
-            <!-- Progression -->
-            <div class="progress-section">
-                <h3 class="text-xs font-semibold mb-1">Progression:</h3>
-                <div class="progress-items space-y-1">
-                    <div class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
-                        <i id="videoIcon" class="fas fa-circle text-gray-300 text-xs"></i>
-                        <span class="text-xs">Vidéo</span>
-                        <span id="videoProgress" class="ml-auto text-xs">0%</span>
-                    </div>
-                    
-                    <div class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
-                        <i id="readingIcon" class="fas fa-circle text-gray-300 text-xs"></i>
-                        <span class="text-xs">Lecture</span>
-                        <span id="readingProgress" class="ml-auto text-xs">0:00</span>
-                    </div>
-                    
-                    <div class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded">
-                        <i id="quizIcon" class="fas fa-circle text-gray-300 text-xs"></i>
-                        <span class="text-xs">Quiz</span>
-                        <span id="quizProgress" class="ml-auto text-xs">0%</span>
-                    </div>
-                </div>
-            </div>
+      <!-- Progression -->
+      <div class="progress-section">
+        <h3 class="text-xs font-semibold mb-1">Progression:</h3>
+        <div class="progress-items space-y-1">
+          <div
+            class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded"
+          >
+            <i id="videoIcon" class="fas fa-circle text-gray-300 text-xs"></i>
+            <span class="text-xs">Vidéo</span>
+            <span id="videoProgress" class="ml-auto text-xs">0%</span>
+          </div>
+
+          <div
+            class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded"
+          >
+            <i id="readingIcon" class="fas fa-circle text-gray-300 text-xs"></i>
+            <span class="text-xs">Lecture</span>
+            <span id="readingProgress" class="ml-auto text-xs">0:00</span>
+          </div>
+
+          <div
+            class="progress-item flex items-center gap-1 bg-white/5 px-2 py-1 rounded"
+          >
+            <i id="quizIcon" class="fas fa-circle text-gray-300 text-xs"></i>
+            <span class="text-xs">Quiz</span>
+            <span id="quizProgress" class="ml-auto text-xs">0%</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <style>
-.chapter-list-container {
+  .chapter-list-container {
     scrollbar-width: thin;
+  }
 
-}
-
-.chapter-list-container::-webkit-scrollbar {
+  .chapter-list-container::-webkit-scrollbar {
     width: 4px;
-}
+  }
 
-
-
-.chapter-list-container::-webkit-scrollbar-thumb {
-
+  .chapter-list-container::-webkit-scrollbar-thumb {
     border-radius: 2px;
-}
+  }
 
-.progress-item {
+  .progress-item {
     transition: all 0.2s ease;
-}
+  }
 
-.progress-item:hover {
+  .progress-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
-}
+  }
 
-.hidden {
+  .hidden {
     display: none;
-}
+  }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const formationElement = document.getElementById('formationName');
-    const moduleSection = document.getElementById('moduleSection');
-    const moduleElement = document.getElementById('currentModule');
-    
-    window.updateChapterInfo = function(formationName, moduleName) {
-        console.log('updateChapterInfo called:', { formationName, moduleName });
-        
-        if (formationElement) {
-            formationElement.textContent = formationName || 'Sélectionnez une formation';
+  document.addEventListener("DOMContentLoaded", function () {
+    const formationElement = document.getElementById("formationName");
+    const moduleSection = document.getElementById("moduleSection");
+    const moduleElement = document.getElementById("currentModule");
+
+    window.updateChapterInfo = function (formationName, moduleName) {
+      console.log("updateChapterInfo called:", { formationName, moduleName });
+
+      if (formationElement) {
+        formationElement.textContent =
+          formationName || "Sélectionnez une formation";
+      }
+
+      if (moduleSection && moduleElement) {
+        if (moduleName) {
+          moduleElement.textContent = moduleName;
+          moduleSection.classList.remove("hidden");
+        } else {
+          moduleElement.textContent = "Aucun module sélectionné";
+          moduleSection.classList.add("hidden");
         }
-        
-        if (moduleSection && moduleElement) {
-            if (moduleName) {
-                moduleElement.textContent = moduleName;
-                moduleSection.classList.remove('hidden');
-            } else {
-                moduleElement.textContent = 'Aucun module sélectionné';
-                moduleSection.classList.add('hidden');
-            }
-        }
+      }
     };
 
-    window.updateChapterProgress = function(state) {
-        if (!state || !moduleSection) return;
-        
-        const elements = {
-            video: {
-                icon: document.getElementById('videoIcon'),
-                progress: document.getElementById('videoProgress')
-            },
-            reading: {
-                icon: document.getElementById('readingIcon'),
-                progress: document.getElementById('readingProgress')
-            },
-            quiz: {
-                icon: document.getElementById('quizIcon'),
-                progress: document.getElementById('quizProgress')
-            }
-        };
+    window.updateChapterProgress = function (state) {
+      console.log("updateChapterProgress called:", state);
+      if (!state || !moduleSection) return;
 
-        if (elements.video.icon && elements.video.progress) {
-            if (state.conditions.videoWatched) {
-                elements.video.icon.className = 'fas fa-check-circle text-green-500 text-xs';
-                elements.video.progress.textContent = '100%';
-            } else {
-                elements.video.icon.className = 'fas fa-circle text-gray-300 text-xs';
-                elements.video.progress.textContent = `${Math.round(state.videoProgress)}%`;
-            }
-        }
+      const elements = {
+        video: {
+          icon: document.getElementById("videoIcon"),
+          progress: document.getElementById("videoProgress"),
+        },
+        reading: {
+          icon: document.getElementById("readingIcon"),
+          progress: document.getElementById("readingProgress"),
+        },
+        quiz: {
+          icon: document.getElementById("quizIcon"),
+          progress: document.getElementById("quizProgress"),
+        },
+      };
 
-        if (elements.reading.icon && elements.reading.progress) {
-            if (state.conditions.timeSpentReading) {
-                elements.reading.icon.className = 'fas fa-check-circle text-green-500 text-xs';
-            } else {
-                elements.reading.icon.className = 'fas fa-circle text-gray-300 text-xs';
-            }
-            const minutes = Math.floor(state.readingTime / 60);
-            const seconds = state.readingTime % 60;
-            elements.reading.progress.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+      // Mise à jour de la progression vidéo
+      if (elements.video.icon && elements.video.progress) {
+        if (state.conditions.videoWatched) {
+          elements.video.icon.className =
+            "fas fa-check-circle text-green-500 text-xs";
+          elements.video.progress.textContent = "100%";
+        } else {
+          elements.video.icon.className = "fas fa-circle text-gray-300 text-xs";
+          elements.video.progress.textContent = `${Math.round(
+            state.videoProgress || 0
+          )}%`;
         }
+      }
 
-        if (elements.quiz.icon && elements.quiz.progress) {
-            if (state.conditions.quizPassed) {
-                elements.quiz.icon.className = 'fas fa-check-circle text-green-500 text-xs';
-                elements.quiz.progress.textContent = '100%';
-            } else {
-                elements.quiz.icon.className = 'fas fa-circle text-gray-300 text-xs';
-                elements.quiz.progress.textContent = `${state.quizScore}%`;
-            }
+      // Mise à jour de la progression de lecture
+      if (elements.reading.icon && elements.reading.progress) {
+        if (state.conditions.timeSpentReading) {
+          elements.reading.icon.className =
+            "fas fa-check-circle text-green-500 text-xs";
+        } else {
+          elements.reading.icon.className =
+            "fas fa-circle text-gray-300 text-xs";
         }
+        const minutes = Math.floor((state.readingTime || 0) / 60);
+        const seconds = (state.readingTime || 0) % 60;
+        elements.reading.progress.textContent = `${minutes}:${String(
+          seconds
+        ).padStart(2, "0")}`;
+      }
+
+      // Mise à jour de la progression du quiz
+      if (elements.quiz.icon && elements.quiz.progress) {
+        if (state.conditions.quizPassed) {
+          elements.quiz.icon.className =
+            "fas fa-check-circle text-green-500 text-xs";
+          elements.quiz.progress.textContent = "100%";
+        } else {
+          elements.quiz.icon.className = "fas fa-circle text-gray-300 text-xs";
+          elements.quiz.progress.textContent = `${state.quizScore || 0}%`;
+        }
+      }
+
+      // Rendre visible la section de progression
+      moduleSection.classList.remove("hidden");
     };
 
-    window.resetChapterProgress = function() {
-        if (!moduleSection) return;
-        
-        const defaultState = {
-            videoProgress: 0,
-            readingTime: 0,
-            quizScore: 0,
-            conditions: {
-                videoWatched: false,
-                timeSpentReading: false,
-                quizPassed: false
-            }
-        };
-        
-        updateChapterProgress(defaultState);
+    window.resetChapterProgress = function () {
+      console.log("resetChapterProgress called");
+      if (!moduleSection) return;
+
+      const defaultState = {
+        videoProgress: 0,
+        readingTime: 0,
+        quizScore: 0,
+        conditions: {
+          videoWatched: false,
+          timeSpentReading: false,
+          quizPassed: false,
+        },
+      };
+
+      updateChapterProgress(defaultState);
+      moduleSection.classList.add("hidden");
     };
-});
+  });
 </script>

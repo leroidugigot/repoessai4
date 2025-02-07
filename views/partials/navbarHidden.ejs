@@ -1,49 +1,444 @@
-<nav class="flex justify-between items-center bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg border-b border-gray-700"> 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div class="flex items-center h-16 w-full">
-            <div class="flex items-center space-x-8 w-full justify-between">
-                <a href="/videos" aria-label="Accéder aux vidéos" class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2">
-                    <div class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"></div>
-                    <svg class="w-6 h-6 mr-2 text-blue-400 group-hover:text-blue-300 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                    </svg>
-                    <span class="font-semibold text-lg z-10">Vidéos</span>
-                </a>
-                
-                <a href="/cours" aria-label="Accéder aux cours" class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2">
-                    <div class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"></div>
-                    <svg class="w-6 h-6 mr-2 text-green-400 group-hover:text-green-300 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    <span class="font-semibold text-lg z-10">Cours</span>
-                </a>
+<nav
+  class="flex justify-between items-center bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg border-b border-gray-700"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="flex items-center h-16 w-full">
+      <div class="flex items-center space-x-8 w-full justify-between">
+        <a
+          href="#"
+          onclick="loadCurrentContent('video'); return false;"
+          aria-label="Accéder aux vidéos"
+          class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2"
+        >
+          <div
+            class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"
+          ></div>
+          <svg
+            class="w-6 h-6 mr-2 text-blue-400 group-hover:text-blue-300 z-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+            ></path>
+          </svg>
+          <span class="font-semibold text-lg z-10">Vidéos</span>
+        </a>
 
-                <a href="/quiz" aria-label="Accéder aux quiz" class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2">
-                    <div class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"></div>
-                    <svg class="w-6 h-6 mr-2 text-yellow-400 group-hover:text-yellow-300 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="font-semibold text-lg z-10">Quiz</span>
-                </a>
+        <a
+          href="#"
+          onclick="loadCurrentContent('course'); return false;"
+          aria-label="Accéder aux cours"
+          class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2"
+        >
+          <div
+            class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"
+          ></div>
+          <svg
+            class="w-6 h-6 mr-2 text-green-400 group-hover:text-green-300 z-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            ></path>
+          </svg>
+          <span class="font-semibold text-lg z-10">Cours</span>
+        </a>
 
-                <a href="/next" aria-label="Accéder à la prochaine étape" class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2">
-                    <div class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"></div>
-                    <svg class="w-6 h-6 mr-2 text-purple-400 group-hover:text-purple-300 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="font-semibold text-lg z-10">Suivant</span>
-                </a>               
-<!-- Bouton GPT avec icône de bascule -->
-                <div id="gptButton" class="cursor-pointer flex items-center justify-center hover:scale-125 relative rounded-lg shadow-md">
-                    <i id="gptIconActive" class="fa-solid fa-graduation-cap text-white hidden hover:scale-125 relative rounded-lg shadow-md"></i>
-                    <i id="gptIconInactive" class="fa-solid fa-rocket text-white"></i>
-                </div>
+        <a
+          href="#"
+          onclick="loadCurrentContent('quiz'); return false;"
+          aria-label="Accéder aux quiz"
+          class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2"
+        >
+          <div
+            class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"
+          ></div>
+          <svg
+            class="w-6 h-6 mr-2 text-yellow-400 group-hover:text-yellow-300 z-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span class="font-semibold text-lg z-10">Quiz</span>
+        </a>
 
-                <button id="toggleButton" class="ml-2 text-white text-2xl hover:scale-125 relative rounded-lg shadow-md ">
-                    <i class="fa-solid fa-down-left-and-up-right-to-center"></i> <!-- Nouvelle icône oeil -->
-                </button>
-
-            </div>
+        <a
+          href="#"
+          onclick="loadNextModule(); return false;"
+          aria-label="Accéder à la prochaine étape"
+          class="group flex items-center flex-grow text-gray-300 hover:text-white transition duration-300 transform hover:scale-105 relative rounded-lg shadow-md overflow-hidden p-2"
+        >
+          <div
+            class="absolute inset-0 rounded-lg shadow-lg bg-gray-800 opacity-40"
+          ></div>
+          <svg
+            class="w-6 h-6 mr-2 text-purple-400 group-hover:text-purple-300 z-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span class="font-semibold text-lg z-10">Suivant</span>
+        </a>
+        <!-- Bouton GPT avec icône de bascule -->
+        <div
+          id="gptButton"
+          class="cursor-pointer flex items-center justify-center hover:scale-125 relative rounded-lg shadow-md"
+        >
+          <i
+            id="gptIconActive"
+            class="fa-solid fa-graduation-cap text-white hidden hover:scale-125 relative rounded-lg shadow-md"
+          ></i>
+          <i id="gptIconInactive" class="fa-solid fa-rocket text-white"></i>
         </div>
+
+        <button
+          id="toggleButton"
+          class="ml-2 text-white text-2xl hover:scale-125 relative rounded-lg shadow-md"
+        >
+          <i class="fa-solid fa-down-left-and-up-right-to-center"></i>
+          <!-- Nouvelle icône oeil -->
+        </button>
+      </div>
     </div>
+  </div>
 </nav>
+
+<script>
+  // Fonctions de rendu
+  function renderVideoContent(content, currentModule) {
+    const contentDisplay = document.getElementById("contentDisplay");
+    let videoId = "";
+    const videoUrl = content.video.trim();
+
+    if (videoUrl.includes("youtube.com/watch")) {
+      videoId = videoUrl.split("v=")[1]?.split("&")[0];
+    } else if (videoUrl.includes("youtu.be")) {
+      videoId = videoUrl.split("youtu.be/")[1]?.split("?")[0];
+    }
+
+    if (videoId) {
+      contentDisplay.innerHTML = `
+        <div class="content-header fade-in">
+          <h2>Vidéo: ${currentModule}</h2>
+        </div>
+        <div class="content-body fade-in">
+          <div class="video-container">
+            <iframe 
+              id="player"
+              src="https://www.youtube.com/embed/${videoId}?enablejsapi=1" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>`;
+
+      const iframe = contentDisplay.querySelector("iframe");
+      if (window.ProgressTracker) {
+        window.ProgressTracker.initializeVideoTracking(iframe);
+      }
+    }
+  }
+
+  function renderTextContent(content, currentModule) {
+    const contentDisplay = document.getElementById("contentDisplay");
+
+    // Vérifier si le contenu est valide
+    if (!content || (!content.description && !content.course)) {
+      contentDisplay.innerHTML = `
+        <div class="content-header fade-in">
+          <h2>${currentModule}</h2>
+        </div>
+        <div class="content-body fade-in">
+          <p class="text-center text-gray-500">Aucun contenu disponible pour ce module</p>
+        </div>`;
+      return;
+    }
+
+    contentDisplay.innerHTML = `
+      <div class="content-header fade-in">
+        <h2>${currentModule}</h2>
+      </div>
+      <div class="content-body fade-in overflow-y-auto h-[calc(100vh-200px)]">
+        ${
+          content.description
+            ? `<div class="description mb-6 text-lg">${content.description}</div>`
+            : ""
+        }
+        ${
+          content.course
+            ? `<div class="course-content prose prose-lg max-w-none">${content.course}</div>`
+            : ""
+        }
+      </div>`;
+
+    if (window.ProgressTracker) {
+      const contentBody = contentDisplay.querySelector(".content-body");
+      if (contentBody) {
+        let readingInterval = setInterval(() => {
+          window.ProgressTracker.state.readingTime += 1;
+          const currentTime = window.ProgressTracker.state.readingTime;
+
+          if (currentTime >= 180) {
+            window.ProgressTracker.state.conditions.timeSpentReading = true;
+          }
+
+          if (window.updateChapterProgress) {
+            window.updateChapterProgress(window.ProgressTracker.state);
+          }
+
+          window.ProgressTracker.saveProgress("reading", currentTime).catch(
+            console.error
+          );
+        }, 1000);
+
+        contentBody.addEventListener("scroll", () => {
+          const scrollPercentage =
+            (contentBody.scrollTop /
+              (contentBody.scrollHeight - contentBody.clientHeight)) *
+            100;
+          if (scrollPercentage > 70) {
+            window.ProgressTracker.state.conditions.timeSpentReading = true;
+            if (window.updateChapterProgress) {
+              window.updateChapterProgress(window.ProgressTracker.state);
+            }
+          }
+        });
+
+        // Nettoyage
+        const cleanup = () => {
+          if (readingInterval) {
+            clearInterval(readingInterval);
+            readingInterval = null;
+          }
+        };
+
+        contentDisplay.addEventListener("DOMNodeRemoved", cleanup, {
+          once: true,
+        });
+        window.addEventListener("beforeunload", cleanup);
+      }
+    }
+  }
+
+  function renderQuizContent(content, moduleName) {
+    const contentDisplay = document.getElementById("contentDisplay");
+    if (!contentDisplay || !content.quiz) return;
+
+    contentDisplay.innerHTML = `
+      <div class="content-header fade-in">
+        <h2>Quiz: ${moduleName}</h2>
+      </div>
+      <div class="content-body fade-in">
+        <form id="quizForm" class="quiz-container space-y-6">
+          ${renderQuizQuestions(content.quiz)}
+          <div class="mt-6 flex justify-between items-center">
+            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors">
+              Valider le quiz
+            </button>
+            <span id="quizScore" class="text-lg font-semibold"></span>
+          </div>
+        </form>
+      </div>`;
+
+    // Gestionnaire de soumission du quiz
+    const quizForm = document.getElementById("quizForm");
+    quizForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const answers = [];
+      content.quiz.forEach((_, index) => {
+        const selected = document.querySelector(
+          `input[name="question${index}"]:checked`
+        );
+        answers.push(selected ? parseInt(selected.value) : -1);
+      });
+
+      // Calcul du score
+      let correctAnswers = 0;
+      answers.forEach((answer, index) => {
+        if (answer === content.quiz[index].reponseCorrecte) {
+          correctAnswers++;
+        }
+      });
+
+      const score = Math.round((correctAnswers / content.quiz.length) * 100);
+      const scoreElement = document.getElementById("quizScore");
+      scoreElement.textContent = `Score: ${score}%`;
+
+      // Sauvegarder la progression
+      if (window.ProgressTracker) {
+        try {
+          await window.ProgressTracker.saveProgress("quiz", score);
+          if (score === 100) {
+            alert("Félicitations ! Vous avez réussi le quiz !");
+          } else {
+            alert(`Vous avez obtenu ${score}%. Continuez vos efforts !`);
+          }
+        } catch (error) {
+          console.error("Erreur lors de la sauvegarde du score:", error);
+          alert("Erreur lors de la sauvegarde du score");
+        }
+      }
+    });
+  }
+
+  function renderQuizQuestions(quiz) {
+    return quiz
+      .map(
+        (q, index) => `
+      <div class="quiz-question p-4 bg-gray-800 rounded-lg">
+        <p class="font-semibold mb-4 text-lg text-white">${index + 1}. ${
+          q.question
+        }</p>
+        <div class="quiz-options space-y-3">
+          ${q.options
+            .map(
+              (option, optIndex) => `
+            <label class="flex items-center space-x-3 text-white hover:bg-gray-700 p-2 rounded cursor-pointer">
+              <input type="radio" name="question${index}" value="${optIndex}" class="form-radio h-4 w-4 text-blue-500">
+              <span>${option}</span>
+            </label>
+          `
+            )
+            .join("")}
+        </div>
+      </div>
+    `
+      )
+      .join("");
+  }
+
+  function loadCurrentContent(type) {
+    if (!window.currentFormationId || !window.currentModuleId) {
+      alert("Veuillez d'abord sélectionner un module");
+      return;
+    }
+
+    const contentDisplay = document.getElementById("contentDisplay");
+    if (!contentDisplay) return;
+
+    if (!window.UI) {
+      console.error("UI n'est pas initialisé");
+      return;
+    }
+
+    window.UI.showLoading(contentDisplay);
+    contentDisplay.classList.remove("hidden");
+
+    const moduleList = document.getElementById("moduleList");
+    if (moduleList) moduleList.classList.add("hidden");
+
+    // S'assurer que ProgressTracker est initialisé
+    if (!window.ProgressTracker) {
+      window.ProgressTracker = {
+        state: {
+          videoProgress: 0,
+          readingTime: 0,
+          quizScore: 0,
+          conditions: {
+            videoWatched: false,
+            timeSpentReading: false,
+            quizPassed: false,
+          },
+        },
+      };
+    }
+
+    ApiClient.getModuleContent(
+      window.currentFormationId,
+      window.currentModuleId
+    )
+      .then(async (content) => {
+        // Réinitialiser l'état si nécessaire
+        if (!window.ProgressTracker.state) {
+          window.ProgressTracker.state = {
+            videoProgress: 0,
+            readingTime: 0,
+            quizScore: 0,
+            conditions: {
+              videoWatched: false,
+              timeSpentReading: false,
+              quizPassed: false,
+            },
+          };
+        }
+
+        switch (type) {
+          case "video":
+            if (content.video) {
+              await renderVideoContent(content, window.currentModule);
+              if (window.updateChapterProgress && window.ProgressTracker) {
+                window.updateChapterProgress(window.ProgressTracker.state);
+              }
+            } else {
+              alert("Pas de vidéo disponible pour ce module");
+            }
+            break;
+          case "course":
+            if (content.description || content.course) {
+              await renderTextContent(content, window.currentModule);
+              if (window.updateChapterProgress && window.ProgressTracker) {
+                window.updateChapterProgress(window.ProgressTracker.state);
+              }
+            } else {
+              alert("Pas de cours disponible pour ce module");
+            }
+            break;
+          case "quiz":
+            if (content.quiz) {
+              await renderQuizContent(content, window.currentModule);
+              if (window.updateChapterProgress && window.ProgressTracker) {
+                window.updateChapterProgress(window.ProgressTracker.state);
+              }
+            } else {
+              alert("Pas de quiz disponible pour ce module");
+            }
+            break;
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement du contenu:", error);
+        if (window.UI) {
+          window.UI.handleError(contentDisplay, error);
+        }
+      });
+  }
+
+  function loadNextModule() {
+    if (!window.currentFormationId || !window.currentModuleId) {
+      alert("Veuillez d'abord sélectionner un module");
+      return;
+    }
+
+    // Rediriger directement vers la liste des modules
+    loadModules(window.currentFormationId, window.currentFormation);
+  }
+</script>
