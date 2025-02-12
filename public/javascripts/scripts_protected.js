@@ -110,18 +110,34 @@ document.getElementById('gptButton').addEventListener('click', function() {
     }
 });
 
-// Scroll Handler
-function handleScroll() {
-    let scrollTop = mainContent.scrollTop;
-    if (scrollTop > lastScrollTop) {
-        navbar.classList.add('hidden');
-    } else {
-        navbar.classList.remove('hidden');
+// Fonction pour gérer l'affichage de la navbar cachée
+function toggleNavbarHidden(show = false) {
+    if (navbar) {
+        if (show) {
+            navbar.classList.remove('hidden');
+        } else {
+            navbar.classList.add('hidden');
+        }
     }
-    lastScrollTop = scrollTop;
+}
+
+// Modifier le gestionnaire de scroll pour ne fonctionner que si la navbar est visible
+function handleScroll() {
+    if (navbar && !navbar.classList.contains('hidden')) {
+        let scrollTop = mainContent.scrollTop;
+        if (scrollTop > lastScrollTop) {
+            navbar.classList.add('opacity-0');
+        } else {
+            navbar.classList.remove('opacity-0');
+        }
+        lastScrollTop = scrollTop;
+    }
 }
 
 mainContent.addEventListener('scroll', handleScroll);
+
+// Exposer la fonction toggleNavbarHidden globalement
+window.toggleNavbarHidden = toggleNavbarHidden;
 
 // Toggle Button Event Listener
 document.getElementById('toggleButton').addEventListener('click', function() {

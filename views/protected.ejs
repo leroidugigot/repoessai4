@@ -110,8 +110,13 @@
         transition: opacity 0.3s ease-in-out;
       }
 
-      #navbarHidden.hidden {
+      #navbarHidden.opacity-0 {
         opacity: 0;
+        pointer-events: none;
+      }
+
+      #navbarHidden.hidden {
+        display: none;
       }
 
       .full-width {
@@ -177,7 +182,7 @@
       <!-- Div4 - Navbar Hidden -->
       <div
         id="navbarHidden"
-        class="div4 z-50 w-full h-full border border-gray-700"
+        class="div4 z-50 w-full h-full border border-gray-700 hidden"
       >
         <%- include('partials/navbarHidden') %>
       </div>

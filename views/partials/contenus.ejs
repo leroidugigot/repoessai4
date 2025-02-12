@@ -554,6 +554,11 @@
           UI.showLoading(formationList);
           formationList.classList.remove("hidden");
 
+          // Cacher la navbar cachée
+          if (window.toggleNavbarHidden) {
+            window.toggleNavbarHidden(false);
+          }
+
           const moduleList = document.getElementById("moduleList");
           const contentDisplay = document.getElementById("contentDisplay");
 
@@ -645,6 +650,11 @@
           UI.showLoading(moduleList);
           moduleList.classList.remove("hidden");
 
+          // Cacher la navbar cachée
+          if (window.toggleNavbarHidden) {
+            window.toggleNavbarHidden(false);
+          }
+
           const formationList = document.getElementById("formationList");
           const contentDisplay = document.getElementById("contentDisplay");
 
@@ -679,78 +689,58 @@
             moduleList.innerHTML = `
               <div class="modules-container">
                 <div class="modules-header">
-                  <h2 class="text-2xl font-bold text-white mb-6">${currentFormation}</h2>
-                  <p class="text-gray-300 mb-8">Sélectionnez un module pour commencer votre apprentissage</p>
-                    </div>
+                  <h2>${currentFormation}</h2>
+                  <p>Sélectionnez un module pour commencer votre apprentissage</p>
+                </div>
                 <div class="modules-grid">
-                  ${modules
-                    .map((module, index) => {
-                      const moduleStatus = progression.find(
-                        (p) =>
-                          p.module &&
-                          p.module.toString() === module._id.toString()
-                      ) || {
-                        isLocked: index > 0, // Premier module déverrouillé, les autres verrouillés par défaut
-                        completed: false,
-                        message:
-                          index === 0
-                            ? "Premier module - Accès autorisé"
-                            : "Complétez d'abord le module précédent",
-                      };
+                  ${modules.map((module, index) => {
+                    const moduleStatus = progression.find(
+                      (p) => p.module && p.module.toString() === module._id.toString()
+                    ) || {
+                      isLocked: index > 0,
+                      completed: false,
+                      message: index === 0 ? "Premier module - Accès autorisé" : "Complétez d'abord le module précédent"
+                    };
 
-                      return `
-                        <div class="module-card ${
-                          moduleStatus.isLocked ? "locked" : ""
-                        }" 
-                             data-module-id="${module._id}"
-                             onclick="${
-                               !moduleStatus.isLocked
-                                 ? `loadContent('${id}', '${module._id}', '${module.nom}')`
-                                 : "void(0)"
-                             }">
+                    return `
+                      <div class="module-card ${moduleStatus.completed ? 'completed' : ''} ${moduleStatus.isLocked ? 'locked' : ''}"
+                           data-module-id="${module._id}"
+                           onclick="${!moduleStatus.isLocked ? `loadContent('${id}', '${module._id}', '${module.nom}')` : 'void(0)'}">
+                        <div class="module-header">
                           <div class="module-number">Module ${index + 1}</div>
-                          ${
-                            moduleStatus.isLocked
-                              ? '<div class="lock-icon"><i class="fas fa-lock"></i></div>'
-                              : ""
-                          }
-                          <div class="module-content">
-                            <h3 class="module-title">${module.nom}</h3>
-                            <p class="module-description">${
-                              module.description ||
-                              "Aucune description disponible"
-                            }</p>
-                            <div class="module-status">
-                              <div class="status-indicator">
-                                <i class="fas ${
-                                  moduleStatus.isLocked
-                                    ? "fa-lock text-red-500"
-                                    : moduleStatus.completed
-                                    ? "fa-check-circle text-green-500"
-                                    : "fa-circle text-gray-400"
-                                }"></i>
-                                <span>${
-                                  moduleStatus.isLocked
-                                    ? "Module verrouillé"
-                                    : moduleStatus.completed
-                                    ? "Complété"
-                                    : "À compléter"
-                                }</span>
-                              </div>
-                              ${
-                                moduleStatus.isLocked
-                                  ? `<div class="lock-message">${moduleStatus.message}</div>`
-                                  : ""
-                              }
-                            </div>
+                          <h3 class="module-title">${module.nom}</h3>
+                        </div>
+                        <div class="module-content">
+                          <p class="module-description">${module.description || "Aucune description disponible"}</p>
+                        </div>
+                        <div class="module-footer">
+                          <div class="module-status">
+                            <i class="status-icon fas ${
+                              moduleStatus.isLocked 
+                                ? 'fa-lock' 
+                                : moduleStatus.completed 
+                                  ? 'fa-check-circle' 
+                                  : 'fa-circle'
+                            }"></i>
+                            <span class="status-text">${
+                              moduleStatus.isLocked 
+                                ? 'Module verrouillé' 
+                                : moduleStatus.completed 
+                                  ? 'Complété' 
+                                  : 'À compléter'
+                            }</span>
                           </div>
                         </div>
-                      `;
-                    })
-                    .join("")}
+                        ${moduleStatus.isLocked ? `
+                          <div class="lock-message">
+                            ${moduleStatus.message}
+                          </div>
+                        ` : ''}
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
-              </div>
-            `;
+              </div>`;
 
             // Ajouter les styles CSS
             const style = document.createElement("style");
@@ -907,6 +897,11 @@
 
             UI.showLoading(contentDisplay);
             contentDisplay.classList.remove("hidden");
+            
+            // Afficher la navbar cachée
+            if (window.toggleNavbarHidden) {
+              window.toggleNavbarHidden(true);
+            }
 
             const moduleList = document.getElementById("moduleList");
             if (moduleList) moduleList.classList.add("hidden");
