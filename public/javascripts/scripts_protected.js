@@ -173,3 +173,49 @@ document.getElementById('toggleButton').addEventListener('click', function() {
         divsHidden = false;
     }
 });
+
+// Gestion du fil d'Ariane
+const BreadcrumbManager = {
+    paths: [],
+    
+    // Ajouter un nouveau chemin
+    addPath(name, callback = null) {
+        this.paths.push({ name, callback });
+        this.updateBreadcrumb();
+    },
+
+    // Retirer le dernier chemin
+    removePath() {
+        this.paths.pop();
+        this.updateBreadcrumb();
+    },
+
+    // Vider le fil d'Ariane
+    clearPaths() {
+        this.paths = [];
+        this.updateBreadcrumb();
+    },
+
+    // Mettre à jour l'affichage du fil d'Ariane
+    updateBreadcrumb() {
+        const breadcrumb = document.querySelector('.breadcrumb');
+        if (!breadcrumb) return;
+
+        let html = '';
+        this.paths.forEach((path, index) => {
+            if (index > 0) {
+                html += '<span class="mx-2 text-gray-500">/</span>';
+            }
+            if (path.callback) {
+                html += `<span class="cursor-pointer hover:text-white" onclick="${path.callback}">${path.name}</span>`;
+            } else {
+                html += `<span class="text-gray-300">${path.name}</span>`;
+            }
+        });
+
+        breadcrumb.innerHTML = html;
+    }
+};
+
+// Rendre BreadcrumbManager disponible globalement
+window.BreadcrumbManager = BreadcrumbManager;

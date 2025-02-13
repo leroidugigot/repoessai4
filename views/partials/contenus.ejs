@@ -12,13 +12,6 @@
     <meta name="csrf-token" content="<%- locals.csrfToken %>" />
   </head>
   <body>
-    <nav class="navigation">
-      <button class="nav-button" onclick="window.location.reload()">
-        <i class="fas fa-home"></i> Accueil
-      </button>
-      <div class="breadcrumb"></div>
-    </nav>
-
     <div class="container">
       <div id="formationList" class="hidden">
         <!-- Liste des formations -->
@@ -31,8 +24,33 @@
       <div id="contentDisplay" class="hidden">
         <!-- Contenu -->
       </div>
+      <div id="breadcrumb"></div>
     </div>
     <script>
+      // Fonction pour mettre à jour le fil d'Ariane
+      function updateBreadcrumb(formation = null, module = null) {
+        const breadcrumb = document.getElementById('breadcrumb');
+        if (!breadcrumb) return;
+
+        let html = '';
+        
+        if (formation) {
+          html += `
+            <span class="mx-2 text-gray-500">/</span>
+            <span class="cursor-pointer hover:text-white" onclick="loadFormations()">${formation}</span>
+          `;
+          
+          if (module) {
+            html += `
+              <span class="mx-2 text-gray-500">/</span>
+              <span class="text-gray-300">${module}</span>
+            `;
+          }
+        }
+        
+        breadcrumb.innerHTML = html;
+      }
+
       // Security Utils
       const SecurityUtils = {
         escapeHtml(unsafe) {
@@ -569,7 +587,14 @@
           currentModule = null;
           window.currentFormationId = null;
           window.currentModuleId = null;
-          updateBreadcrumb();
+
+          // Mettre à jour le fil d'Ariane
+          if (window.BreadcrumbManager) {
+            window.BreadcrumbManager.clearPaths();
+            window.BreadcrumbManager.addPath(name);
+          }
+
+          currentModuleContent = null;
 
           try {
             const formations = await ApiClient.getFormations();
@@ -601,7 +626,6 @@
           UI.showLoading(formationList);
           currentFormation = name;
           window.currentFormationId = id;
-          updateBreadcrumb();
 
           try {
             const formation = await ApiClient.getFormation(id);
@@ -668,7 +692,9 @@
           window.currentFormationId = id;
           currentModule = null;
           window.currentModuleId = null;
-          updateBreadcrumb();
+
+          // Mettre à jour le fil d'Ariane
+          updateBreadcrumb(name);
 
           currentModuleContent = null;
 
@@ -911,14 +937,15 @@
             window.currentFormationId = fId;
             window.currentFormation = currentFormation;
 
+            // Mettre à jour le fil d'Ariane
+            updateBreadcrumb(currentFormation, mName);
+
             // Initialiser l'état depuis le backend
             await ProgressTracker.initializeState(fId, mId);
 
             if (window.updateChapterInfo) {
               window.updateChapterInfo(currentFormation, mName);
             }
-
-            updateBreadcrumb();
 
             const content = await ApiClient.getModuleContent(fId, mId);
             currentModuleContent = content;
@@ -998,31 +1025,6 @@
         </div>`;
 
           ProgressTracker.startReadingTracking();
-        }
-
-        // Fonction pour mettre à jour le fil d'Ariane
-        function updateBreadcrumb() {
-          const breadcrumb = document.querySelector(".breadcrumb");
-          if (!breadcrumb) return;
-
-          let html = "";
-          if (currentFormation) {
-            html += `
-                <span class="breadcrumb-item cursor-pointer" onclick="loadFormations()">
-                    ${currentFormation}
-                </span>`;
-
-            if (currentModule) {
-              html += `
-                    <span class="breadcrumb-separator">
-                        <i class="fas fa-chevron-right"></i>
-                    </span>
-                    <span class="breadcrumb-item">
-                        ${currentModule}
-                    </span>`;
-            }
-          }
-          breadcrumb.innerHTML = html;
         }
 
         // Chargement initial
