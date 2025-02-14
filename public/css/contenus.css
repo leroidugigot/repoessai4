@@ -62,18 +62,24 @@
   /* Conteneurs principaux */
   .container {
     width: 100%;
-    max-width: 1200px;
+    
+ 
   }
+
+
+ 
 
   #formationList,
   #moduleList,
   #contentDisplay {
     background: var(--card-bg);
     border-radius: 12px;
-    padding: 24px;
+    padding: 1px;
     box-shadow: 0 5px 20px var(--shadow);
     transition: box-shadow 0.3s, transform 0.2s;
     margin-bottom: 24px;
+    margin-right: 2px;
+    
   }
 
   #formationList:hover,
