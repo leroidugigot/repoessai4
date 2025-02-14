@@ -8,6 +8,7 @@ const ModuleSchema = new Schema({
   nom: { type: String, required: true },
   description: { type: String, required: true }, // Nouveau champ description pour le module
   ordre: { type: Number, required: true }, // Ajouter ce champ pour l'ordre des modules
+  duree: { type: Number, default: 0 }, // Durée estimée en minutes
   contenu: {
     video: { type: String, required: true },
     cours: { type: String, required: true },

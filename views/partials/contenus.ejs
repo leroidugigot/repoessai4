@@ -364,6 +364,183 @@
         color: #64748b;
         font-style: italic;
       }
+
+      /* Styles pour la liste des modules */
+      .modules-container {
+        width: 100%;
+        padding: 2rem;
+      }
+
+      .modules-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .modules-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+
+      .modules-subtitle {
+        color: #94a3b8;
+        font-size: 1.1rem;
+      }
+
+      .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        width: 100%;
+      }
+
+      .module-card {
+        background: linear-gradient(135deg, #1a1f35 0%, #131620 100%);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .module-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .module-card:hover:not(.locked) {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .module-card:hover:not(.locked)::before {
+        opacity: 1;
+      }
+
+      .module-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .module-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .module-icon i {
+        font-size: 1.25rem;
+        color: white;
+        transition: transform 0.3s ease;
+      }
+
+      .module-card:hover:not(.locked) .module-icon i {
+        transform: scale(1.1);
+      }
+
+      .module-info {
+        flex-grow: 1;
+      }
+
+      .module-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 0.5rem;
+      }
+
+      .module-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .module-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .module-meta i {
+        font-size: 1rem;
+      }
+
+      .module-progress {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        margin-top: 1rem;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #2563eb, #1e40af);
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+
+      .locked {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .locked .module-icon {
+        background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+      }
+
+      .locked::after {
+        content: '🔒';
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.25rem;
+        opacity: 0.8;
+      }
+
+      .completed .module-icon {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+
+      .completed::after {
+        content: '✓';
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.25rem;
+        color: #059669;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+
+      .locked:hover {
+        animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      }
     </style>
   </head>
   <body>
@@ -1186,29 +1363,21 @@
                            data-module-id="${module._id}"
                            onclick="${!moduleStatus.isLocked ? `loadContent('${id}', '${module._id}', '${module.nom}')` : 'void(0)'}">
                         <div class="module-header">
-                          <div class="module-number">Module ${index + 1}</div>
-                          <h3 class="module-title">${module.nom}</h3>
-                        </div>
-                        <div class="module-content">
-                          <p class="module-description">${module.description || "Aucune description disponible"}</p>
-                        </div>
-                        <div class="module-footer">
-                          <div class="module-status">
-                            <i class="status-icon fas ${
-                              moduleStatus.isLocked 
-                                ? 'fa-lock' 
-                                : moduleStatus.completed 
-                                  ? 'fa-check-circle' 
-                                  : 'fa-circle'
-                            }"></i>
-                            <span class="status-text">${
-                              moduleStatus.isLocked 
-                                ? 'Module verrouillé' 
-                                : moduleStatus.completed 
-                                  ? 'Complété' 
-                                  : 'À compléter'
-                            }</span>
+                          <div class="module-icon">
+                            <i class="fas fa-book"></i>
                           </div>
+                          <div class="module-info">
+                            <h3 class="module-title">${module.nom}</h3>
+                            <div class="module-meta">
+                              <span>
+                                <i class="fas fa-clock"></i>
+                                <span>${module.duree ? `~${module.duree}min` : 'Durée non définie'}</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="module-progress">
+                          <div class="progress-bar" style="width: ${moduleStatus.completed ? '100%' : '0%'}"></div>
                         </div>
                         ${moduleStatus.isLocked ? `
                           <div class="lock-message">
@@ -1248,9 +1417,7 @@
                 padding: 2rem;
                 transition: all 0.4s ease;
                 cursor: pointer;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                overflow: hidden;
+                border: none;
               }
 
               .module-card:not(.locked):hover {
@@ -1262,76 +1429,50 @@
               .module-card.locked {
                 cursor: not-allowed;
                 opacity: 0.7;
-                filter: grayscale(0.5);
+                filter: grayscale(0.3);
               }
 
               .module-card.locked:hover {
                 animation: shake 0.5s ease-in-out;
               }
 
-              .module-number {
-                position: absolute;
-                top: 1.5rem;
-                left: 1.5rem;
-                background: rgba(255, 255, 255, 0.1);
-                padding: 0.25rem 0.75rem;
-                border-radius: 1rem;
-                font-size: 0.9rem;
-                color: rgba(255, 255, 255, 0.8);
+              .module-card.locked .module-icon {
+                background: linear-gradient(135deg, #475569 0%, #334155 100%);
               }
 
-              .lock-icon {
-                position: absolute;
-                top: 1.5rem;
-                right: 1.5rem;
-                font-size: 1.75rem;
-                color: #ff4444;
-                text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+              .module-card.locked .status-icon {
+                color: #ef4444;
               }
 
-              .module-content {
-                margin-top: 2rem;
-              }
-
-              .module-title {
-                font-size: 1.5rem;
-                color: white;
-                margin-bottom: 1rem;
-                font-weight: 600;
-              }
-
-              .module-description {
-                color: rgba(255, 255, 255, 0.8);
-                font-size: 1rem;
-                line-height: 1.6;
-                margin-bottom: 1.5rem;
-                min-height: 3rem;
-              }
-
-              .module-status {
-                margin-top: 1.5rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-              }
-
-              .status-indicator {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                font-size: 0.9rem;
-                color: rgba(255, 255, 255, 0.7);
+              .module-card.completed .status-icon {
+                color: #22c55e;
               }
 
               .lock-message {
-                margin-top: 0.5rem;
-                font-size: 0.85rem;
-                color: #ff4444;
+                position: absolute;
+                bottom: 1rem;
+                left: 1rem;
+                right: 1rem;
+                text-align: center;
+                color: #94a3b8;
+                font-size: 0.9rem;
+                padding: 0.75rem;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 0.5rem;
+                opacity: 0;
+                transform: translateY(10px);
+                transition: all 0.3s ease;
+              }
+
+              .module-card.locked:hover .lock-message {
+                opacity: 1;
+                transform: translateY(0);
               }
 
               @keyframes shake {
                 0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-8px); }
-                75% { transform: translateX(8px); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
               }
             `;
             document.head.appendChild(style);
