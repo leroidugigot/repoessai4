@@ -645,7 +645,7 @@
                 ...SecurityUtils.getHeaders(),
                 ...options.headers,
               },
-              credentials: "include", // Important pour les cookies d'authentification
+              credentials: "include",
             });
 
             if (!response.ok) {
@@ -684,6 +684,15 @@
           }
           return this.fetchWithSecurity(
             `/formations/${formationId}/modules/${moduleId}/content`
+          );
+        },
+
+        async getModuleLockStatus(formationId, moduleId) {
+          if (!SecurityUtils.validateId(formationId) || !SecurityUtils.validateId(moduleId)) {
+            throw new Error("ID invalide");
+          }
+          return this.fetchWithSecurity(
+            `/api/content/${formationId}/modules/${moduleId}/lock-status`
           );
         },
 
@@ -806,8 +815,13 @@
 
         async saveProgress(type, value) {
           try {
-            if (!window.currentFormationId || !window.currentModuleId) {
-              console.error("Formation ID ou Module ID manquant");
+            if (!this.currentFormationId || !this.currentModuleId) {
+              console.error("Formation ID ou Module ID manquant dans ProgressTracker", {
+                currentFormationId: this.currentFormationId,
+                currentModuleId: this.currentModuleId,
+                windowFormationId: window.currentFormationId,
+                windowModuleId: window.currentModuleId
+              });
               throw new Error(
                 "Impossible de sauvegarder la progression : Formation ou Module non sélectionné"
               );
@@ -815,8 +829,8 @@
 
             const progressData = { type, value };
             const response = await ApiClient.saveProgress(
-              window.currentFormationId,
-              window.currentModuleId,
+              this.currentFormationId,
+              this.currentModuleId,
               progressData
             );
 
@@ -842,10 +856,7 @@
 
             return response;
           } catch (error) {
-            console.error(
-              "Erreur lors de la sauvegarde de la progression:",
-              error
-            );
+            console.error("Erreur lors de la sauvegarde de la progression:", error);
             throw error;
           }
         },
@@ -1362,18 +1373,49 @@
           currentModuleContent = null;
 
           try {
+            console.log("[loadModules] Chargement des modules pour la formation:", { id, name });
             const [modules, progression] = await Promise.all([
               ApiClient.getModules(id),
               ApiClient.getProgression(id),
             ]);
 
+            console.log("[loadModules] Données récupérées:", {
+              modulesCount: modules.length,
+              progressionCount: progression.length,
+              progression
+            });
+
             if (!modules || modules.length === 0) {
               moduleList.innerHTML = `
                 <div class="module-message fade-in">
-                    <p>Aucun module disponible pour cette formation.</p>
+                  <p>Aucun module disponible pour cette formation.</p>
                 </div>`;
               return;
             }
+
+            // Vérifier le statut de verrouillage pour chaque module
+            const moduleStatuses = await Promise.all(
+              modules.map(async (module) => {
+                try {
+                  const status = await ApiClient.getModuleLockStatus(id, module._id.toString());
+                  console.log("[loadModules] Statut du module:", {
+                    moduleId: module._id,
+                    moduleName: module.nom,
+                    status
+                  });
+                  return {
+                    ...module,
+                    lockStatus: status
+                  };
+                } catch (error) {
+                  console.error("[loadModules] Erreur lors de la récupération du statut:", error);
+                  return {
+                    ...module,
+                    lockStatus: { isLocked: true, message: "Erreur de chargement" }
+                  };
+                }
+              })
+            );
 
             moduleList.innerHTML = `
               <div class="modules-container">
@@ -1382,19 +1424,20 @@
                   <p>Sélectionnez un module pour commencer votre apprentissage</p>
                 </div>
                 <div class="modules-grid">
-                  ${modules.map((module, index) => {
-                    const moduleStatus = progression.find(
+                  ${moduleStatuses.map((module, index) => {
+                    const moduleProgress = progression.find(
                       (p) => p.module && p.module.toString() === module._id.toString()
-                    ) || {
-                      isLocked: index > 0,
-                      completed: false,
-                      message: index === 0 ? "Premier module - Accès autorisé" : "Complétez d'abord le module précédent"
-                    };
+                    );
+
+                    const isLocked = module.lockStatus.isLocked;
+                    const lockMessage = module.lockStatus.message;
+                    const isCompleted = moduleProgress?.completed || false;
 
                     return `
-                      <div class="module-card ${moduleStatus.completed ? 'completed' : ''} ${moduleStatus.isLocked ? 'locked' : ''}"
+                      <div class="module-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}"
                            data-module-id="${module._id}"
-                           onclick="${!moduleStatus.isLocked ? `loadContent('${id}', '${module._id}', '${module.nom}')` : 'void(0)'}">
+                           onclick="${!isLocked ? `loadContent('${id}', '${module._id}', '${module.nom}')` : 'void(0)'}"
+                           title="${isLocked ? lockMessage : ''}">
                         <div class="module-header">
                           <div class="module-icon">
                             <i class="fas fa-book"></i>
@@ -1410,11 +1453,11 @@
                           </div>
                         </div>
                         <div class="module-progress">
-                          <div class="progress-bar" style="width: ${moduleStatus.completed ? '100%' : '0%'}"></div>
+                          <div class="progress-bar" style="width: ${isCompleted ? '100%' : '0%'}"></div>
                         </div>
-                        ${moduleStatus.isLocked ? `
+                        ${isLocked ? `
                           <div class="lock-message">
-                            ${moduleStatus.message}
+                            ${lockMessage}
                           </div>
                         ` : ''}
                       </div>
@@ -1423,121 +1466,8 @@
                 </div>
               </div>`;
 
-            // Ajouter les styles CSS
-            const style = document.createElement("style");
-            style.textContent = `
-              .modules-container {
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 2rem;
-              }
-
-              .modules-header {
-                text-align: center;
-                margin-bottom: 2rem;
-              }
-
-              .modules-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                gap: 2rem;
-              }
-
-              .module-card {
-                position: relative;
-                background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-                border-radius: 1.5rem;
-                padding: 2rem;
-                transition: all 0.4s ease;
-                cursor: pointer;
-                border: none;
-              }
-
-              .module-card:not(.locked):hover {
-                transform: translateY(-8px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-                background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
-              }
-
-              .module-card.locked {
-                cursor: not-allowed;
-                opacity: 0.7;
-                filter: grayscale(0.3);
-              }
-
-              .module-card.locked:hover {
-                animation: shake 0.5s ease-in-out;
-              }
-
-              .module-card.locked .module-icon {
-                background: linear-gradient(135deg, #475569 0%, #334155 100%);
-              }
-
-              .module-card.locked .status-icon {
-                color: #ef4444;
-              }
-
-              .module-card.completed .status-icon {
-                color: #22c55e;
-              }
-
-              .lock-message {
-                position: absolute;
-                bottom: 1rem;
-                left: 1rem;
-                right: 1rem;
-                text-align: center;
-                color: #94a3b8;
-                font-size: 0.9rem;
-                padding: 0.75rem;
-                background: rgba(0, 0, 0, 0.2);
-                border-radius: 0.5rem;
-                opacity: 0;
-                transform: translateY(10px);
-                transition: all 0.3s ease;
-              }
-
-              .module-card.locked:hover .lock-message {
-                opacity: 1;
-                transform: translateY(0);
-              }
-
-              @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
-              }
-            `;
-            document.head.appendChild(style);
-
-            // Mettre à jour les visuels des modules
-            await ProgressTracker.updateModuleVisuals();
-
-            // Réinitialisation de l'état
-            ProgressTracker.state = {
-              videoProgress: 0,
-              readingTime: 0,
-              quizScore: 0,
-              conditions: {
-                videoWatched: false,
-                timeSpentReading: false,
-                quizPassed: false,
-              },
-            };
-
-            if (window.resetChapterProgress) {
-              window.resetChapterProgress();
-            }
-            if (window.updateChapterInfo) {
-              window.updateChapterInfo(name, null);
-            }
-
-            if (ProgressTracker.readingInterval) {
-              clearInterval(ProgressTracker.readingInterval);
-              ProgressTracker.readingInterval = null;
-            }
           } catch (error) {
-            console.error("Erreur lors du chargement:", error);
+            console.error("[loadModules] Erreur lors du chargement:", error);
             UI.handleError(moduleList, error);
           }
         };
@@ -1545,6 +1475,7 @@
         // Fonction pour charger le contenu d'un module
         window.loadContent = async function (fId, mId, mName) {
           try {
+            console.log("loadContent appelé avec:", { fId, mId, mName });
             const contentDisplay = document.getElementById("contentDisplay");
             if (!contentDisplay) return;
 
@@ -1566,10 +1497,17 @@
             const moduleList = document.getElementById("moduleList");
             if (moduleList) moduleList.classList.add("hidden");
 
+            // Mettre à jour les variables globales
             currentModule = mName;
             window.currentModuleId = mId;
             window.currentFormationId = fId;
             window.currentFormation = currentFormation;
+
+            // Mettre à jour les IDs dans ProgressTracker
+            if (window.ProgressTracker) {
+              window.ProgressTracker.currentFormationId = fId;
+              window.ProgressTracker.currentModuleId = mId;
+            }
 
             // Mettre à jour le fil d'Ariane
             updateBreadcrumb(currentFormation, mName);

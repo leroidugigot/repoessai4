@@ -433,7 +433,7 @@ exports.saveProgress = async (req, res) => {
         });
         break;
       case "reading":
-        moduleProgress.timeSpentReading = value >= 30;
+        moduleProgress.timeSpentReading = value >= 180;
         console.log("[saveProgress] Mise à jour lecture:", {
           timeSpentReading: moduleProgress.timeSpentReading,
         });

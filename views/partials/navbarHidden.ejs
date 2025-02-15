@@ -349,6 +349,10 @@
 
   function loadCurrentContent(type) {
     if (!window.currentFormationId || !window.currentModuleId) {
+      console.log("État actuel:", {
+        currentFormationId: window.currentFormationId,
+        currentModuleId: window.currentModuleId
+      });
       alert("Veuillez d'abord sélectionner un module");
       return;
     }
@@ -379,7 +383,7 @@
     const moduleList = document.getElementById("moduleList");
     if (moduleList) moduleList.classList.add("hidden");
 
-    // S'assurer que ProgressTracker est initialisé
+    // S'assurer que ProgressTracker est initialisé avec les IDs corrects
     if (!window.ProgressTracker) {
       window.ProgressTracker = {
         state: {
@@ -392,7 +396,12 @@
             quizPassed: false,
           },
         },
+        currentFormationId: window.currentFormationId,
+        currentModuleId: window.currentModuleId
       };
+    } else {
+      window.ProgressTracker.currentFormationId = window.currentFormationId;
+      window.ProgressTracker.currentModuleId = window.currentModuleId;
     }
 
     ApiClient.getModuleContent(

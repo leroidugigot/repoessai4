@@ -237,11 +237,24 @@ exports.getModuleLockStatus = async (req, res) => {
   const { formationId, moduleId } = req.params;
   const userId = req.user._id;
 
+  console.log("[getModuleLockStatus] Début de la vérification:", {
+    formationId,
+    moduleId,
+    userId
+  });
+
   try {
     const user = await User.findById(userId);
     const formation = await Formation.findById(formationId);
 
+    console.log("[getModuleLockStatus] Utilisateur et formation:", {
+      userFound: !!user,
+      formationFound: !!formation,
+      formationModules: formation?.modules?.length
+    });
+
     if (!formation) {
+      console.log("[getModuleLockStatus] Formation non trouvée:", formationId);
       return res.status(404).json({ message: "Formation non trouvée" });
     }
 
@@ -250,12 +263,21 @@ exports.getModuleLockStatus = async (req, res) => {
       (m) => m._id.toString() === moduleId
     );
 
+    console.log("[getModuleLockStatus] Index du module:", {
+      moduleIndex,
+      totalModules: formation.modules.length,
+      moduleId,
+      allModuleIds: formation.modules.map(m => m._id.toString())
+    });
+
     if (moduleIndex === -1) {
+      console.log("[getModuleLockStatus] Module non trouvé:", moduleId);
       return res.status(404).json({ message: "Module non trouvé" });
     }
 
     // Le premier module est toujours déverrouillé
     if (moduleIndex === 0) {
+      console.log("[getModuleLockStatus] Premier module - déverrouillé automatiquement");
       return res.json({ 
         isLocked: false,
         message: "Premier module - Accès autorisé"
@@ -267,7 +289,20 @@ exports.getModuleLockStatus = async (req, res) => {
       (f) => f.formation.toString() === formationId
     );
 
+    console.log("[getModuleLockStatus] Progression trouvée:", {
+      found: !!formationProgress,
+      progressionCount: formationProgress?.progression?.length || 0,
+      progressionDetails: formationProgress?.progression?.map(p => ({
+        moduleId: p.module.toString(),
+        completed: p.completed,
+        videoWatched: p.videoWatched,
+        timeSpentReading: p.timeSpentReading,
+        quizPassed: p.quiz?.passed
+      }))
+    });
+
     if (!formationProgress) {
+      console.log("[getModuleLockStatus] Aucune progression trouvée");
       return res.json({ 
         isLocked: true,
         message: "Vous devez d'abord vous inscrire à cette formation" 
@@ -281,12 +316,24 @@ exports.getModuleLockStatus = async (req, res) => {
         (p) => p.module.toString() === previousModuleId.toString()
       );
 
-      // Vérifier si le module précédent existe et si tous ses contenus sont validés
+      console.log("[getModuleLockStatus] Vérification module précédent:", {
+        index: i,
+        moduleId: previousModuleId.toString(),
+        progressFound: !!previousModuleProgress,
+        completed: previousModuleProgress?.completed,
+        conditions: {
+          videoWatched: previousModuleProgress?.videoWatched,
+          timeSpentReading: previousModuleProgress?.timeSpentReading,
+          quizPassed: previousModuleProgress?.quiz?.passed
+        }
+      });
+
       if (!previousModuleProgress || 
           !previousModuleProgress.videoWatched || 
           !previousModuleProgress.timeSpentReading || 
           !previousModuleProgress.quiz?.passed) {
         
+        console.log("[getModuleLockStatus] Module verrouillé - conditions non remplies");
         return res.json({
           isLocked: true,
           message: `Vous devez d'abord compléter le module "${formation.modules[i].nom}"`,
@@ -299,13 +346,14 @@ exports.getModuleLockStatus = async (req, res) => {
       }
     }
 
-    // Si tous les modules précédents sont complétés
+    console.log("[getModuleLockStatus] Tous les modules précédents sont complétés");
     return res.json({
       isLocked: false,
       message: "Module accessible"
     });
 
   } catch (error) {
+    console.error("[getModuleLockStatus] Erreur:", error);
     return res.status(500).json({
       message: "Erreur lors de la vérification du statut du module",
       error: error.message,
@@ -317,6 +365,13 @@ exports.saveProgress = async (req, res) => {
   const { formationId, moduleId } = req.params;
   const { type, value } = req.body;
   const userId = req.user._id;
+
+  console.log("[saveProgress] Début de la sauvegarde:", {
+    formationId,
+    moduleId,
+    type,
+    value
+  });
 
   try {
     const user = await User.findById(userId);
@@ -342,6 +397,7 @@ exports.saveProgress = async (req, res) => {
         videoWatched: false,
         timeSpentReading: false,
         quiz: { score: 0, passed: false },
+        completed: false,
         lastProgress: new Date(),
       };
       user.local.formations[formationIndex].progression.push(moduleProgress);
@@ -370,6 +426,23 @@ exports.saveProgress = async (req, res) => {
           .json({ message: "Type de progression invalide" });
     }
 
+    // Vérifier si toutes les conditions sont remplies pour marquer le module comme complété
+    moduleProgress.completed = 
+      moduleProgress.videoWatched && 
+      moduleProgress.timeSpentReading && 
+      moduleProgress.quiz?.passed;
+
+    if (moduleProgress.completed && !moduleProgress.completedAt) {
+      moduleProgress.completedAt = new Date();
+    }
+
+    console.log("[saveProgress] État final du module:", {
+      videoWatched: moduleProgress.videoWatched,
+      timeSpentReading: moduleProgress.timeSpentReading,
+      quizPassed: moduleProgress.quiz?.passed,
+      completed: moduleProgress.completed
+    });
+
     moduleProgress.lastProgress = new Date();
     await user.save();
 
@@ -381,8 +454,10 @@ exports.saveProgress = async (req, res) => {
         timeSpentReading: moduleProgress.timeSpentReading,
         quizPassed: moduleProgress.quiz?.passed || false,
       },
+      completed: moduleProgress.completed
     });
   } catch (error) {
+    console.error("[saveProgress] Erreur:", error);
     return res
       .status(500)
       .json({ message: "Erreur serveur", error: error.message });
