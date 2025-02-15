@@ -180,6 +180,20 @@ router.get(
   moduleController.getModuleContent
 );
 
+// Route pour vérifier si un utilisateur est inscrit à une formation
+router.get(
+  "/:formationId/check-inscription",
+  ensureAuthenticated,
+  (req, res, next) => {
+    logColor(
+      `Requête reçue pour vérifier l'inscription à la formation ID: ${req.params.formationId}`,
+      colors.cyan
+    );
+    next();
+  },
+  formationController.checkInscription
+);
+
 // Route de test (pas protégée)
 router.get("/test", (req, res) => {
   logColor("Route de test appelée", colors.green);

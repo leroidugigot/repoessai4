@@ -607,3 +607,26 @@ exports.getModuleStatus = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+// Vérifier si un utilisateur est inscrit à une formation
+exports.checkInscription = async (req, res) => {
+  const { formationId } = req.params;
+  const userId = req.user?._id;
+
+  try {
+    if (!userId) {
+      return res.status(401).json({ message: "Utilisateur non authentifié." });
+    }
+
+    const formation = await Formation.findById(formationId);
+    if (!formation) {
+      return res.status(404).json({ message: "Formation non trouvée." });
+    }
+
+    const isInscrit = formation.participants.includes(userId);
+    return res.json({ isInscrit });
+  } catch (error) {
+    console.error("Erreur lors de la vérification de l'inscription:", error);
+    return res.status(500).json({ message: "Erreur lors de la vérification de l'inscription" });
+  }
+};
