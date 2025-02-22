@@ -157,9 +157,6 @@
 
     if (videoId) {
       contentDisplay.innerHTML = `
-        <div class="content-header fade-in">
-          <h2>Vidéo: ${currentModule}</h2>
-        </div>
         <div class="content-body fade-in">
           <div class="video-container">
             <iframe 
@@ -182,12 +179,8 @@
   function renderTextContent(content, currentModule) {
     const contentDisplay = document.getElementById("contentDisplay");
 
-    // Vérifier si le contenu est valide
     if (!content || (!content.description && !content.course)) {
       contentDisplay.innerHTML = `
-        <div class="content-header fade-in">
-          <h2>${currentModule}</h2>
-        </div>
         <div class="content-body fade-in">
           <p class="text-center text-gray-500">Aucun contenu disponible pour ce module</p>
         </div>`;
@@ -195,20 +188,9 @@
     }
 
     contentDisplay.innerHTML = `
-      <div class="content-header fade-in">
-        <h2>${currentModule}</h2>
-      </div>
       <div class="content-body fade-in overflow-y-auto h-[calc(100vh-200px)]">
-        ${
-          content.description
-            ? `<div class="description mb-6 text-lg">${content.description}</div>`
-            : ""
-        }
-        ${
-          content.course
-            ? `<div class="course-content prose prose-lg max-w-none">${content.course}</div>`
-            : ""
-        }
+        ${content.description ? `<div class="description mb-6 text-lg">${content.description}</div>` : ""}
+        ${content.course ? `<div class="course-content prose prose-lg max-w-none">${content.course}</div>` : ""}
       </div>`;
 
     if (window.ProgressTracker) {
@@ -226,16 +208,30 @@
             window.updateChapterProgress(window.ProgressTracker.state);
           }
 
-          window.ProgressTracker.saveProgress("reading", currentTime).catch(
-            console.error
-          );
+          window.ProgressTracker.saveProgress("reading", currentTime).catch(console.error);
         }, 1000);
 
+        let scrollTimeout;
         contentBody.addEventListener("scroll", () => {
-          const scrollPercentage =
-            (contentBody.scrollTop /
-              (contentBody.scrollHeight - contentBody.clientHeight)) *
-            100;
+          const scrollPercentage = (contentBody.scrollTop / (contentBody.scrollHeight - contentBody.clientHeight)) * 100;
+          
+          // Afficher la navbar lors du scroll
+          if (window.toggleNavbarHidden) {
+            window.toggleNavbarHidden(false);
+            
+            // Nettoyer le timeout précédent s'il existe
+            if (scrollTimeout) {
+              clearTimeout(scrollTimeout);
+            }
+            
+            // Cacher la navbar après 3 secondes d'inactivité de scroll
+            scrollTimeout = setTimeout(() => {
+              if (window.toggleNavbarHidden) {
+                window.toggleNavbarHidden(true);
+              }
+            }, 3000);
+          }
+
           if (scrollPercentage > 70) {
             window.ProgressTracker.state.conditions.timeSpentReading = true;
             if (window.updateChapterProgress) {
@@ -244,17 +240,18 @@
           }
         });
 
-        // Nettoyage
         const cleanup = () => {
           if (readingInterval) {
             clearInterval(readingInterval);
             readingInterval = null;
           }
+          if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = null;
+          }
         };
 
-        contentDisplay.addEventListener("DOMNodeRemoved", cleanup, {
-          once: true,
-        });
+        contentDisplay.addEventListener("DOMNodeRemoved", cleanup, { once: true });
         window.addEventListener("beforeunload", cleanup);
       }
     }
@@ -265,9 +262,6 @@
     if (!contentDisplay || !content.quiz) return;
 
     contentDisplay.innerHTML = `
-      <div class="content-header fade-in">
-        <h2>Quiz: ${moduleName}</h2>
-      </div>
       <div class="content-body fade-in">
         <form id="quizForm" class="quiz-container space-y-6">
           ${renderQuizQuestions(content.quiz)}
@@ -377,6 +371,49 @@
       return;
     }
 
+    // Vérification des conditions d'accès
+    if (window.ProgressTracker && window.ProgressTracker.state) {
+      const state = window.ProgressTracker.state;
+      
+      if (type === 'course' && !state.conditions.videoWatched) {
+        contentDisplay.innerHTML = `
+          <div class="content-body fade-in text-center">
+            <img src="/public/images/tropvite.jpg" alt="Trop vite!" class="mx-auto max-w-md mb-4">
+            <p class="text-xl text-red-500">Vous devez d'abord terminer la vidéo avant d'accéder au cours.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      if (type === 'quiz' && (!state.conditions.videoWatched || !state.conditions.timeSpentReading)) {
+        contentDisplay.innerHTML = `
+          <div class="content-body fade-in text-center">
+            <img src="/public/images/tropvite.jpg" alt="Trop vite!" class="mx-auto max-w-md mb-4">
+            <p class="text-xl text-red-500">Vous devez d'abord terminer la vidéo et le cours avant d'accéder au quiz.</p>
+          </div>
+        `;
+        return;
+      }
+    }
+
+    // Cacher la navbar au début
+    if (window.toggleNavbarHidden) {
+      window.toggleNavbarHidden(true);
+    }
+
+    // Afficher la navbar brièvement
+    setTimeout(() => {
+      if (window.toggleNavbarHidden) {
+        window.toggleNavbarHidden(false);
+        // La cacher à nouveau après 3 secondes
+        setTimeout(() => {
+          if (window.toggleNavbarHidden) {
+            window.toggleNavbarHidden(true);
+          }
+        }, 3000);
+      }
+    }, 100);
+
     window.UI.showLoading(contentDisplay);
     contentDisplay.classList.remove("hidden");
 
@@ -404,12 +441,8 @@
       window.ProgressTracker.currentModuleId = window.currentModuleId;
     }
 
-    ApiClient.getModuleContent(
-      window.currentFormationId,
-      window.currentModuleId
-    )
+    ApiClient.getModuleContent(window.currentFormationId, window.currentModuleId)
       .then(async (content) => {
-        // Réinitialiser l'état si nécessaire
         if (!window.ProgressTracker.state) {
           window.ProgressTracker.state = {
             videoProgress: 0,
@@ -427,9 +460,6 @@
           case "video":
             if (content.video) {
               await renderVideoContent(content, window.currentModule);
-              if (window.updateChapterProgress && window.ProgressTracker) {
-                window.updateChapterProgress(window.ProgressTracker.state);
-              }
             } else {
               alert("Pas de vidéo disponible pour ce module");
             }
@@ -437,9 +467,6 @@
           case "course":
             if (content.description || content.course) {
               await renderTextContent(content, window.currentModule);
-              if (window.updateChapterProgress && window.ProgressTracker) {
-                window.updateChapterProgress(window.ProgressTracker.state);
-              }
             } else {
               alert("Pas de cours disponible pour ce module");
             }
@@ -447,13 +474,14 @@
           case "quiz":
             if (content.quiz) {
               await renderQuizContent(content, window.currentModule);
-              if (window.updateChapterProgress && window.ProgressTracker) {
-                window.updateChapterProgress(window.ProgressTracker.state);
-              }
             } else {
               alert("Pas de quiz disponible pour ce module");
             }
             break;
+        }
+
+        if (window.updateChapterProgress && window.ProgressTracker) {
+          window.updateChapterProgress(window.ProgressTracker.state);
         }
       })
       .catch((error) => {

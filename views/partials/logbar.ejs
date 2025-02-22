@@ -1,20 +1,20 @@
-<nav class="flex items-center justify-between">
-  <span class="mr-4">Bonjour : <%= user ? user.username : 'Invité' %></span>
+<!-- Logbar avec taille fixe -->
+<nav class="flex items-center justify-between h-16 px-4 bg-gray-800">
+  <span class="mr-4 text-white">Bonjour : <%= user ? user.username : 'Invité' %></span>
 
   <!-- Show avatar (profile photo) if available -->
   <% if (user && user.avatar) { %>
     <img src="<%= user.avatar %>" alt="Profile Photo" class="w-12 h-12 rounded-full object-cover mr-4">
   <% } %>
 
-  <div class="d-flex flex-row">
+  <div class="flex items-center">
     <% if (user) { %>
-      <a href="/auth/signout" class="mx-3" ><i class="fa-solid fa-power-off text-4xl"></i></a>
+      <a href="/auth/signout" class="mx-3 text-white hover:text-gray-300 transition-colors">
+        <i class="fa-solid fa-power-off text-2xl"></i>
+      </a>
     <% } else { %>
-      <a href="/users/new" class="mx-3">Inscription</a>
-      <a href="/auth/signin/form" class="mx-3">Connexion</a>
+      <a href="/users/new" class="mx-3 text-white hover:text-gray-300 transition-colors">Inscription</a>
+      <a href="/auth/signin/form" class="mx-3 text-white hover:text-gray-300 transition-colors">Connexion</a>
     <% } %>
   </div>
-
-
-
 </nav>
