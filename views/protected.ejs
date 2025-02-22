@@ -26,17 +26,47 @@
         height: 100vh;
         overflow: hidden;
         scrollbar-width: none;
+        max-width: 100vw;
       }
 
       .parent {
         display: grid;
-        grid-template-columns: repeat(2, 0.75fr) repeat(8, 1fr) repeat(
-            2,
-            0.75fr
-          );
+        grid-template-columns: repeat(2, 0.75fr) repeat(8, 1fr) repeat(2, 0.75fr);
         grid-template-rows: repeat(12, 1fr);
         height: 100vh;
         width: 100vw;
+        max-width: 1920px; /* Taille maximale pour les grands écrans */
+        margin: 0 auto; /* Centrage horizontal */
+        overflow: hidden;
+      }
+
+      /* Container global pour le centrage */
+      .container-center {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      /* Conteneurs internes */
+      .content-container {
+        width: 100%;
+        max-width: 100%;
+        overflow: auto;
+        margin: 0 auto;
+      }
+
+      .div-parent-left,
+      .div-parent-right {
+        max-width: 300px; /* Largeur maximale pour les panneaux latéraux */
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .div12 {
+        max-width: 100%;
+        margin: 0 auto;
+        overflow: auto;
       }
 
       .div-parent-left {
@@ -101,11 +131,12 @@
       }
 
       #mainContent {
-        display: flex;
-        justify-content: center;
         width: 100%;
-        height: 100%
-
+        max-width: 1200px; /* Largeur maximale pour le contenu principal */
+        margin: 0 auto;
+        padding: 0 1rem;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
       
       body,
@@ -138,6 +169,7 @@
         font-size: 18px;
         cursor: pointer;
         z-index: 100;
+        right: max(10px, calc((100vw - 1920px) / 2 + 10px));
       }
 
       .btn-inscription {
@@ -164,88 +196,193 @@
         transform: translateY(1px);
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
       }
+
+      /* Styles Mobile */
+      @media (max-width: 768px) {
+        .parent {
+          max-width: 100%;
+          padding: 0;
+        }
+
+        .container-center {
+          padding: 0;
+        }
+
+        .div-parent-left,
+        .div-parent-right {
+          max-width: 85%;
+          width: 85%;
+        }
+
+        .div-parent-left,
+        .div-parent-right {
+          position: fixed;
+          top: 0;
+          z-index: 1000;
+          transition: transform 0.3s ease-in-out;
+        }
+
+        .div-parent-left {
+          left: 0;
+          transform: translateX(-100%);
+        }
+
+        .div-parent-right {
+          right: 0;
+          transform: translateX(100%);
+        }
+
+        .div-parent-left.show,
+        .div-parent-right.show {
+          transform: translateX(0);
+        }
+
+        .mobile-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+        }
+
+        .mobile-overlay.show {
+          display: block;
+        }
+
+        .mobile-nav {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 60px;
+          background: #1F2937;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          z-index: 1001;
+          border-top: 1px solid #374151;
+          max-width: 100%;
+          width: 100%;
+        }
+
+        .mobile-nav-btn {
+          color: white;
+          padding: 10px;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #374151;
+        }
+
+        .div1, .div2, .div3 {
+          height: 60px;
+        }
+
+        .div12 {
+          height: calc(100vh - 120px);
+          margin-bottom: 60px;
+        }
+
+        #mainContent {
+          padding: 0 0.5rem;
+        }
+
+        .mobile-hidden {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-100 text-gray-900">
-    <div class="parent">
-      <!-- Div1 - Logo -->
-      <div
-        class="div1 bg-gray-800 flex justify-center items-center w-full h-full border border-gray-700"
-      >
-        <%- include('partials/logoSite') %>
-      </div>
-
-      <!-- Div2 - Navbar -->
-      <div class="div2 bg-gray-800 w-full h-full border border-gray-700">
-        <%- include('partials/navbar') %>
-      </div>
-
-      <!-- Div3 - Logbar -->
-      <div
-        class="div3 bg-gray-800 text-white flex items-center justify-center w-full h-full border border-gray-700"
-      >
-        <%- include('partials/logbar', { user }) %>
-      </div>
-
-      <!-- Div4 - Navbar Hidden -->
-      <div
-        id="navbarHidden"
-        class="div4 z-50 w-full h-full border border-gray-700 hidden"
-      >
-        <%- include('partials/navbarHidden') %>
-      </div>
-
-      <!-- Left Parent Div -->
-      <div id="div-parent-left" class="div-parent-left border border-gray-700">
-        <!-- Div5 - Lesson Online -->
-        <div id="div5" class="div5 bg-transparent w-full">
-          <%- include('partials/lessonOnLine', { currentFormation }) %>
+    <div class="container-center">
+      <div class="parent">
+        <!-- Div1 - Logo -->
+        <div class="div1 bg-gray-800 flex justify-center items-center w-full h-full border border-gray-700">
+          <div class="content-container">
+            <%- include('partials/logoSite') %>
+          </div>
         </div>
 
-        <!-- Div6 - Chapter List -->
-        <div id="div6" class="div6 bg-transparent w-full overflow-y-auto">
-          <%- include('partials/chapterList', { currentFormation:
-          currentFormation?.formation?.nom || null, currentModule: null }) %>
+        <!-- Div2 - Navbar -->
+        <div class="div2 bg-gray-800 w-full h-full border border-gray-700">
+          <div class="content-container">
+            <%- include('partials/navbar') %>
+          </div>
         </div>
 
-        <!-- Div7 - Dashboard -->
-        <div id="div7" class="div7 bg-transparent w-full">
-          <%- include('partials/dashboarddiv') %>
-        </div>
-      </div>
-
-      <!-- Right Parent Div -->
-      <div
-        id="div-parent-right"
-        class="div-parent-right border border-gray-700"
-      >
-        <!-- Div8 - Connected Users -->
-        <div id="div8" class="div8 bg-transparent w-full">
-          <%- include('partials/connectedList') %>
+        <!-- Div3 - Logbar -->
+        <div
+          class="div3 bg-gray-800 text-white flex items-center justify-center w-full h-full border border-gray-700"
+        >
+          <%- include('partials/logbar', { user }) %>
         </div>
 
-        <!-- Div9 - Referentials -->
-        <div id="div9" class="div9 bg-transparent w-full">
-          <%- include('partials/referentiels') %>
+        <!-- Div4 - Navbar Hidden -->
+        <div
+          id="navbarHidden"
+          class="div4 z-50 w-full h-full border border-gray-700 hidden"
+        >
+          <%- include('partials/navbarHidden') %>
         </div>
 
-        <!-- Div10 - Contact -->
-        <div id="div10" class="div10 bg-transparent w-full relative">
-          <%- include('partials/contact') %>
+        <!-- Left Parent Div -->
+        <div id="div-parent-left" class="div-parent-left border border-gray-700">
+          <!-- Div5 - Lesson Online -->
+          <div id="div5" class="div5 bg-transparent w-full">
+            <%- include('partials/lessonOnLine', { currentFormation }) %>
+          </div>
+
+          <!-- Div6 - Chapter List -->
+          <div id="div6" class="div6 bg-transparent w-full overflow-y-auto">
+            <%- include('partials/chapterList', { currentFormation:
+            currentFormation?.formation?.nom || null, currentModule: null }) %>
+          </div>
+
+          <!-- Div7 - Dashboard -->
+          <div id="div7" class="div7 bg-transparent w-full">
+            <%- include('partials/dashboarddiv') %>
+          </div>
         </div>
-      </div>
 
-      <!-- Div11 - Input GPT -->
-      <div id="gptInput" class="div12 hidden overflow-auto w-full h-full">
-        <%- include('partials/inputgpt') %>
-      </div>
+        <!-- Right Parent Div -->
+        <div
+          id="div-parent-right"
+          class="div-parent-right border border-gray-700"
+        >
+          <!-- Div8 - Connected Users -->
+          <div id="div8" class="div8 bg-transparent w-full">
+            <%- include('partials/connectedList') %>
+          </div>
 
-      <!-- Div12 - Main Content -->
-      <div
-        id="mainContent"
-        class="div12 border border-gray-700 overflow-y-auto  w-full h-full"
-      >
-        <%- include('partials/contenus', { csrfToken: locals.csrfToken }) %>
+          <!-- Div9 - Referentials -->
+          <div id="div9" class="div9 bg-transparent w-full">
+            <%- include('partials/referentiels') %>
+          </div>
+
+          <!-- Div10 - Contact -->
+          <div id="div10" class="div10 bg-transparent w-full relative">
+            <%- include('partials/contact') %>
+          </div>
+        </div>
+
+        <!-- Div11 - Input GPT -->
+        <div id="gptInput" class="div12 hidden overflow-auto w-full h-full">
+          <%- include('partials/inputgpt') %>
+        </div>
+
+        <!-- Div12 - Main Content -->
+        <div
+          id="mainContent"
+          class="div12 border border-gray-700 overflow-y-auto  w-full h-full"
+        >
+          <%- include('partials/contenus', { csrfToken: locals.csrfToken }) %>
+        </div>
       </div>
     </div>
 
@@ -255,6 +392,20 @@
     </button>
 
     <button id="toggleButton" class="fixed top-10 right-10"></button>
+
+    <!-- Ajout des éléments mobile -->
+    <div class="mobile-overlay"></div>
+    <nav class="mobile-nav hidden md:hidden">
+      <button class="mobile-nav-btn" id="leftMenuBtn">
+        <i class="fas fa-book"></i>
+      </button>
+      <button class="mobile-nav-btn" id="homeBtn">
+        <i class="fas fa-home"></i>
+      </button>
+      <button class="mobile-nav-btn" id="rightMenuBtn">
+        <i class="fas fa-users"></i>
+      </button>
+    </nav>
 
     <script>
       // Fonction pour afficher le profil

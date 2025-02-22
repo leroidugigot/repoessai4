@@ -219,3 +219,94 @@ const BreadcrumbManager = {
 
 // Rendre BreadcrumbManager disponible globalement
 window.BreadcrumbManager = BreadcrumbManager;
+
+// Mobile Management
+const MobileManager = {
+    init() {
+        this.overlay = document.querySelector('.mobile-overlay');
+        this.leftPanel = document.querySelector('.div-parent-left');
+        this.rightPanel = document.querySelector('.div-parent-right');
+        this.leftBtn = document.getElementById('leftMenuBtn');
+        this.rightBtn = document.getElementById('rightMenuBtn');
+        this.homeBtn = document.getElementById('homeBtn');
+        this.mobileNav = document.querySelector('.mobile-nav');
+
+        this.setupEventListeners();
+        this.setupSwipeHandlers();
+        this.checkScreenSize();
+    },
+
+    setupEventListeners() {
+        // Boutons de menu
+        this.leftBtn.addEventListener('click', () => this.togglePanel('left'));
+        this.rightBtn.addEventListener('click', () => this.togglePanel('right'));
+        this.homeBtn.addEventListener('click', () => this.goHome());
+        
+        // Overlay
+        this.overlay.addEventListener('click', () => this.closeAllPanels());
+        
+        // Redimensionnement
+        window.addEventListener('resize', () => this.checkScreenSize());
+    },
+
+    setupSwipeHandlers() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].clientX;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > 50) {
+                if (swipeDistance > 0) {
+                    this.togglePanel('left');
+                } else {
+                    this.togglePanel('right');
+                }
+            }
+        });
+    },
+
+    togglePanel(side) {
+        const panel = side === 'left' ? this.leftPanel : this.rightPanel;
+        const otherPanel = side === 'left' ? this.rightPanel : this.leftPanel;
+
+        if (panel.classList.contains('show')) {
+            panel.classList.remove('show');
+            this.overlay.classList.remove('show');
+        } else {
+            otherPanel.classList.remove('show');
+            panel.classList.add('show');
+            this.overlay.classList.add('show');
+        }
+    },
+
+    closeAllPanels() {
+        this.leftPanel.classList.remove('show');
+        this.rightPanel.classList.remove('show');
+        this.overlay.classList.remove('show');
+    },
+
+    goHome() {
+        this.closeAllPanels();
+        mainContent.scrollTo(0, 0);
+    },
+
+    checkScreenSize() {
+        if (window.innerWidth <= 768) {
+            this.mobileNav.classList.remove('hidden');
+        } else {
+            this.mobileNav.classList.add('hidden');
+            this.closeAllPanels();
+        }
+    }
+};
+
+// Initialize Mobile Manager on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    MobileManager.init();
+});
