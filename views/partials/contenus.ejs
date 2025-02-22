@@ -541,6 +541,58 @@
       .locked:hover {
         animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
       }
+
+      .tab-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+        transition: all 0.3s ease;
+      }
+
+      .tab-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .tab-button.active {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+
+      .tab-pane {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      .tab-pane.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .feature-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .description-content {
+        animation: fadeIn 0.5s ease-out;
+      }
     </style>
   </head>
   <body>
@@ -1299,13 +1351,144 @@
                   </div>
                 </div>
 
-                <div class="formation-description">
-                  <h3 class="description-title">
-                    <i class="fas fa-info-circle"></i>
-                    À propos de cette formation
+                <div class="formation-description bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 shadow-2xl">
+                  <h3 class="description-title flex items-center space-x-3 mb-4 pb-3 border-b border-gray-700">
+                    <i class="fas fa-info-circle text-blue-500 text-2xl"></i>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                      À propos de cette formation
+                    </span>
                   </h3>
+
                   <div class="description-content">
-                    ${formation.description || ''}
+                    <!-- Tabs de navigation -->
+                    <div class="description-tabs flex space-x-4 mb-3 overflow-x-auto">
+                      <button onclick="switchDescriptionTab('objectifs')" 
+                              class="tab-button active px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-300"
+                              data-tab="objectifs">
+                        <i class="fas fa-bullseye text-blue-400"></i>
+                        <span>Objectifs</span>
+                      </button>
+                      <button onclick="switchDescriptionTab('public')"
+                              class="tab-button px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-300"
+                              data-tab="public">
+                        <i class="fas fa-users text-green-400"></i>
+                        <span>Public visé</span>
+                      </button>
+                      <button onclick="switchDescriptionTab('programme')"
+                              class="tab-button px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-300"
+                              data-tab="programme">
+                        <i class="fas fa-book-open text-purple-400"></i>
+                        <span>Programme</span>
+                      </button>
+                      <button onclick="switchDescriptionTab('points-forts')"
+                              class="tab-button px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-300"
+                              data-tab="points-forts">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <span>Points forts</span>
+                      </button>
+                    </div>
+
+                    <!-- Contenu des tabs -->
+                    <div class="tab-content">
+                      <!-- Objectifs -->
+                      <div id="objectifs" class="tab-pane active transform transition-all duration-300">
+                        <div class="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800/70 transition-all duration-300">
+                          <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                              <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                <i class="fas fa-bullseye text-blue-400 text-lg"></i>
+                              </div>
+                            </div>
+                            <div class="flex-grow">
+                              <h4 class="text-lg font-semibold text-blue-400 mb-2">Objectifs de la formation</h4>
+                              <p class="text-gray-300 leading-relaxed">
+                                ${formation.objectifs || 'Cette formation vous permettra de maîtriser les concepts essentiels et d\'acquérir des compétences pratiques.'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Public visé -->
+                      <div id="public" class="tab-pane hidden transform transition-all duration-300">
+                        <div class="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800/70 transition-all duration-300">
+                          <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                              <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                <i class="fas fa-users text-green-400 text-lg"></i>
+                              </div>
+                            </div>
+                            <div class="flex-grow">
+                              <h4 class="text-lg font-semibold text-green-400 mb-2">Public visé</h4>
+                              <p class="text-gray-300 leading-relaxed">
+                                ${formation.publicVise || 'Cette formation s\'adresse à tous les niveaux, des débutants aux experts souhaitant approfondir leurs connaissances.'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Programme -->
+                      <div id="programme" class="tab-pane hidden transform transition-all duration-300">
+                        <div class="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800/70 transition-all duration-300">
+                          <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                              <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                                <i class="fas fa-book-open text-purple-400 text-lg"></i>
+                              </div>
+                            </div>
+                            <div class="flex-grow">
+                              <h4 class="text-lg font-semibold text-purple-400 mb-2">Description du programme</h4>
+                              <div class="text-gray-300 leading-relaxed whitespace-pre-line">
+                                ${formation.description || 'Programme non disponible'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Points forts -->
+                      <div id="points-forts" class="tab-pane hidden transform transition-all duration-300">
+                        <div class="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800/70 transition-all duration-300">
+                          <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                              <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                                <i class="fas fa-star text-yellow-400 text-lg"></i>
+                              </div>
+                            </div>
+                            <div class="flex-grow">
+                              <h4 class="text-lg font-semibold text-yellow-400 mb-2">Points forts</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="feature-card bg-gray-800/30 p-3 rounded-lg hover:bg-gray-800/50 transition-all duration-300">
+                                  <div class="flex items-center space-x-2">
+                                    <i class="fas fa-graduation-cap text-green-500"></i>
+                                    <span class="text-gray-300">Apprentissage progressif</span>
+                                  </div>
+                                </div>
+                                <div class="feature-card bg-gray-800/30 p-3 rounded-lg hover:bg-gray-800/50 transition-all duration-300">
+                                  <div class="flex items-center space-x-2">
+                                    <i class="fas fa-tasks text-green-500"></i>
+                                    <span class="text-gray-300">Exercices pratiques</span>
+                                  </div>
+                                </div>
+                                <div class="feature-card bg-gray-800/30 p-3 rounded-lg hover:bg-gray-800/50 transition-all duration-300">
+                                  <div class="flex items-center space-x-2">
+                                    <i class="fas fa-book text-green-500"></i>
+                                    <span class="text-gray-300">Support pédagogique</span>
+                                  </div>
+                                </div>
+                                <div class="feature-card bg-gray-800/30 p-3 rounded-lg hover:bg-gray-800/50 transition-all duration-300">
+                                  <div class="flex items-center space-x-2">
+                                    <i class="fas fa-certificate text-green-500"></i>
+                                    <span class="text-gray-300">Certification finale</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1602,6 +1785,29 @@
         // Chargement initial
         loadFormations();
       });
+
+      function switchDescriptionTab(tabId) {
+        // Cacher tous les contenus
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+          pane.classList.add('hidden');
+          pane.classList.remove('active');
+        });
+        
+        // Désactiver tous les boutons
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.classList.remove('active');
+        });
+        
+        // Activer le contenu et le bouton sélectionnés
+        const selectedPane = document.getElementById(tabId);
+        const selectedButton = document.querySelector(`[data-tab="${tabId}"]`);
+        
+        if (selectedPane && selectedButton) {
+          selectedPane.classList.remove('hidden');
+          selectedPane.classList.add('active');
+          selectedButton.classList.add('active');
+        }
+      }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
   </body>
