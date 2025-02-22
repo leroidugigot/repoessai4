@@ -109,8 +109,31 @@
       .div10 {
         height: 20%;
       }
-      .div12 {
+      .div12-container {
         grid-area: 2 / 3 / 13 / 11;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .div12 {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      #mainContent,
+      #gptInput {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
 
       /* Scrollbar styles */
@@ -122,10 +145,11 @@
 
       #mainContent {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         width: 100%;
-        height: 100%
-
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
       
       body,
@@ -267,9 +291,18 @@
           height: 60px;
         }
 
+        .div12-container,
         .div12 {
-          height: calc(100vh - 120px);
-          margin-bottom: 60px;
+          width: 100vw;
+          padding: 0;
+          margin: 0;
+        }
+
+        #mainContent,
+        #gptInput {
+          width: 100%;
+          padding: 0 10px;
+          margin-bottom: 60px; /* Pour la barre de navigation mobile */
         }
 
         #gptButton {
@@ -332,10 +365,7 @@
         </div>
 
         <!-- Right Parent Div -->
-        <div
-          id="div-parent-right"
-          class="div-parent-right border border-gray-700"
-        >
+        <div id="div-parent-right" class="div-parent-right border border-gray-700">
           <!-- Div8 - Connected Users -->
           <div id="div8" class="div8 bg-transparent w-full">
             <%- include('partials/connectedList') %>
@@ -352,17 +382,17 @@
           </div>
         </div>
 
-        <!-- Div11 - Input GPT -->
-        <div id="gptInput" class="div12 hidden overflow-auto w-full h-full">
-          <%- include('partials/inputgpt') %>
-        </div>
+        <!-- Div12 Container -->
+        <div class="div12-container">
+          <!-- Div11 - Input GPT -->
+          <div id="gptInput" class="div12 hidden">
+            <%- include('partials/inputgpt') %>
+          </div>
 
-        <!-- Div12 - Main Content -->
-        <div
-          id="mainContent"
-          class="div12 border border-gray-700 overflow-y-auto  w-full h-full"
-        >
-          <%- include('partials/contenus', { csrfToken: locals.csrfToken }) %>
+          <!-- Div12 - Main Content -->
+          <div id="mainContent" class="div12 border border-gray-700">
+            <%- include('partials/contenus', { csrfToken: locals.csrfToken }) %>
+          </div>
         </div>
       </div>
     </div>
