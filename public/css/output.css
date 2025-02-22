@@ -1287,6 +1287,10 @@ footer p {
   margin-top: 2rem;
 }
 
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
 .block {
   display: block;
 }
@@ -1545,6 +1549,10 @@ footer p {
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-center {
   justify-content: center;
 }
@@ -1726,6 +1734,14 @@ footer p {
 
 .border-l-2 {
   border-left-width: 2px;
+}
+
+.border-l {
+  border-left-width: 1px;
+}
+
+.border-r {
+  border-right-width: 1px;
 }
 
 .border-black {
@@ -2692,6 +2708,11 @@ footer p {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-gray-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+}
+
 .hover\:text-blue-400:hover {
   --tw-text-opacity: 1;
   color: rgb(96 165 250 / var(--tw-text-opacity));
@@ -2872,12 +2893,32 @@ footer p {
     margin-top: 8rem;
   }
 
+  .md\:ml-4 {
+    margin-left: 1rem;
+  }
+
+  .md\:mr-2 {
+    margin-right: 0.5rem;
+  }
+
+  .md\:block {
+    display: block;
+  }
+
+  .md\:inline-block {
+    display: inline-block;
+  }
+
   .md\:flex {
     display: flex;
   }
 
   .md\:hidden {
     display: none;
+  }
+
+  .md\:h-10 {
+    height: 2.5rem;
   }
 
   .md\:w-1\/2 {

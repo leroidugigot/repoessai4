@@ -26,7 +26,6 @@
         height: 100vh;
         overflow: hidden;
         scrollbar-width: none;
-        max-width: 100vw;
       }
 
       .parent {
@@ -35,38 +34,29 @@
         grid-template-rows: repeat(12, 1fr);
         height: 100vh;
         width: 100vw;
-        max-width: 1920px; /* Taille maximale pour les grands écrans */
+        max-width: 1920px; /* Taille maximale */
         margin: 0 auto; /* Centrage horizontal */
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Container wrapper pour le centrage */
+      .container-wrapper {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #111827; /* Fond sombre pour les bords */
         overflow: hidden;
       }
 
-      /* Container global pour le centrage */
-      .container-center {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 0 1rem;
-      }
-
-      /* Conteneurs internes */
-      .content-container {
-        width: 100%;
-        max-width: 100%;
-        overflow: auto;
-        margin: 0 auto;
-      }
-
-      .div-parent-left,
-      .div-parent-right {
-        max-width: 300px; /* Largeur maximale pour les panneaux latéraux */
-        width: 100%;
-        margin: 0 auto;
-      }
-
-      .div12 {
-        max-width: 100%;
-        margin: 0 auto;
-        overflow: auto;
+      /* Ajustement des marges automatiques pour les grands écrans */
+      @media (min-width: 1921px) {
+        .parent {
+          border-left: 1px solid #374151;
+          border-right: 1px solid #374151;
+        }
       }
 
       .div-parent-left {
@@ -131,12 +121,11 @@
       }
 
       #mainContent {
+        display: flex;
+        justify-content: center;
         width: 100%;
-        max-width: 1200px; /* Largeur maximale pour le contenu principal */
-        margin: 0 auto;
-        padding: 0 1rem;
-        overflow-y: auto;
-        overflow-x: hidden;
+        height: 100%
+
       }
       
       body,
@@ -169,7 +158,6 @@
         font-size: 18px;
         cursor: pointer;
         z-index: 100;
-        right: max(10px, calc((100vw - 1920px) / 2 + 10px));
       }
 
       .btn-inscription {
@@ -199,24 +187,21 @@
 
       /* Styles Mobile */
       @media (max-width: 768px) {
+        .container-wrapper {
+          padding: 0;
+        }
+
         .parent {
+          width: 100%;
           max-width: 100%;
-          padding: 0;
-        }
-
-        .container-center {
-          padding: 0;
-        }
-
-        .div-parent-left,
-        .div-parent-right {
-          max-width: 85%;
-          width: 85%;
+          margin: 0;
         }
 
         .div-parent-left,
         .div-parent-right {
           position: fixed;
+          width: 85%;
+          height: 100vh;
           top: 0;
           z-index: 1000;
           transition: transform 0.3s ease-in-out;
@@ -264,8 +249,6 @@
           align-items: center;
           z-index: 1001;
           border-top: 1px solid #374151;
-          max-width: 100%;
-          width: 100%;
         }
 
         .mobile-nav-btn {
@@ -289,8 +272,8 @@
           margin-bottom: 60px;
         }
 
-        #mainContent {
-          padding: 0 0.5rem;
+        #gptButton {
+          bottom: 70px;
         }
 
         .mobile-hidden {
@@ -300,20 +283,18 @@
     </style>
   </head>
   <body class="bg-gray-100 text-gray-900">
-    <div class="container-center">
+    <div class="container-wrapper">
       <div class="parent">
         <!-- Div1 - Logo -->
-        <div class="div1 bg-gray-800 flex justify-center items-center w-full h-full border border-gray-700">
-          <div class="content-container">
-            <%- include('partials/logoSite') %>
-          </div>
+        <div
+          class="div1 bg-gray-800 flex justify-center items-center w-full h-full border border-gray-700"
+        >
+          <%- include('partials/logoSite') %>
         </div>
 
         <!-- Div2 - Navbar -->
         <div class="div2 bg-gray-800 w-full h-full border border-gray-700">
-          <div class="content-container">
-            <%- include('partials/navbar') %>
-          </div>
+          <%- include('partials/navbar') %>
         </div>
 
         <!-- Div3 - Logbar -->
